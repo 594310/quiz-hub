@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>性格與命理小測驗</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;color:#2a2140;
+ background:radial-gradient(circle at 20% 0,#3a2a7a 0,#171230 60%) fixed;min-height:100vh}
+.wrap{max-width:820px;margin:0 auto;padding:34px 16px 60px}
+h1{color:#fff;text-align:center;margin:0 0 6px;font-size:30px;letter-spacing:3px}
+.lead{color:#cfc7ee;text-align:center;margin:0 0 26px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+a.tool{display:block;text-decoration:none;color:inherit;background:#fffdf8;border-radius:18px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:.15s}
+a.tool:hover{transform:translateY(-4px)}
+.ico{font-size:40px}
+.tool h2{margin:6px 0 6px;font-size:21px}
+.tool p{margin:0;color:#6b6880;line-height:1.7;font-size:14px}
+.last{margin-top:12px;background:#f1edff;border-radius:10px;padding:8px 12px;font-size:13px;color:#5b3fd1;line-height:1.6}
+.go{display:inline-block;margin-top:12px;color:#fff;background:linear-gradient(135deg,#5b3fd1,#8b5cf6);padding:7px 18px;border-radius:99px;font-size:14px;font-weight:700}
+.data{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:18px;margin-top:26px;color:#e6e0ff;font-size:14px;line-height:1.8}
+.data h3{margin:0 0 6px;color:#fff;font-size:17px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.b{font:inherit;font-size:14px;cursor:pointer;border:1.5px solid #bda9ff;background:transparent;color:#fff;border-radius:10px;padding:7px 16px}
+.b:hover{background:rgba(255,255,255,.12)}
+.b.red{border-color:#fca5a5;color:#fecaca}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔮 性格與命理小測驗</h1>
+  <p class="lead">選一個開始吧，全部免費，結果只有你自己看得到</p>
+
+  <div class="grid">
+    <a class="tool" href="mbti.html">
+      <div class="ico">🧠🐾</div>
+      <h2>MBTI 性格測驗</h2>
+      <p>24 題、每題 4 個選項。得到 16 型人格、四維度比例圖表、可愛動物角色，以及配對分析（誰最合、誰容易有摩擦）。</p>
+      <div class="last" id="lastMbti">尚無紀錄</div>
+      <span class="go">開始測驗 →</span>
+    </a>
+    <a class="tool" href="ziwei.html">
+      <div class="ico">🌌</div>
+      <h2>紫微斗數命盤</h2>
+      <p>輸入國曆或農曆生日，自動排出十二宮命盤、十四主星、生年四化與大限，附命宮與重點宮位解讀。</p>
+      <div class="last" id="lastZw">尚無紀錄</div>
+      <span class="go">排出命盤 →</span>
+    </a>
+  </div>
+
+  <div class="data">
+    <h3>💾 我的資料</h3>
+    這個網站沒有伺服器、也沒有帳號，<b>你的測驗結果與命盤只會存在你這台裝置的瀏覽器裡</b>（localStorage），不會上傳給任何人，作者也看不到。<br>
+    換手機、換瀏覽器、無痕模式或清除瀏覽器資料後，紀錄就不見了。想帶著走，可以「匯出備份圖片」，到另一台再用同一張圖片「匯入」。<br>
+    備份圖片是一張好看的結果圖，資料藏在圖片裡；各測驗結果頁的「儲存圖片」按鈕存出的圖也可以拿來匯入。傳送時請用<b>「原圖／檔案」</b>方式，被 LINE 等 App 壓縮過的圖片會讀不到資料。
+    <div class="btns">
+      <button class="b" onclick="exportData()">🖼 匯出備份圖片</button>
+      <button class="b" onclick="document.getElementById('imp').click()">📥 從圖片匯入</button>
+      <button class="b red" onclick="clearAll()">🗑 清除全部紀錄</button>
+      <input type="file" id="imp" accept="image/png" style="display:none" onchange="importData(this)">
+    </div>
+  </div>
+</div>
+<script src="hubkit.js"></script>
+<script>
+function ld(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+const ANI={INTJ:'貓頭鷹',INTP:'灰貓',ENTJ:'獅子',ENTP:'狐狸',INFJ:'小鹿',INFP:'兔兔',ENFJ:'黃金獵犬',ENFP:'小猴',ISTJ:'棕熊',ISFJ:'綿羊',ESTJ:'老虎',ESFJ:'貓熊',ISTP:'浣熊',ISFP:'無尾熊',ESTP:'青蛙',ESFP:'小豬'};
+function show(){
+  const h=ld('hub.mbti.history',[]);
+  if(h.length){const r=h[0];document.getElementById('lastMbti').innerHTML='上次結果：<b>'+esc(r.code)+'</b>（'+esc(ANI[r.code]||'')+'）・'+new Date(r.t).toLocaleDateString('zh-TW')+'・共 '+h.length+' 筆'}
+  else document.getElementById('lastMbti').textContent='尚無紀錄';
+  const p=ld('hub.ziwei.profiles',[]);
+  document.getElementById('lastZw').innerHTML=p.length?'已儲存 '+p.length+' 個命盤：'+p.slice(0,3).map(x=>esc(x.label)).join('、')+(p.length>3?'…':''):'尚無紀錄';
+}
+function keys(){const a=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('hub.'))a.push(k)}}catch(e){}return a}
+async function exportData(){
+  const F=HubKit.FONT, W=900, H=1100, c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,W,H); g.addColorStop(0,'#2a1d5c'); g.addColorStop(1,'#171230'); x.fillStyle=g; x.fillRect(0,0,W,H);
+  x.textAlign='center'; x.fillStyle='#fff'; x.font='bold 54px '+F; x.fillText('🔮 我的測驗備份',W/2,120);
+  x.fillStyle='#cfc7ee'; x.font='26px '+F; x.fillText(new Date().toLocaleString('zh-TW',{hour12:false}),W/2,170);
+  const h=ld('hub.mbti.history',[]), p=ld('hub.ziwei.profiles',[]);
+  let y=250;
+  x.textAlign='left'; x.fillStyle='#fbbf24'; x.font='bold 32px '+F; x.fillText('MBTI 歷史結果（'+h.length+' 筆）',80,y); y+=50;
+  x.fillStyle='#fff'; x.font='28px '+F;
+  if(!h.length){x.fillStyle='#9a96ad';x.fillText('尚無紀錄',80,y);y+=46}
+  h.slice(0,6).forEach(r=>{x.fillText(r.code+'　'+(ANI[r.code]||'')+'　'+new Date(r.t).toLocaleDateString('zh-TW'),80,y);y+=46});
+  y+=30; x.fillStyle='#fbbf24'; x.font='bold 32px '+F; x.fillText('紫微命盤（'+p.length+' 個）',80,y); y+=50;
+  x.fillStyle='#fff'; x.font='28px '+F;
+  if(!p.length){x.fillStyle='#9a96ad';x.fillText('尚無紀錄',80,y);y+=46}
+  p.slice(0,6).forEach(r=>{x.fillText(r.label,80,y);y+=46});
+  x.textAlign='center'; x.fillStyle='#9a96ad'; x.font='22px '+F;
+  x.fillText('此圖片內含完整備份資料（只存在圖片裡）',W/2,H-110);
+  x.fillText('到首頁按「從圖片匯入」即可還原　請用原圖傳送，勿壓縮',W/2,H-70);
+  await HubKit.download(c,'測驗備份.png');
+}
+async function importData(inp){
+  const f=inp.files[0]; if(!f) return;
+  try{const n=await HubKit.importFile(f); show(); alert('已從圖片匯入 '+n+' 項資料')}catch(e){alert(e.message||'讀取失敗')}
+  inp.value='';
+}
+function clearAll(){if(confirm('確定清除這台裝置上的全部測驗紀錄？無法復原。')){keys().forEach(k=>localStorage.removeItem(k));show()}}
+show();
+</script>
+</body>
+</html>

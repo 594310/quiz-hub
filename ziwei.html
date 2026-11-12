@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>紫微斗數命盤</title>
+<style>
+:root{--bg:#171230;--card:#fffdf8;--ink:#2a2140;--mute:#7a7090;--gold:#c8a24a;--pur:#5b3fd1;--line:#e5dcc8;
+ --lu:#16a34a;--quan:#2563eb;--ke:#d97706;--ji:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;color:var(--ink);
+ background:radial-gradient(circle at 20% 0,#3a2a7a 0,#171230 55%) fixed;min-height:100vh}
+.wrap{max-width:900px;margin:0 auto;padding:22px 14px 60px}
+.card{background:var(--card);border-radius:18px;padding:24px;box-shadow:0 10px 36px rgba(0,0,0,.35);margin-bottom:18px}
+h1{margin:0 0 6px;font-size:28px;color:#fff;text-align:center;letter-spacing:4px}
+.lead{color:#cfc7ee;text-align:center;margin:0 0 18px;line-height:1.7}
+h2{font-size:19px;margin:0 0 12px;padding-left:10px;border-left:5px solid var(--gold)}
+label{display:block;font-size:14px;color:var(--mute);margin:10px 0 4px}
+input,select{font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;width:100%}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tabs{display:flex;gap:8px;margin-bottom:6px}
+.tab{flex:1;padding:9px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font:inherit;cursor:pointer}
+.tab.on{background:var(--pur);color:#fff;border-color:var(--pur)}
+.btn{display:block;margin:20px auto 0;background:linear-gradient(135deg,#5b3fd1,#8b5cf6);color:#fff;border:0;border-radius:12px;padding:13px 40px;font:inherit;font-size:18px;font-weight:700;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.hidden{display:none}
+.info{font-size:13px;color:var(--mute);line-height:1.7;margin-top:12px}
+/* 命盤 */
+.chartwrap{overflow-x:auto}
+.chart{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,minmax(150px,auto));gap:3px;min-width:640px;background:var(--gold);border:3px solid var(--gold);border-radius:8px}
+.cell{background:#fffaf0;padding:6px 7px;position:relative;font-size:13px;display:flex;flex-direction:column}
+.cell.ming{background:#f3edff}
+.pname{font-weight:800;color:var(--pur);font-size:14px}
+.pgz{position:absolute;right:7px;bottom:5px;color:var(--mute);font-size:12px;text-align:right;line-height:1.3}
+.badge{display:inline-block;font-size:11px;background:var(--pur);color:#fff;border-radius:4px;padding:0 4px;margin-left:3px;vertical-align:middle}
+.badge.sh{background:#ea580c}
+.main{margin-top:4px;line-height:1.5}
+.st{display:inline-block;margin-right:6px;white-space:nowrap}
+.st.m{font-size:16px;font-weight:800;color:#b91c1c}
+.st.g{color:#15803d}
+.st.b{color:#555}
+.st.x{color:#7c3aed}
+.hua{display:inline-block;font-size:11px;color:#fff;border-radius:4px;padding:0 3px;margin-left:2px;vertical-align:middle}
+.hua.lu{background:var(--lu)}.hua.quan{background:var(--quan)}.hua.ke{background:var(--ke)}.hua.ji{background:var(--ji)}
+.dx{color:var(--mute);font-size:12px;margin-top:auto;padding-right:44px}
+.center{grid-area:2/2/4/4;background:#fffdf8;padding:14px;display:flex;flex-direction:column;justify-content:center;gap:5px;font-size:14px}
+.center h3{margin:0 0 4px;font-size:19px;color:var(--pur);text-align:center}
+.center div{display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding:2px 0}
+.center b{color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:13px;color:var(--mute);margin-top:10px}
+.analy p{line-height:1.9;margin:0 0 10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.box{background:#faf7ff;border:1px solid #e4dbff;border-radius:12px;padding:12px 14px}
+.box h3{margin:0 0 6px;font-size:16px;color:var(--pur)}
+.box p{margin:0;line-height:1.8;font-size:14px}
+.sihua{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.shi{border-radius:12px;padding:10px 12px;color:#fff}
+.shi b{font-size:17px}
+.shi small{display:block;opacity:.92;margin-top:3px;line-height:1.6}
+.note{font-size:12.5px;color:#cfc7ee;text-align:center;line-height:1.8;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<p style="margin:0 0 10px"><a href="index.html" style="color:#cfc7ee;text-decoration:none">← 回首頁</a></p>
+  <h1>🌌 紫微斗數命盤</h1>
+  <p class="lead">輸入出生資料，自動排出十二宮命盤、四化飛星，並提供命宮與各宮位的簡易解讀</p>
+
+  <section class="card" id="formcard">
+    <div class="tabs">
+      <button class="tab on" id="tabS" onclick="setMode('solar')">國曆（陽曆）生日</button>
+      <button class="tab" id="tabL" onclick="setMode('lunar')">農曆生日</button>
+    </div>
+    <div id="solarBox" class="row">
+      <div><label>出生日期</label><input type="date" id="sdate" value="1995-06-15" min="1900-02-01" max="2099-12-31"></div>
+    </div>
+    <div id="lunarBox" class="row hidden">
+      <div><label>農曆年（西元）</label><input type="number" id="lyear" value="1995" min="1900" max="2099"></div>
+      <div><label>農曆月</label><select id="lmonth"></select></div>
+      <div><label>農曆日</label><select id="lday"></select></div>
+      <div><label>是否閏月</label><select id="lleap"><option value="0">否</option><option value="1">是（閏月）</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>出生時間</label><input type="time" id="stime" value="14:30"></div>
+      <div><label>性別</label><select id="gender"><option value="M">男</option><option value="F">女</option></select></div>
+      <div><label>稱呼（可不填）</label><input type="text" id="nm" maxlength="12" placeholder="例如：小明"></div>
+    </div>
+    <button class="btn" onclick="run()">排出命盤</button>
+    <div class="info">所有計算都在你的瀏覽器中完成，資料不會傳到任何地方。<br>23:00～00:59 視為子時（不分早晚子，日期不進位）。</div>
+  </section>
+
+  <section class="card hidden" id="savedcard"><h2>💾 已儲存的命盤（僅存在這台裝置）</h2><div id="saved"></div></section>
+  <div id="out"></div>
+  <p class="note">※ 本頁採三合派常見排盤法（五虎遁、定局、安紫微天府十四主星與六吉六煞，不含廟旺利陷與雜曜），解讀為通則性簡述，僅供文化參考與娛樂，並非命運定論。</p>
+</div>
+
+<script src="hubkit.js"></script>
+<script>
+const GAN='甲乙丙丁戊己庚辛壬癸', ZHI='子丑寅卯辰巳午未申酉戌亥';
+const PAL=['命宮','兄弟','夫妻','子女','財帛','疾厄','遷移','交友','官祿','田宅','福德','父母'];
+const PALMEAN={命宮:'本人的性格、才能與一生的基調',兄弟:'手足、同輩與合夥人的關係',夫妻:'感情、婚姻與伴侶的特質',子女:'子女緣、晚輩與創造力',財帛:'賺錢方式與理財態度',疾厄:'健康體質與容易出現的壓力點',遷移:'外出運勢、人際環境與社會形象',交友:'朋友、部屬與貴人小人運',官祿:'事業方向、工作態度與成就',田宅:'家庭環境、不動產與財庫',福德:'精神享受、內心世界與福分',父母:'與長輩、上司的關係及家庭影響'};
+const STAR={
+ 紫微:{t:'尊貴有主見，具領導氣質，自尊心強、愛面子，擅長統籌與決策。',w:'適合管理、領導或專業權威的位置，重視地位與格局。',l:'對伴侶有期待也有責任感，但放不下身段時易顯得高傲。'},
+ 天機:{t:'聰明靈活、反應快，善於謀略與策劃，但思慮多、心思易變。',w:'靠腦力與企劃吃飯，適合顧問、研究、技術與策略工作。',l:'重視精神交流，容易想太多，需要多溝通少猜測。'},
+ 太陽:{t:'熱情大方、光明磊落，樂於付出，重視名聲與公眾形象。',w:'適合公眾性、服務、教育或需要曝光的工作，付出多於計較。',l:'付出型伴侶，慷慨但有時忽略自己的需求。'},
+ 武曲:{t:'剛毅果決、務實重效率，有財星之稱，行動力強、不愛拐彎抹角。',w:'適合金融、實業、技術與理財，講求實際成果。',l:'愛得直接務實，較少浪漫表達，宜多些柔軟。'},
+ 天同:{t:'溫和知足、重享受，帶有童心，人緣好但容易安逸、缺乏衝勁。',w:'適合服務、福利、創意與人和型的工作，宜自我激勵。',l:'隨和體貼、好相處，但被動，需要主動經營。'},
+ 廉貞:{t:'多面向、有魅力，企圖心強且原則分明，情感與意志皆濃烈。',w:'適合公關、政法、技術或需要突破的領域，競爭力強。',l:'愛恨分明、感情濃烈，需學習放鬆與包容。'},
+ 天府:{t:'穩重保守、有包容力與格局，是財庫星，重安全感與秩序。',w:'適合管理、財務、行政與守成累積型的事業。',l:'顧家可靠、給人安全感，但較不擅長表達。'},
+ 太陰:{t:'溫柔細膩、內斂含蓄，重視感受與家庭，直覺敏銳。',w:'適合幕後、文教、設計、不動產等細緻型工作，財運偏穩累積。',l:'浪漫多情、需要安全感，對感情用心。'},
+ 貪狼:{t:'多才多藝、慾望與好奇心強，善交際、有魅力，容易有多方嗜好。',w:'適合業務、娛樂、創業或多元發展，要避免分心。',l:'異性緣佳、追求新鮮感，需培養專一與耐心。'},
+ 巨門:{t:'口才好、愛分析與質疑，觀察入微，但易生是非口舌。',w:'適合傳播、教學、律師、研究等以口才與分析為主的工作。',l:'容易因說話或猜疑造成誤會，多溝通、少懷疑。'},
+ 天相:{t:'熱心穩重、重禮節與信用，善於協調與輔佐他人。',w:'適合幕僚、行政、人資、秘書等協助型角色。',l:'重承諾、顧慮他人感受，但有時過於遷就。'},
+ 天梁:{t:'老成穩重、有長輩緣，具蔭庇與照顧人的特質，愛說道理。',w:'適合醫療、法務、顧問、公益等守護型領域，遇事常有貴人。',l:'偏成熟照顧型，宜避免說教過多。'},
+ 七殺:{t:'勇敢果斷、獨立有衝勁，獨來獨往，追求突破與挑戰。',w:'適合開創、技術、軍警或需要魄力的拓荒型事業。',l:'愛得直接但不善表達，需學習軟化姿態。'},
+ 破軍:{t:'開創變動、不安於現狀，敢破敢立，人生起伏較大。',w:'適合創業、改革、變動大的行業，擅長打破舊局。',l:'感情或關係容易有變化，需要穩定的磨合與承諾。'}
+};
+const SIHUA={
+ 甲:['廉貞','破軍','武曲','太陽'],乙:['天機','天梁','紫微','太陰'],丙:['天同','天機','文昌','廉貞'],丁:['太陰','天同','天機','巨門'],
+ 戊:['貪狼','太陰','右弼','天機'],己:['武曲','貪狼','天梁','文曲'],庚:['太陽','武曲','太陰','天同'],辛:['巨門','太陽','文曲','文昌'],
+ 壬:['天梁','紫微','左輔','武曲'],癸:['破軍','巨門','太陰','貪狼']
+};
+const HNAME=['祿','權','科','忌'], HCLS=['lu','quan','ke','ji'], HCOL=['#16a34a','#2563eb','#d97706','#dc2626'];
+const HMEAN=['化祿：財運與機緣，順遂的助力','化權：掌控力與成就，主動爭取的領域','化科：名聲與貴人，帶來好口碑','化忌：執著與課題，需要多留意的地方'];
+const JU={1:['金四局',4],2:['水二局',2],3:['火六局',6],4:['土五局',5],5:['木三局',3]};
+const m12=x=>((x%12)+12)%12;
+
+/* ---- 農曆轉換（使用瀏覽器內建中國曆）---- */
+const LM={'正月':1,'二月':2,'三月':3,'四月':4,'五月':5,'六月':6,'七月':7,'八月':8,'九月':9,'十月':10,'冬月':11,'十一月':11,'臘月':12,'十二月':12};
+function toLunar(y,mo,d){
+  const dt=new Date(y,mo-1,d,12);
+  const parts=new Intl.DateTimeFormat('zh-TW-u-ca-chinese',{year:'numeric',month:'numeric',day:'numeric'}).formatToParts(dt);
+  const g=t=>(parts.find(p=>p.type===t)||{}).value||'';
+  let ms=g('month'), leap=ms.startsWith('閏'); ms=ms.replace('閏','');
+  return {y:+g('relatedYear'),m:LM[ms],d:+g('day'),leap};
+}
+
+/* ---- 排盤 ---- */
+function build(L, hour, gender){
+  const ys=m12(L.y-4)%10, yb=m12(L.y-4);   // 年干、年支
+  let mm=L.m; if(L.leap && L.d>15) mm=mm%12+1;   // 閏月15日後算下月
+  const h=Math.floor(((hour+1)%24)/2);
+  const ming=m12(2+(mm-1)-h), shen=m12(2+(mm-1)+h);
+  // 宮干（五虎遁）
+  const yinStem=[2,4,6,8,0][ys%5];
+  const stemOf=b=>(yinStem+m12(b-2))%10;
+  // 五行局
+  const sv=[1,1,2,2,3,3,4,4,5,5][stemOf(ming)], bv=[0,0,1,1,2,2,0,0,1,1,2,2][ming];
+  let jk=sv+bv; if(jk>5) jk-=5;
+  const [juName,n]=JU[jk];
+  // 紫微
+  let x=0; while((L.d+x)%n) x++;
+  const q=(L.d+x)/n;
+  const zw=m12(2+q-1+(x%2?-x:x));
+  const tf=m12(4-zw);
+  const pos={}; const put=(nm,p)=>pos[nm]=m12(p);
+  put('紫微',zw);put('天機',zw-1);put('太陽',zw-3);put('武曲',zw-4);put('天同',zw-5);put('廉貞',zw-8);
+  put('天府',tf);put('太陰',tf+1);put('貪狼',tf+2);put('巨門',tf+3);put('天相',tf+4);put('天梁',tf+5);put('七殺',tf+6);put('破軍',tf+10);
+  const aux={};
+  aux['左輔']=m12(4+mm-1);aux['右弼']=m12(10-(mm-1));aux['文昌']=m12(10-h);aux['文曲']=m12(4+h);
+  aux['地劫']=m12(11+h);aux['地空']=m12(11-h);
+  const lu=[2,3,5,6,5,6,8,9,11,0][ys]; aux['祿存']=lu;aux['擎羊']=m12(lu+1);aux['陀羅']=m12(lu-1);
+  const kui={0:[1,7],4:[1,7],6:[1,7],1:[0,8],5:[0,8],2:[11,9],3:[11,9],8:[3,5],9:[3,5],7:[6,2]}[ys];
+  aux['天魁']=kui[0];aux['天鉞']=kui[1];
+  const g1=[2,6,10].includes(yb)?[1,3]:[8,0,4].includes(yb)?[2,10]:[5,9,1].includes(yb)?[3,10]:[9,10];
+  aux['火星']=m12(g1[0]+h);aux['鈴星']=m12(g1[1]+h);
+  // 四化
+  const sh=SIHUA[GAN[ys]], huaOf={}; sh.forEach((s,i)=>huaOf[s]=i);
+  // 宮位
+  const cells=Array.from({length:12},()=>({main:[],aux:[]}));
+  Object.entries(pos).forEach(([s,p])=>cells[p].main.push(s));
+  Object.entries(aux).forEach(([s,p])=>cells[p].aux.push(s));
+  // 大限
+  const yang=ys%2===0, dir=((yang&&gender==='M')||(!yang&&gender==='F'))?1:-1;
+  const palaces=PAL.map((nm,k)=>{ const b=m12(ming-k); const steps=m12((b-ming)*dir); return {nm,b,stem:stemOf(b),dx:[n+10*steps,n+10*steps+9],...cells[b]}});
+  return {ys,yb,mm,h,ming,shen,juName,n,zw,tf,sh,huaOf,palaces,dir,yang,pos,aux,L};
+}
+
+/* ---- 顯示 ---- */
+const SHENG=['鼠','牛','虎','兔','龍','蛇','馬','羊','猴','雞','狗','豬'];
+const HOURS=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const DN=['初一','初二','初三','初四','初五','初六','初七','初八','初九','初十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十','廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
+const MN=['','正','二','三','四','五','六','七','八','九','十','冬','臘'];
+const hua=(s,C)=>C.huaOf[s]!==undefined?`<span class="hua ${HCLS[C.huaOf[s]]}">${HNAME[C.huaOf[s]]}</span>`:'';
+const GOOD=['左輔','右弼','文昌','文曲','天魁','天鉞','祿存'];
+function mainOf(C,b){ // 命宮無主星則借對宮
+  const p=C.palaces.find(x=>x.b===b); if(p.main.length) return {s:p.main,borrow:false};
+  const o=C.palaces.find(x=>x.b===m12(b+6)); return {s:o.main,borrow:true};
+}
+let lastR=null;
+function render(C,name,gender,solarText){ lastR={C,name,gender,solarText};
+  const ph=Array(12);
+  C.palaces.forEach(p=>ph[p.b]=p);
+  const area={5:[1,1],6:[1,2],7:[1,3],8:[1,4],4:[2,1],9:[2,4],3:[3,1],10:[3,4],2:[4,1],1:[4,2],0:[4,3],11:[4,4]};
+  let cellsHTML='';
+  for(let b=0;b<12;b++){
+    const p=ph[b], [r,c]=area[b];
+    const mains=p.main.map(s=>`<span class="st m">${s}${hua(s,C)}</span>`).join('');
+    const auxs=p.aux.map(s=>`<span class="st ${GOOD.includes(s)?'g':(['擎羊','陀羅','火星','鈴星','地空','地劫'].includes(s)?'b':'x')}">${s}${hua(s,C)}</span>`).join('');
+    cellsHTML+=`<div class="cell ${b===C.ming?'ming':''}" style="grid-area:${r}/${c}">
+      <div class="pname">${p.nm}${b===C.ming?'<span class="badge">命</span>':''}${b===C.shen?'<span class="badge sh">身</span>':''}</div>
+      <div class="main">${mains||'<span class="st b" style="font-size:12px">（無主星）</span>'}</div>
+      <div>${auxs}</div>
+      <div class="dx">大限 ${p.dx[0]}–${p.dx[1]}</div>
+      <div class="pgz">${GAN[p.stem]}${ZHI[b]}</div></div>`;
+  }
+  const L=C.L;
+  const center=`<div class="center"><h3>${name?name+' 的命盤':'命盤資料'}</h3>
+    <div><span>性別</span><b>${gender==='M'?'男':'女'}（${C.yang?'陽':'陰'}${gender==='M'?'男':'女'}）</b></div>
+    <div><span>國曆</span><b>${solarText}</b></div>
+    <div><span>農曆</span><b>${GAN[C.ys]}${ZHI[C.yb]}年（${SHENG[C.yb]}）${L.leap?'閏':''}${MN[L.m]}月${DN[L.d-1]}</b></div>
+    <div><span>時辰</span><b>${HOURS[C.h]}時</b></div>
+    <div><span>五行局</span><b>${C.juName}</b></div>
+    <div><span>命宮 / 身宮</span><b>${GAN[ph[C.ming].stem]}${ZHI[C.ming]} / ${ZHI[C.shen]}（${ph[C.shen].nm}）</b></div>
+    <div><span>大限方向</span><b>${C.dir===1?'順行':'逆行'}</b></div></div>`;
+  // 命宮主星分析
+  const mg=mainOf(C,C.ming), nm=mg.s;
+  const star=nm.map(s=>`${s}：${STAR[s].t}`).join('<br>');
+  const shenP=ph[C.shen];
+  let html=`<section class="card"><h2>🪐 命盤</h2><div class="chartwrap"><div class="chart">${cellsHTML}${center}</div></div>
+    <div class="legend"><span>紅色大字＝十四主星</span><span style="color:#15803d">綠＝六吉星（輔弼昌曲魁鉞祿存）</span><span>灰＝煞星（羊陀火鈴空劫）</span>
+    <span><span class="hua lu">祿</span> <span class="hua quan">權</span> <span class="hua ke">科</span> <span class="hua ji">忌</span> 生年四化</span></div></section>`;
+  html+=`<section class="card analy"><h2>🔮 命宮解讀</h2>
+    <p><b>命宮在${ZHI[C.ming]}宮（${GAN[ph[C.ming].stem]}${ZHI[C.ming]}）</b>，${C.juName}。${mg.borrow?'命宮無主星，借對宮（遷移宮）星曜來看：':''}${nm.length?nm.join('、')+'坐命。':'對宮亦無主星，以三方四正與輔星論。'}</p>
+    <p>${star||'此盤命宮與對宮皆無主星，性格較受環境與六吉煞星影響，具高度可塑性。'}</p>
+    <p><b>身宮</b>落在<b>${shenP.nm}</b>（${ZHI[C.shen]}宮）：後天（約30歲後）人生重心偏向「${PALMEAN[shenP.nm]}」。</p>
+    <p><b>五行局</b>${C.juName}：起運年齡為 ${C.n} 歲，之後每 10 年換一個大限（${C.dir===1?'順':'逆'}行）。</p></section>`;
+  // 四化
+  html+=`<section class="card"><h2>✨ 生年四化（${GAN[C.ys]}年）</h2><div class="sihua">`+C.sh.map((s,i)=>{
+    const p=C.palaces.find(x=>x.main.includes(s)||x.aux.includes(s));
+    return `<div class="shi" style="background:${HCOL[i]}"><b>${s}化${HNAME[i]}</b>　落${p.nm}宮<small>${HMEAN[i]}<br>${p.nm}宮：${PALMEAN[p.nm]}</small></div>`}).join('')+`</div></section>`;
+  // 重點宮位
+  const pick=['財帛','官祿','夫妻','福德','遷移','疾厄'];
+  const desc=(pn)=>{
+    const p=C.palaces.find(x=>x.nm===pn); const m=mainOf(C,p.b);
+    const key=pn==='財帛'||pn==='官祿'?'w':pn==='夫妻'?'l':'t';
+    const text=m.s.length?m.s.map(s=>STAR[s][key]).join(' '):'此宮無主星，受輔煞星與對宮影響，變動彈性大。';
+    return `<div class="box"><h3>${pn}宮（${ZHI[p.b]}）｜${m.s.join('、')||'無主星'}${m.borrow?'（借對宮）':''}</h3><p style="color:var(--mute);font-size:12.5px;margin-bottom:4px">${PALMEAN[pn]}</p><p>${text}</p></div>`;
+  };
+  html+=`<section class="card"><h2>📖 重點宮位</h2><div class="grid2">${pick.map(desc).join('')}</div></section>`;
+  // 大限
+  html+=`<section class="card"><h2>⏳ 大限（每十年運勢走向）</h2><div class="grid2">`+C.palaces.slice().sort((a,b)=>a.dx[0]-b.dx[0]).map(p=>{
+    const ms=p.main.length?p.main.join('、'):'無主星';
+    return `<div class="box"><h3>${p.dx[0]}–${p.dx[1]} 歲：${p.nm}宮（${GAN[p.stem]}${ZHI[p.b]}）</h3><p>${ms}。此十年重心：${PALMEAN[p.nm]}。</p></div>`}).join('')+`</div></section>`;
+  document.getElementById('out').innerHTML=html;
+  document.getElementById('out').scrollIntoView({behavior:'smooth'});
+}
+
+/* ---- 介面 ---- */
+let mode='solar';
+function setMode(m){mode=m;
+  document.getElementById('solarBox').classList.toggle('hidden',m!=='solar');
+  document.getElementById('lunarBox').classList.toggle('hidden',m!=='lunar');
+  document.getElementById('tabS').classList.toggle('on',m==='solar');
+  document.getElementById('tabL').classList.toggle('on',m==='lunar');}
+function initSel(){
+  const lm=document.getElementById('lmonth'), ld=document.getElementById('lday');
+  for(let i=1;i<=12;i++) lm.add(new Option(MN[i]+'月',i));
+  for(let i=1;i<=30;i++) ld.add(new Option(DN[i-1],i));
+  lm.value=5; ld.value=18;
+}
+function run(){
+  const t=document.getElementById('stime').value||'12:00'; const hour=+t.split(':')[0];
+  const gender=document.getElementById('gender').value, name=document.getElementById('nm').value.trim();
+  let L, solarText;
+  if(mode==='solar'){
+    const v=document.getElementById('sdate').value; if(!v){alert('請輸入出生日期');return}
+    const [y,m,d]=v.split('-').map(Number); L=toLunar(y,m,d); solarText=`${y}/${m}/${d} ${t}`;
+    if(!L.m){alert('此瀏覽器不支援農曆轉換，請改用農曆輸入或更新瀏覽器');return}
+  }else{
+    L={y:+document.getElementById('lyear').value,m:+document.getElementById('lmonth').value,d:+document.getElementById('lday').value,leap:document.getElementById('lleap').value==='1'};
+    solarText='（以農曆輸入）'+t;
+  }
+  render(build(L,hour,gender),name,gender,solarText);
+  sv('hub.ziwei.last',getInp());
+  document.getElementById('out').insertAdjacentHTML('beforeend','<div style="text-align:center;margin-bottom:18px"><button class="btn" onclick="saveProfile()">💾 儲存這個命盤到此裝置</button> <button class=\"btn\" style=\"background:#fff;color:#5b3fd1;border:2px solid #5b3fd1\" onclick=\"saveCard()\">🖼 儲存命盤圖片</button></div>');
+}
+initSel();
+
+/* ===== 本機儲存（localStorage，只存在使用者自己的瀏覽器）===== */
+function ld(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+const PK='hub.ziwei.profiles';
+const FIELDS=['sdate','stime','gender','nm','lyear','lmonth','lday','lleap'];
+function getInp(){const o={mode};FIELDS.forEach(f=>o[f]=document.getElementById(f).value);return o}
+function setInp(o){setMode(o.mode||'solar');FIELDS.forEach(f=>{if(o[f]!=null)document.getElementById(f).value=o[f]})}
+function saveProfile(){
+  const i=getInp(), list=ld(PK,[]);
+  const label=i.nm||(i.mode==='solar'?i.sdate:'農曆 '+i.lyear+'/'+i.lmonth+'/'+i.lday);
+  list.unshift({id:Date.now(),label,inp:i}); sv(PK,list.slice(0,20)); renderSaved(); alert('已儲存到這台裝置');
+}
+function loadProfile(id){const p=ld(PK,[]).find(x=>x.id===id); if(p){setInp(p.inp);run()}}
+function delProfile(id){sv(PK,ld(PK,[]).filter(x=>x.id!==id));renderSaved()}
+function renderSaved(){
+  const list=ld(PK,[]), card=document.getElementById('savedcard');
+  card.classList.toggle('hidden',!list.length);
+  document.getElementById('saved').innerHTML=list.map(p=>'<div class="box" style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px"><span><b>'+esc(p.label)+'</b> <small style="color:var(--mute)">'+(p.inp.gender==='M'?'男':'女')+' '+esc(p.inp.mode==='solar'?p.inp.sdate+' '+p.inp.stime:'農曆輸入 '+p.inp.stime)+'</small></span><span><button class="tab" style="padding:5px 12px" onclick="loadProfile('+p.id+')">開啟</button> <button class="tab" style="padding:5px 12px" onclick="if(confirm(&quot;刪除這筆？&quot;))delProfile('+p.id+')">刪除</button></span></div>').join('');
+}
+{const last=ld('hub.ziwei.last',null); if(last) setInp(last); renderSaved();}
+
+async function saveCard(){
+  const {C,name,gender,solarText}=lastR, F=HubKit.FONT, W=1000, H=1020, cw=230, ch=200, ox=40, oy=130;
+  const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,W,H); g.addColorStop(0,'#2a1d5c'); g.addColorStop(1,'#171230'); x.fillStyle=g; x.fillRect(0,0,W,H);
+  x.textAlign='center'; x.fillStyle='#fff'; x.font='bold 40px '+F; x.fillText('紫微斗數命盤'+(name?'・'+name:''),W/2,70);
+  x.fillStyle='#cfc7ee'; x.font='22px '+F; x.fillText(C.juName+'　命宮 '+GAN[C.palaces[0].stem]+ZHI[C.ming]+'　'+(gender==='M'?'男':'女'),W/2,105);
+  const area={5:[0,0],6:[0,1],7:[0,2],8:[0,3],4:[1,0],9:[1,3],3:[2,0],10:[2,3],2:[3,0],1:[3,1],0:[3,2],11:[3,3]};
+  const tag=s=>C.huaOf[s]!==undefined?'['+HNAME[C.huaOf[s]]+']':'';
+  const BAD=['擎羊','陀羅','火星','鈴星','地空','地劫'];
+  C.palaces.forEach(p=>{
+    const [r,cc]=area[p.b], px=ox+cc*cw, py=oy+r*ch;
+    x.fillStyle=p.b===C.ming?'#f3edff':'#fffaf0'; x.fillRect(px+2,py+2,cw-4,ch-4);
+    x.textAlign='left'; x.fillStyle='#5b3fd1'; x.font='bold 22px '+F; x.fillText(p.nm+(p.b===C.ming?'·命':'')+(p.b===C.shen?'·身':''),px+10,py+30);
+    let cx=px+10, cy=py+66; x.font='bold 24px '+F; x.fillStyle='#b91c1c';
+    p.main.forEach(s=>{const t=s+tag(s), w=x.measureText(t).width+10; if(cx+w>px+cw-6){cx=px+10;cy+=30} x.fillText(t,cx,cy); cx+=w});
+    if(!p.main.length){x.font='18px '+F;x.fillStyle='#999';x.fillText('（無主星）',px+10,cy)}
+    cx=px+10; cy+=30; x.font='18px '+F;
+    p.aux.forEach(s=>{const t=s+tag(s), w=x.measureText(t).width+8; if(cx+w>px+cw-6){cx=px+10;cy+=24} x.fillStyle=GOOD.includes(s)?'#15803d':(BAD.includes(s)?'#555':'#7c3aed'); x.fillText(t,cx,cy); cx+=w});
+    x.fillStyle='#8a8499'; x.font='16px '+F; x.fillText('大限 '+p.dx[0]+'–'+p.dx[1],px+10,py+ch-12);
+    x.textAlign='right'; x.fillText(GAN[p.stem]+ZHI[p.b],px+cw-10,py+ch-12);
+  });
+  x.strokeStyle='#c8a24a'; x.lineWidth=4; x.strokeRect(ox,oy,cw*4,ch*4);
+  x.lineWidth=2; for(let i=1;i<4;i++){x.beginPath();x.moveTo(ox+i*cw,oy);x.lineTo(ox+i*cw,oy+ch*4);x.stroke();x.beginPath();x.moveTo(ox,oy+i*ch);x.lineTo(ox+cw*4,oy+i*ch);x.stroke()}
+  x.fillStyle='#fffdf8'; x.fillRect(ox+cw+2,oy+ch+2,cw*2-4,ch*2-4);
+  const L=C.L, info=[['國曆',solarText],['農曆',GAN[C.ys]+ZHI[C.yb]+'年（'+SHENG[C.yb]+'）'+(L.leap?'閏':'')+MN[L.m]+'月'+DN[L.d-1]],['時辰',HOURS[C.h]+'時'],['五行局',C.juName],['身宮',ZHI[C.shen]+'（'+C.palaces.find(p=>p.b===C.shen).nm+'）'],['四化',C.sh.map((s,i)=>s+HNAME[i]).join(' ')]];
+  x.font='20px '+F; info.forEach((r,i)=>{const y=oy+ch+50+i*52; x.textAlign='left'; x.fillStyle='#7a7090'; x.fillText(r[0],ox+cw+24,y); x.textAlign='right'; x.fillStyle='#2a2140'; x.fillText(r[1],ox+cw*3-24,y)});
+  x.textAlign='center'; x.fillStyle='#9a96ad'; x.font='18px '+F; x.fillText('此圖片內含備份資料，可到首頁「匯入」還原',W/2,H-24);
+  await HubKit.download(c,'紫微命盤'+(name?'-'+name:'')+'.png');
+}
+</script>
+</body>
+</html>

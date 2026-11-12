@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MBTI 性格測驗</title>
+<style>
+:root{
+  --bg:#f5f3ff; --card:#fff; --ink:#1f1b2e; --mute:#6b6880; --line:#e6e3f3;
+  --main:#6c4cf1; --main2:#8b72ff;
+  --E:#f59e0b; --I:#3b82f6; --S:#10b981; --N:#8b5cf6; --T:#ef4444; --F:#ec4899; --J:#0ea5e9; --P:#f97316;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;background:linear-gradient(160deg,#f5f3ff,#eef6ff);color:var(--ink);min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:24px 16px 60px}
+.card{background:var(--card);border-radius:20px;box-shadow:0 8px 30px rgba(80,60,160,.10);padding:28px}
+h1{margin:0 0 8px;font-size:30px}
+.sub{color:var(--mute);line-height:1.7}
+button{font:inherit;cursor:pointer}
+.btn{background:linear-gradient(135deg,var(--main),var(--main2));color:#fff;border:0;border-radius:12px;padding:12px 28px;font-size:17px;font-weight:600}
+.btn.ghost{background:#fff;color:var(--main);border:1.5px solid var(--main)}
+.btn:hover{filter:brightness(1.07)}
+.hidden{display:none}
+.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0 4px}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--main),var(--main2));width:0;transition:width .3s}
+.pinfo{display:flex;justify-content:space-between;color:var(--mute);font-size:14px}
+.qtext{font-size:21px;font-weight:700;line-height:1.5;margin:22px 0 18px}
+.opt{display:block;width:100%;text-align:left;background:#faf9ff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;font-size:16px;line-height:1.5;color:var(--ink);transition:.15s}
+.opt:hover{border-color:var(--main);background:#f1edff;transform:translateX(3px)}
+.opt.sel{border-color:var(--main);background:#e9e3ff}
+.nav{display:flex;justify-content:space-between;margin-top:8px}
+.link{background:none;border:0;color:var(--mute);font-size:15px;padding:6px}
+.link:disabled{opacity:.3;cursor:default}
+/* result */
+.hero{text-align:center;padding:10px 0 4px}
+.type{font-size:64px;font-weight:800;letter-spacing:6px;background:linear-gradient(135deg,var(--main),#ec4899);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.1}
+.tname{font-size:22px;font-weight:700;margin-top:4px}
+.tag{color:var(--mute);margin-top:6px}
+h2{font-size:20px;margin:30px 0 12px;padding-left:10px;border-left:5px solid var(--main)}
+.dim{margin:16px 0}
+.dimhead{display:flex;justify-content:space-between;font-weight:700;margin-bottom:6px}
+.bar{display:flex;height:30px;border-radius:99px;overflow:hidden;background:var(--line)}
+.bar span{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;transition:width 1s ease;width:0;min-width:0;white-space:nowrap;overflow:hidden}
+.dimnote{color:var(--mute);font-size:14px;margin-top:6px;line-height:1.6}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center}
+@media(max-width:640px){.charts{grid-template-columns:1fr}.type{font-size:52px}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.box{background:#faf9ff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.box h3{margin:0 0 8px;font-size:16px}
+.box ul{margin:0;padding-left:20px;line-height:1.8}
+.chips span{display:inline-block;background:#ece8ff;color:var(--main);border-radius:99px;padding:4px 12px;margin:3px 4px 3px 0;font-size:14px}
+p.desc{line-height:1.9;margin:0}
+.note{font-size:13px;color:var(--mute);margin-top:26px;line-height:1.7}
+.avatar{width:190px;height:190px;margin:0 auto 4px;display:block}
+.pairs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.pairs{grid-template-columns:1fr}}
+.pcol h3{margin:0 0 10px;font-size:16px}
+.pcard{display:flex;gap:10px;align-items:center;border-radius:14px;padding:10px;margin-bottom:10px;border:1.5px solid}
+.pcard.good{background:#ecfdf5;border-color:#a7f3d0}
+.pcard.bad{background:#fff1f2;border-color:#fecdd3}
+.pcard svg{width:64px;height:64px;flex:none}
+.pcard b{display:block}
+.pcard small{color:var(--mute);line-height:1.6;display:block}
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:640px){.gallery{grid-template-columns:repeat(2,1fr)}}
+.gitem{background:#faf9ff;border:1.5px solid var(--line);border-radius:14px;padding:8px 4px;text-align:center;font-size:13px}
+.gitem:hover,.gitem.on{border-color:var(--main);background:#f1edff}
+.gitem svg{width:78px;height:78px;display:block;margin:0 auto 2px}
+.gitem b{display:block;font-size:15px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;font-size:13px;color:var(--mute)}
+.legend b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<p style="margin:0 0 10px"><a href="index.html" style="color:#6c4cf1;text-decoration:none">← 回首頁</a></p>
+
+<!-- 開始 -->
+<section id="start" class="card">
+  <h1>🧠 MBTI 性格測驗</h1>
+  <p class="sub">共 24 題，每題 4 個選項，約需 5 分鐘。請依照「平時真實的你」作答，而不是「你希望成為的樣子」。沒有對錯，也沒有好壞之分。<br>
+  結束後會得到：你的 16 型人格、四個維度的比例圖表，以及性格分析、優缺點與適合的方向。</p>
+  <p style="text-align:center;margin-top:28px"><button class="btn" onclick="startQuiz()">開始測驗</button></p>
+  <div id="hist"></div>
+</section>
+
+<!-- 題目 -->
+<section id="quiz" class="card hidden">
+  <div class="pinfo"><span id="pnum"></span><span id="ppct"></span></div>
+  <div class="progress"><i id="pbar"></i></div>
+  <div class="qtext" id="qtext"></div>
+  <div id="opts"></div>
+  <div class="nav">
+    <button class="link" id="back" onclick="goBack()">← 上一題</button>
+    <button class="link" onclick="if(confirm('確定要重新開始？'))restart()">重新開始</button>
+  </div>
+</section>
+
+<!-- 結果 -->
+<section id="result" class="card hidden"></section>
+
+</div>
+
+<script src="hubkit.js"></script>
+<script>
+/* ===== 題庫：每題 4 選項。順序 a,b 偏第一極(E/S/T/J)，c,d 偏第二極(I/N/F/P)；a、d 為強烈偏好(2分)，b、c 為輕微(1分)。作答時會隨機打亂選項順序 ===== */
+const DIMS = {
+  EI:{p:['E','I'],names:['外向 Extraversion','內向 Introversion']},
+  SN:{p:['S','N'],names:['實感 Sensing','直覺 iNtuition']},
+  TF:{p:['T','F'],names:['思考 Thinking','情感 Feeling']},
+  JP:{p:['J','P'],names:['判斷 Judging','感知 Perceiving']}
+};
+const Q = [
+ ['EI','週末難得空閒，你最想怎麼度過？',['約一群朋友出門熱鬧一整天','找一兩位好友聚餐聊天','待在家看劇、看書，偶爾出門走走','一個人安靜獨處，完全充電']],
+ ['SN','學習新事物時，你偏好哪種方式？',['實際動手操作，照步驟一步步來','先看範例與實用案例','先理解整體概念與背後原理','天馬行空，探索各種可能性']],
+ ['TF','朋友向你訴說工作不順，你第一反應是？',['分析問題，給出具體解決方案','提供建議，也順便安慰','先傾聽共感，再慢慢給想法','陪伴支持，讓他感到被理解最重要']],
+ ['JP','出遊前，你通常會怎麼準備？',['做好詳細行程表與備案','排好大致行程','只訂交通與住宿，其餘隨興','說走就走，到了再說']],
+ ['EI','在聚會中遇到陌生人，你通常會？',['主動上前自我介紹，很快聊開','等對方先開口，再自然交談','只跟認識的人聊，在旁觀察全場','盡量待在角落，想早點離開']],
+ ['SN','向別人描述一件事時，你通常？',['詳細交代時間、地點、人物等事實','著重重要細節與實際經過','說重點與其背後的意義','用比喻、聯想帶出整體感受']],
+ ['TF','做重要決定時，你最看重什麼？',['客觀事實與邏輯利弊','效益與公平，兼顧感受','對相關人的影響與感受','是否符合自己的價值與內心感受']],
+ ['JP','你的工作桌面或房間大多是什麼狀態？',['物品分類歸位，井井有條','大致整齊，偶爾整理','亂中有序，我自己找得到','隨手一放，需要時再翻找']],
+ ['EI','忙碌一整週後，什麼最能讓你恢復能量？',['參加活動、和很多人互動','跟親近的人吃頓飯聊聊','獨自散步或做喜歡的事','關在房間，完全不被打擾']],
+ ['SN','你更相信什麼？',['親眼所見、親身驗證的經驗','過去證實有效的方法','直覺與第一印象','對未來趨勢的預感與靈感']],
+ ['TF','有人犯了錯，你傾向怎麼處理？',['直接指出問題，就事論事','指出問題，但注意措辭','先肯定其努力，再委婉提醒','顧及對方心情，盡量不讓他難堪']],
+ ['JP','面對截止日期，你通常是？',['提前完成，留足緩衝時間','照進度穩定完成','前幾天才開始衝刺','靠最後一刻的爆發力']],
+ ['EI','開會或討論時，你比較像哪一種人？',['想到就說，邊說邊整理想法','稍作思考後積極發言','想清楚才發言，通常說得不多','多半傾聽，需要時才補充']],
+ ['SN','做事時，你更喜歡哪種風格？',['腳踏實地，處理眼前具體的事','沿用成熟方法，小幅改進','嘗試新方法、改良流程','打破常規，創造從未有過的做法']],
+ ['TF','與人爭論時，你更在意什麼？',['誰的論點更站得住腳','理性討論，得出最合理的結論','維持和氣，找到彼此都能接受的方案','不傷感情，必要時寧願讓步']],
+ ['JP','計劃臨時被打亂時，你的感受是？',['很不舒服，想盡快回到軌道','有點困擾，但會重新安排','還好，順勢調整就行','開心，意外往往帶來驚喜']],
+ ['EI','突然有人臨時約你出門或來訪，你的反應？',['太好了，臨時的最有趣','還行，順勢加入','有點被打擾，需要時間調整','感到壓力，希望能事先預告']],
+ ['SN','看電影或讀小說時，你比較在意什麼？',['劇情是否寫實、細節是否合理','情節流暢與角色刻畫','隱含的主題與象徵意義','腦補延伸設定與各種解讀']],
+ ['TF','別人通常怎麼形容你？',['理性冷靜、客觀公正','條理清楚但也有溫度','體貼細膩，容易同理他人','溫暖感性，非常在乎他人感受']],
+ ['JP','做決定的時候，你傾向？',['儘快決定，確定下來才安心','蒐集足夠資訊後再決定','保留彈性，盡量晚點決定','一直保持開放，隨情況改變']],
+ ['EI','朋友會怎麼形容你？',['開朗健談，氣氛製造機','親切好相處，熟了話很多','沉穩內斂，需要時間熟悉','神祕安靜，內心世界很豐富']],
+ ['SN','你平常最常花時間在哪件事上？',['處理當下該做的實際事務','規劃近期能達成的目標','思考未來的各種可能','沉浸在想像與抽象的點子裡']],
+ ['TF','評估一個方案時，你會先看什麼？',['是否有效率、合乎邏輯','可行性與成本效益','對團隊氣氛與成員的影響','是否符合大家的價值與初衷']],
+ ['JP','對於待辦清單，你的習慣是？',['每天列清單，逐項打勾','有清單，但不嚴格執行','偶爾列，通常記在腦中','很少列，憑感覺行動']]
+];
+// 每題選項：[文字, 極(0=第一極,1=第二極), 分數]
+const W = [[0,2],[0,1],[1,1],[1,2]];
+
+/* ===== 16 型人格資料 ===== */
+const TYPES = {
+ INTJ:{n:'建築師',t:'有遠見的策略家，凡事都有計畫',d:'你擁有強大的獨立思考與長遠規劃能力，習慣先看清全局再行動。對自己和他人都有高標準，重視效率與知識，討厭浪費時間在無意義的事情上。你不在乎隨波逐流，更相信自己的判斷。',s:['策略思維、善於長期規劃','獨立自主、決心堅定','學習力強，追求精進'],w:['容易顯得冷淡、難親近','對他人要求過高','不太習慣表達情感'],c:['策略顧問','工程師','研究員','架構師','投資分析師']},
+ INTP:{n:'邏輯學家',t:'愛鑽研的思想家，永遠好奇',d:'你熱愛分析與理論，總想弄懂事物背後的運作原理。思維跳躍而深入，喜歡獨自鑽研有趣的問題。你重視邏輯與真理，對權威與傳統抱持質疑，但有時會因想太多而遲遲不行動。',s:['分析力強、點子多','開放包容、求知若渴','客觀不受情緒左右'],w:['容易拖延、缺乏執行力','社交上顯得疏離','忽略生活細節'],c:['程式設計師','數據科學家','學者','作家','產品研究']},
+ ENTJ:{n:'指揮官',t:'天生的領導者，果斷有魄力',d:'你目標明確、擅長組織與統籌，遇到問題會立刻想辦法解決。你重視效率與成果，願意承擔責任並帶領團隊向前。你天生有說服力，也享受挑戰與競爭。',s:['領導力強、決策果斷','有效率、擅長規劃','自信且有說服力'],w:['可能過於強勢','缺乏耐心','容易忽略他人感受'],c:['企業主管','創業家','律師','管理顧問','專案經理']},
+ ENTP:{n:'辯論家',t:'機智的創新者，熱愛挑戰',d:'你反應快、點子多，愛與人辯論和腦力激盪。你討厭一成不變，喜歡從不同角度挑戰既有觀念，並發掘新可能。你好奇而風趣，但常常熱情來得快、去得也快。',s:['創意無限、思維靈活','口才佳、適應力強','充滿魅力與活力'],w:['難以堅持到底','不愛處理瑣事','有時愛槓而傷人'],c:['創業家','行銷企劃','記者','產品經理','創意總監']},
+ INFJ:{n:'提倡者',t:'溫柔而堅定的理想主義者',d:'你富有洞察力與同理心，能感受他人沒說出口的情緒。你擁有深刻的價值觀與使命感，希望為世界帶來正面改變。你安靜、內斂，但內心信念異常堅定。',s:['洞察力強、富同理心','有理想與原則','善於傾聽與引導'],w:['容易過度耗損自己','完美主義','不輕易向人敞開心扉'],c:['心理諮商師','作家','教師','社工','人資顧問']},
+ INFP:{n:'調停者',t:'詩意而善良的夢想家',d:'你內心世界豐富，重視真誠與自我價值，總想找到有意義的事去投入。你溫和有同理心，對美與創意特別敏感。你常常活在想像與理想中，現實與理想的落差有時會讓你沮喪。',s:['真誠、有同理心','創造力與想像力豐富','開放包容、忠於價值'],w:['過度理想化','容易自我懷疑','不擅長處理衝突'],c:['作家','設計師','心理諮商師','藝術工作者','非營利組織']},
+ ENFJ:{n:'主人公',t:'有魅力的啟發者，天生的帶領者',d:'你熱情、有感染力，善於理解他人並激勵大家成長。你重視人際關係與團體和諧，常常主動付出，扮演支持者與引導者。你渴望讓身邊的人變得更好。',s:['感染力強、善於溝通','樂於助人、有責任感','善於凝聚團隊'],w:['過度在意他人評價','容易承擔太多','難以拒絕別人'],c:['教師','人資主管','公關','活動企劃','輔導員']},
+ ENFP:{n:'競選者',t:'熱情的自由靈魂，愛創造連結',d:'你充滿熱情與好奇，善於發現可能性並感染身邊的人。你喜歡探索新事物、結識新朋友，重視自由與真誠。你點子多、感受力強，但容易三分鐘熱度。',s:['熱情開朗、人緣佳','創意豐富、適應力強','善於激勵他人'],w:['容易分心、難以持久','情緒起伏大','不擅長日常瑣事'],c:['行銷企劃','創意工作者','記者','講師','新創團隊']},
+ ISTJ:{n:'物流師',t:'可靠務實，一諾千金',d:'你踏實可靠，重視責任、秩序與傳統。做事講求事實與步驟，答應的事一定做到。你不愛張揚，但總是默默把事情做好，是團隊中最值得信賴的人。',s:['責任感強、值得信賴','條理分明、講求效率','務實穩重'],w:['不易接受改變','較固執','不善表達情感'],c:['會計','公務員','工程師','審計','行政管理']},
+ ISFJ:{n:'守護者',t:'溫暖細心的守護者',d:'你體貼、忠誠，總是默默照顧身邊的人。你記得每個人的喜好與細節，重視穩定與和諧。你願意為所愛的人付出，但常常忽略自己的需求。',s:['細心體貼、忠誠可靠','耐心且有責任感','善於記住細節'],w:['不善於拒絕','抗拒改變','壓抑自己的需求'],c:['護理師','教師','行政','社工','客服主管']},
+ ESTJ:{n:'總經理',t:'講求秩序的管理者',d:'你務實、果斷，擅長制定規則並確保大家遵守。你重視效率、紀律與責任，能有條不紊地管理人和事。你直率可靠，是團隊中的中流砥柱。',s:['組織管理能力強','誠實直接、有責任感','執行力高'],w:['可能過於僵化','不夠有彈性','容易顯得強勢'],c:['管理者','軍警','法官','銀行主管','營運經理']},
+ ESFJ:{n:'執政官',t:'熱心貼心的社交達人',d:'你熱情友善、善於照顧他人，重視和諧與傳統。你樂於組織活動、讓大家感到被接納，在人際圈中常是溫暖的凝聚者。你很在意他人的看法與需要。',s:['熱心、善於合作','有責任感、重視人情','社交能力強'],w:['過度在意他人眼光','不喜歡衝突','難接受批評'],c:['教師','護理師','公關','活動策劃','人資']},
+ ISTP:{n:'鑑賞家',t:'冷靜的實作派，動手高手',d:'你冷靜、務實，喜歡拆解並弄懂事物如何運作。你擅長在危機時刻快速反應，崇尚自由與彈性。你話不多，但動手能力強，喜歡用行動解決問題。',s:['動手能力強、冷靜','靈活應變、務實','善於解決實際問題'],w:['不愛承諾與長期計畫','情感表達少','容易感到無聊'],c:['工程師','技師','飛行員','工匠','資安人員']},
+ ISFP:{n:'探險家',t:'靈活而有魅力的藝術家',d:'你溫和、敏感，擁有獨特的審美與創造力。你活在當下，享受生活中的美好，重視自由與真實的自己。你不愛爭執，用行動與作品表達內心。',s:['藝術感強、親和','活在當下、隨和','善良且忠於自我'],w:['不喜歡長期規劃','易逃避衝突','自我批評較多'],c:['設計師','攝影師','廚師','音樂人','獸醫']},
+ ESTP:{n:'企業家',t:'精力充沛的行動派',d:'你活力十足、敢冒險，喜歡在當下抓住機會。你觀察力敏銳、反應快，擅長解決突發狀況。你重視實際行動勝於空談，是氣氛的帶動者。',s:['行動力強、應變快','大膽果敢、擅長談判','活潑有魅力'],w:['衝動、缺乏耐心','不重視長遠規劃','容易冒進'],c:['業務','創業家','運動員','急救人員','投資交易']},
+ ESFP:{n:'表演者',t:'自帶舞台的快樂製造機',d:'你熱情、愛玩、充滿感染力，享受成為眾人焦點。你活在當下，善於讓身邊的人開心。你重視人際互動與感官體驗，喜歡自由、有趣的生活。',s:['樂觀開朗、魅力十足','善於帶動氣氛','實際又有同理心'],w:['容易分心、不愛規劃','逃避嚴肅話題','衝動消費'],c:['藝人','活動主持','導遊','銷售','幼教']}
+};
+
+const C = {E:'--E',I:'--I',S:'--S',N:'--N',T:'--T',F:'--F',J:'--J',P:'--P'};
+const col = k => getComputedStyle(document.documentElement).getPropertyValue(C[k]).trim();
+
+/* ===== 16 型可愛動物角色（程式繪製 SVG）===== */
+const EMOJI={INTJ:'♟️',INTP:'🔬',ENTJ:'👑',ENTP:'💡',INFJ:'🔮',INFP:'🌸',ENFJ:'🌟',ENFP:'🎈',ISTJ:'📋',ISFJ:'🛡️',ESTJ:'📊',ESFJ:'🤝',ISTP:'🔧',ISFP:'🎨',ESTP:'🏄',ESFP:'🎤'};
+const ANIMAL={INTJ:['owl','貓頭鷹'],INTP:['cat','灰貓'],ENTJ:['lion','獅子'],ENTP:['fox','狐狸'],INFJ:['deer','小鹿'],INFP:['rabbit','兔兔'],ENFJ:['dog','黃金獵犬'],ENFP:['monkey','小猴'],ISTJ:['bear','棕熊'],ISFJ:['sheep','綿羊'],ESTJ:['tiger','老虎'],ESFJ:['panda','貓熊'],ISTP:['raccoon','浣熊'],ISFP:['koala','無尾熊'],ESTP:['frog','青蛙'],ESFP:['pig','小豬']};
+function grp(c){const m=c.slice(1,3);return m==='NT'?['#8b5cf6','#ede9fe','#3b2a78']:m==='NF'?['#10b981','#d1fae5','#064e3b']:(c[1]==='S'&&c[3]==='J')?['#3b82f6','#dbeafe','#1e3a8a']:['#f59e0b','#fef3c7','#78350f']}
+function avatar(code){
+  const [main,bg]=grp(code), E=code[0]==='E', a=ANIMAL[code][0];
+  const C={owl:'#b8895a',cat:'#a3a3ad',lion:'#fbbf24',fox:'#fb923c',deer:'#e0b184',rabbit:'#fafafa',dog:'#f5c561',monkey:'#c08552',bear:'#b9783f',sheep:'#fde7d0',tiger:'#fbbf24',panda:'#ffffff',raccoon:'#a8a8b3',koala:'#b4b4bf',frog:'#86efac',pig:'#fbcfe8'}[a];
+  const ST='stroke="rgba(0,0,0,.12)" stroke-width="2"';
+  let back='',front='',eyeBack='',eyeY=112,ex=[78,122];
+  switch(a){
+   case 'cat': back=`<path d="M46 98 L52 44 L92 70Z M154 98 L148 44 L108 70Z" fill="${C}" ${ST}/><path d="M56 84 L58 58 L78 72Z M144 84 L142 58 L122 72Z" fill="#fda4af"/>`;
+     front=`<path d="M100 56 V72 M84 58 V70 M116 58 V70" stroke="#6b6b75" stroke-width="4" stroke-linecap="round"/>`;break;
+   case 'owl': back=`<path d="M50 96 L44 48 L88 68Z M150 96 L156 48 L112 68Z" fill="${C}" ${ST}/>`;
+     eyeBack=`<circle cx="76" cy="108" r="21" fill="#fff7e6"/><circle cx="124" cy="108" r="21" fill="#fff7e6"/>`;
+     front=`<path d="M100 114 L92 126 L100 134 L108 126Z" fill="#f59e0b"/><path d="M70 150 Q100 166 130 150 Q100 176 70 150Z" fill="#e9c9a0"/>`;break;
+   case 'lion': back=`<circle cx="100" cy="112" r="80" fill="#d97706" ${ST}/><circle cx="56" cy="60" r="16" fill="${C}"/><circle cx="144" cy="60" r="16" fill="${C}"/>`;
+     front=`<ellipse cx="100" cy="132" rx="26" ry="18" fill="#fff3c4"/>`;break;
+   case 'fox': back=`<path d="M44 100 L50 36 L94 68Z M156 100 L150 36 L106 68Z" fill="${C}" ${ST}/><path d="M50 56 L54 36 L68 46Z M150 56 L146 36 L132 46Z" fill="#3f2a1d"/>`;
+     front=`<path d="M40 120 Q70 100 100 128 Q130 100 160 120 Q140 164 100 164 Q60 164 40 120Z" fill="#fff" opacity=".95"/>`;break;
+   case 'deer': back=`<g stroke="#8a5a2b" stroke-width="6" stroke-linecap="round" fill="none"><path d="M74 66 L64 30 M65 46 L50 38 M66 36 L74 22"/><path d="M126 66 L136 30 M135 46 L150 38 M134 36 L126 22"/></g><ellipse cx="42" cy="88" rx="16" ry="10" transform="rotate(-30 42 88)" fill="${C}" ${ST}/><ellipse cx="158" cy="88" rx="16" ry="10" transform="rotate(30 158 88)" fill="${C}" ${ST}/>`;
+     front=`<g fill="#fff" opacity=".85"><circle cx="86" cy="76" r="4"/><circle cx="114" cy="76" r="4"/><circle cx="100" cy="68" r="4"/></g>`;break;
+   case 'rabbit': back=`<ellipse cx="72" cy="40" rx="15" ry="42" fill="${C}" ${ST}/><ellipse cx="128" cy="40" rx="15" ry="42" fill="${C}" ${ST}/><ellipse cx="72" cy="44" rx="7" ry="30" fill="#fbcfe8"/><ellipse cx="128" cy="44" rx="7" ry="30" fill="#fbcfe8"/>`;break;
+   case 'dog': back=`<ellipse cx="44" cy="106" rx="20" ry="38" transform="rotate(14 44 106)" fill="#c98a2b" ${ST}/><ellipse cx="156" cy="106" rx="20" ry="38" transform="rotate(-14 156 106)" fill="#c98a2b" ${ST}/>`;
+     front=`<ellipse cx="100" cy="134" rx="28" ry="20" fill="#fff3d6"/><path d="M100 126 V134" stroke="#5b3a1a" stroke-width="3"/>`;break;
+   case 'monkey': back=`<circle cx="42" cy="112" r="20" fill="${C}" ${ST}/><circle cx="158" cy="112" r="20" fill="${C}" ${ST}/><circle cx="42" cy="112" r="11" fill="#f6d2b0"/><circle cx="158" cy="112" r="11" fill="#f6d2b0"/>`;
+     front=`<path d="M62 106 Q82 90 100 108 Q118 90 138 106 Q146 150 100 156 Q54 150 62 106Z" fill="#f6d2b0"/>`;break;
+   case 'bear': back=`<circle cx="56" cy="66" r="19" fill="${C}" ${ST}/><circle cx="144" cy="66" r="19" fill="${C}" ${ST}/><circle cx="56" cy="66" r="9" fill="#e3b385"/><circle cx="144" cy="66" r="9" fill="#e3b385"/>`;
+     front=`<ellipse cx="100" cy="134" rx="24" ry="18" fill="#efd0a8"/>`;break;
+   case 'sheep': back=`<ellipse cx="42" cy="104" rx="18" ry="9" transform="rotate(20 42 104)" fill="#6b5b4e"/><ellipse cx="158" cy="104" rx="18" ry="9" transform="rotate(-20 158 104)" fill="#6b5b4e"/><g fill="#fff" stroke="#e5e7eb" stroke-width="2"><circle cx="64" cy="64" r="20"/><circle cx="92" cy="52" r="22"/><circle cx="120" cy="54" r="22"/><circle cx="144" cy="68" r="19"/><circle cx="100" cy="70" r="20"/></g>`;break;
+   case 'tiger': back=`<circle cx="56" cy="66" r="18" fill="${C}" ${ST}/><circle cx="144" cy="66" r="18" fill="${C}" ${ST}/><circle cx="56" cy="66" r="8" fill="#fff"/><circle cx="144" cy="66" r="8" fill="#fff"/>`;
+     front=`<g stroke="#78350f" stroke-width="5" stroke-linecap="round" fill="none"><path d="M100 62 V76 M86 64 L90 76 M114 64 L110 76 M44 108 L58 112 M44 124 L58 124 M156 108 L142 112 M156 124 L142 124"/></g><ellipse cx="100" cy="134" rx="26" ry="17" fill="#fff"/>`;break;
+   case 'panda': back=`<circle cx="54" cy="64" r="19" fill="#27272a"/><circle cx="146" cy="64" r="19" fill="#27272a"/>`;
+     eyeBack=`<ellipse cx="78" cy="112" rx="15" ry="19" transform="rotate(25 78 112)" fill="#27272a"/><ellipse cx="122" cy="112" rx="15" ry="19" transform="rotate(-25 122 112)" fill="#27272a"/>`;break;
+   case 'raccoon': back=`<circle cx="56" cy="66" r="18" fill="${C}" ${ST}/><circle cx="144" cy="66" r="18" fill="${C}" ${ST}/><circle cx="56" cy="66" r="8" fill="#52525b"/><circle cx="144" cy="66" r="8" fill="#52525b"/>`;
+     eyeBack=`<path d="M44 108 Q76 88 100 104 Q124 88 156 108 Q150 134 120 130 Q104 126 100 118 Q96 126 80 130 Q50 134 44 108Z" fill="#3f3f46"/>`;
+     front=`<ellipse cx="100" cy="140" rx="26" ry="16" fill="#fff"/>`;break;
+   case 'koala': back=`<circle cx="38" cy="86" r="28" fill="${C}" ${ST}/><circle cx="162" cy="86" r="28" fill="${C}" ${ST}/><circle cx="38" cy="86" r="16" fill="#f1f1f5"/><circle cx="162" cy="86" r="16" fill="#f1f1f5"/>`;
+     front=`<ellipse cx="100" cy="124" rx="13" ry="18" fill="#3f3f46"/>`;break;
+   case 'frog': back=`<circle cx="66" cy="68" r="22" fill="${C}" ${ST}/><circle cx="134" cy="68" r="22" fill="${C}" ${ST}/><circle cx="66" cy="68" r="14" fill="#fff"/><circle cx="134" cy="68" r="14" fill="#fff"/>`;
+     front=`<circle cx="66" cy="68" r="8" fill="#1f2937"/><circle cx="134" cy="68" r="8" fill="#1f2937"/><circle cx="69" cy="65" r="3" fill="#fff"/><circle cx="137" cy="65" r="3" fill="#fff"/>`;eyeY=-999;break;
+   case 'pig': back=`<path d="M50 84 L46 46 L84 68Z M150 84 L154 46 L116 68Z" fill="#f9a8c4" ${ST}/>`;
+     front=`<ellipse cx="100" cy="128" rx="24" ry="16" fill="#f9a8c4"/><ellipse cx="91" cy="128" rx="4" ry="6" fill="#be185d"/><ellipse cx="109" cy="128" rx="4" ry="6" fill="#be185d"/>`;break;
+  }
+  const noNose=['pig','koala','dog','frog','owl'].includes(a);
+  let s=`<svg class="av" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="96" fill="${bg}"/>`;
+  s+=`<ellipse cx="100" cy="186" rx="48" ry="30" fill="${a==='panda'?'#27272a':C}" ${ST}/>`;
+  s+=back;
+  s+=`<ellipse cx="100" cy="112" rx="62" ry="54" fill="${C}" ${ST}/>`;
+  s+=front.startsWith('<path d="M100 56')||a==='cat'?'':'';
+  // 臉部底色（部分動物在眼睛前）
+  if(['fox','monkey','bear','tiger','dog','raccoon','owl','lion','cat','sheep','pig','koala','deer','deer'].includes(a)||true) s+=front;
+  s+=eyeBack;
+  if(eyeY>0) ex.forEach(x=>{ s+=`<ellipse cx="${x}" cy="${eyeY}" rx="8" ry="10" fill="#1f2937"/><circle cx="${x+3}" cy="${eyeY-4}" r="3.2" fill="#fff"/><circle cx="${x-3}" cy="${eyeY+4}" r="1.6" fill="#fff"/>`; });
+  s+=`<circle cx="60" cy="130" r="8" fill="#fda4af" opacity=".55"/><circle cx="140" cy="130" r="8" fill="#fda4af" opacity=".55"/>`;
+  if(!noNose) s+=`<ellipse cx="100" cy="126" rx="6" ry="4.5" fill="#3f3f46"/>`;
+  const my = a==='pig'?146: a==='koala'?146:136;
+  s+= E ? `<path d="M88 ${my} Q100 ${my+16} 112 ${my}Z" fill="#9f1239"/><path d="M94 ${my+8} Q100 ${my+13} 106 ${my+8}" fill="#fb7185"/>`
+        : `<path d="M90 ${my} Q95 ${my+6} 100 ${my} Q105 ${my+6} 110 ${my}" stroke="#7f1d1d" stroke-width="3.2" fill="none" stroke-linecap="round"/>`;
+  s+=`<circle cx="162" cy="40" r="22" fill="#fff" stroke="${main}" stroke-width="3"/><text x="162" y="49" text-anchor="middle" font-size="24">${EMOJI[code]}</text></svg>`;
+  return s;
+}
+
+/* ===== 配對分析 ===== */
+const BEST={INTJ:['ENFP','ENTP'],INTP:['ENTJ','ESTJ'],ENTJ:['INTP','INFP'],ENTP:['INFJ','INTJ'],INFJ:['ENTP','ENFP'],INFP:['ENFJ','ENTJ'],ENFJ:['INFP','ISFP'],ENFP:['INFJ','INTJ'],ISTJ:['ESFP','ESTP'],ISFJ:['ESFP','ESTP'],ESTJ:['ISTP','INTP'],ESFJ:['ISFP','ISTP'],ISTP:['ESTJ','ESFJ'],ISFP:['ENFJ','ESFJ'],ESTP:['ISFJ','ISTJ'],ESFP:['ISTJ','ISFJ']};
+const HARD1={INTJ:['ESFP','ESFJ'],INTP:['ESFJ','ISFJ'],ENTJ:['ISFP','ISFJ'],ENTP:['ISFJ','ISTJ'],INFJ:['ESTP','ISTP'],INFP:['ESTJ','ISTJ'],ENFJ:['ISTP','ESTP'],ENFP:['ISTJ','ESTJ'],ISTJ:['ENFP','ENTP'],ISFJ:['ENTP','INTP'],ESTJ:['INFP','ENFP'],ESFJ:['INTJ','INTP'],ISTP:['INFJ','ENFJ'],ISFP:['ENTJ','INTJ'],ESTP:['INFJ','ENFJ'],ESFP:['INTJ','INTP']};
+const HARD={};Object.keys(HARD1).forEach(k=>HARD[k]=new Set());
+Object.entries(HARD1).forEach(([k,v])=>v.forEach(x=>{HARD[k].add(x);HARD[x].add(k)}));
+Object.keys(BEST).forEach(k=>BEST[k].forEach(x=>HARD[k].delete(x)));
+const SAME={0:'都是外向，節奏相近、一拍即合',1:'都偏內向，彼此尊重獨處空間',2:'都重視事實與細節，溝通務實',3:'都著眼可能性與未來，聊得來',4:'都以邏輯分析看事情',5:'都重視感受與價值觀，容易同理',6:'都偏好計畫與秩序，生活步調一致',7:'都偏好彈性隨興，彼此不拘束'};
+const DIFF={0:'外向與內向互補：一方帶動、一方沉澱',1:'實感與直覺互補：務實與創意相輔相成',2:'思考與情感互補：理性與溫度兼顧',3:'判斷與感知互補：有計畫也有彈性'};
+const IDX=[['E','I'],['S','N'],['T','F'],['J','P']];
+function why(a,b,good){
+  const same=[],diff=[];
+  IDX.forEach((p,i)=>{ if(a[i]===b[i]) same.push(SAME[i*2+(a[i]===p[0]?0:1)]); else diff.push(DIFF[i]); });
+  if(good) return (diff.slice(0,2).concat(same.slice(0,1))).join('；')+'。';
+  // 不合：說明衝突點
+  const c=[];
+  if(a[1]!==b[1]) c.push('一個重細節現實、一個重概念未來，常雞同鴨講');
+  if(a[2]!==b[2]) c.push('一個講邏輯、一個重感受，容易覺得對方太冷或太情緒化');
+  if(a[3]!==b[3]) c.push('計畫派與隨興派的步調容易起摩擦');
+  if(a[0]!==b[0]) c.push('社交與獨處需求落差大');
+  if(!c.length) c.push('相似度太高，缺點會被放大');
+  return c.slice(0,2).join('；')+'。需要更多溝通與包容。';
+}
+function pcard(me,o,good){
+  return `<div class="pcard ${good?'good':'bad'}">${avatar(o)}<div><b>${o}｜${TYPES[o].n}（${ANIMAL[o][1]}）</b><small>${why(me,o,good)}</small></div></div>`;
+}
+function pairHTML(me){
+  return `<div class="pairs">
+    <div class="pcol"><h3>💚 最適合 ${me} 的類型</h3>${BEST[me].map(o=>pcard(me,o,true)).join('')}</div>
+    <div class="pcol"><h3>💔 較容易有摩擦的類型</h3>${[...HARD[me]].map(o=>pcard(me,o,false)).join('')}</div>
+  </div>`;
+}
+function galleryHTML(){
+  return `<div class="gallery">${Object.keys(TYPES).map(k=>`<button class="gitem" onclick="viewPair('${k}',this)">${avatar(k)}<b>${k}</b>${ANIMAL[k][1]}</button>`).join('')}</div>`;
+}
+function viewPair(k,btn){
+  document.querySelectorAll('.gitem').forEach(x=>x.classList.remove('on')); btn.classList.add('on');
+  $('pairview').innerHTML=`<h3 style="margin:16px 0 10px">${k}｜${TYPES[k].n} 的配對</h3>`+pairHTML(k);
+  $('pairview').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+let order, cur, ans;
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function $(id){return document.getElementById(id)}
+
+function startQuiz(){
+  // 題目順序固定（已交錯四個維度），選項順序隨機
+  order = Q.map((q,i)=>({dim:q[0],text:q[1],opts:shuffle(q[2].map((t,k)=>({t,k})))}));
+  cur=0; ans=new Array(order.length).fill(null);
+  $('start').classList.add('hidden'); $('result').classList.add('hidden'); $('quiz').classList.remove('hidden');
+  render();
+}
+function restart(){ $('quiz').classList.add('hidden'); $('result').classList.add('hidden'); $('start').classList.remove('hidden'); renderHist(); window.scrollTo(0,0)}
+function render(){
+  const q=order[cur];
+  $('pnum').textContent=`第 ${cur+1} / ${order.length} 題`;
+  $('ppct').textContent=Math.round(cur/order.length*100)+'%';
+  $('pbar').style.width=(cur/order.length*100)+'%';
+  $('qtext').textContent=q.text;
+  $('back').disabled = cur===0;
+  const box=$('opts'); box.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt'+(ans[cur]===i?' sel':'');
+    b.textContent=String.fromCharCode(65+i)+'．'+o.t;
+    b.onclick=()=>choose(i);
+    box.appendChild(b);
+  });
+}
+function choose(i){
+  ans[cur]=i;
+  if(cur<order.length-1){cur++;setTimeout(render,120)} else showResult();
+}
+function goBack(){ if(cur>0){cur--;render()} }
+
+function showResult(){
+  // 計分
+  const sc={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
+  order.forEach((q,n)=>{
+    const o=q.opts[ans[n]]; const [pole,w]=W[o.k];
+    sc[DIMS[q.dim].p[pole]]+=w;
+  });
+  const pct={}; let code='';
+  const dimInfo=[];
+  for(const d of ['EI','SN','TF','JP']){
+    const [a,b]=DIMS[d].p, tot=sc[a]+sc[b]||1;
+    pct[a]=Math.round(sc[a]/tot*100); pct[b]=100-pct[a];
+    // 平手時取 I/N/F/P
+    const win = sc[a]>sc[b]?a:b;
+    code+=win;
+    dimInfo.push({d,win,a,b,strength:Math.abs(pct[a]-50)*2});
+  }
+  const T=TYPES[code]; saveRes(code,pct); lastRes={code,pct};
+  const level = s => s>=60?'非常明顯':s>=30?'中等':'輕微';
+  const dimHTML = dimInfo.map(x=>{
+    const [na,nb]=DIMS[x.d].names;
+    const wn = x.win===x.a?na:nb;
+    return `<div class="dim">
+      <div class="dimhead"><span style="color:${col(x.a)}">${na} ${pct[x.a]}%</span><span style="color:${col(x.b)}">${pct[x.b]}% ${nb}</span></div>
+      <div class="bar"><span style="background:${col(x.a)}" data-w="${pct[x.a]}">${pct[x.a]>=12?x.a:''}</span><span style="background:${col(x.b)}" data-w="${pct[x.b]}">${pct[x.b]>=12?x.b:''}</span></div>
+      <div class="dimnote">你偏向「${wn}」，傾向程度：${level(x.strength)}。${notes[x.win]}</div>
+    </div>`;}).join('');
+
+  $('result').innerHTML=`
+    <div class="hero">
+      <div class="avatar">${avatar(code)}</div>
+      <div class="sub">你的 MBTI 類型是</div>
+      <div class="type">${code}</div>
+      <div class="tname">${T.n}　<span style="font-size:16px;color:var(--mute)">守護動物：${ANIMAL[code][1]}</span></div>
+      <div class="tag">${T.t}</div>
+    </div>
+    <h2>性格比例圖表</h2>
+    ${dimHTML}
+    <div class="charts">
+      <div>${radar(pct)}</div>
+      <div>${donut(sc)}</div>
+    </div>
+    <div class="legend">${['E','I','S','N','T','F','J','P'].map(k=>`<span><b style="background:${col(k)}"></b>${k} ${pct[k]}%</span>`).join('')}</div>
+    <h2>性格分析</h2>
+    <p class="desc">${T.d}</p>
+    <div class="grid2" style="margin-top:16px">
+      <div class="box"><h3>💪 優勢</h3><ul>${T.s.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div class="box"><h3>⚠️ 可留意的盲點</h3><ul>${T.w.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    </div>
+    <div class="box" style="margin-top:14px"><h3>💼 適合的方向</h3><div class="chips">${T.c.map(x=>`<span>${x}</span>`).join('')}</div></div>
+    <h2>配對分析：誰與你最合拍？</h2>
+    ${pairHTML(code)}
+    <div class="note" style="margin-top:4px">配對僅依四維度的互補與相似度推論，真實關係更取決於成熟度、溝通與彼此用心，任何組合都可以相處得很好。</div>
+    <h2>16 型人物圖鑑（點選查看該型配對）</h2>
+    ${galleryHTML()}
+    <div id="pairview"></div>
+    <p style="text-align:center;margin-top:28px"><button class="btn" onclick="saveCard()">🖼 儲存結果圖片</button>　<button class="btn ghost" onclick="startQuiz()">重新測驗</button></p>
+    <div class="note">※ 本測驗為依 MBTI 四維度架構編寫的簡易自我探索工具，非官方正式測評，結果僅供參考。比例越接近 50%，代表你在該維度上兩種傾向都會使用；性格會隨情境與成長而變化，請把它當作了解自己的起點，而不是標籤。</div>
+  `;
+  $('quiz').classList.add('hidden'); $('result').classList.remove('hidden'); window.scrollTo(0,0);
+  requestAnimationFrame(()=>setTimeout(()=>{document.querySelectorAll('.bar span').forEach(s=>s.style.width=s.dataset.w+'%')},50));
+}
+
+const notes={
+ E:'你從與人互動中獲得能量，喜歡表達、行動，思考常在交談中成形。',
+ I:'你需要獨處來恢復能量，偏好深入思考後再行動，與少數人深交。',
+ S:'你注重具體事實與現實經驗，相信看得見、摸得著的資訊。',
+ N:'你重視可能性與整體脈絡，喜歡抽象概念與未來想像。',
+ T:'你做判斷時偏重邏輯、客觀與一致性。',
+ F:'你做判斷時偏重價值觀、人際和諧與他人感受。',
+ J:'你偏好有計畫、有條理，喜歡事情有明確結論。',
+ P:'你偏好彈性、隨機應變，喜歡保持選項開放。'
+};
+
+/* 雷達圖：8 種傾向 */
+function radar(pct){
+  const keys=['E','S','T','J','I','N','F','P'], cx=160, cy=150, R=100;
+  const pt=(i,r)=>{const a=(-90+45*i)*Math.PI/180;return [cx+r*Math.cos(a),cy+r*Math.sin(a)]};
+  let g='';
+  [25,50,75,100].forEach(l=>{g+=`<polygon points="${keys.map((_,i)=>pt(i,R*l/100).join(',')).join(' ')}" fill="none" stroke="#e6e3f3"/>`});
+  keys.forEach((k,i)=>{const [x,y]=pt(i,R);g+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#e6e3f3"/>`;
+    const [lx,ly]=pt(i,R+20);g+=`<text x="${lx}" y="${ly+5}" text-anchor="middle" font-size="14" font-weight="700" fill="${col(k)}">${k}</text>`});
+  const poly=keys.map((k,i)=>pt(i,R*pct[k]/100).join(',')).join(' ');
+  g+=`<polygon points="${poly}" fill="rgba(108,76,241,.22)" stroke="#6c4cf1" stroke-width="2"/>`;
+  keys.forEach((k,i)=>{const [x,y]=pt(i,R*pct[k]/100);g+=`<circle cx="${x}" cy="${y}" r="4" fill="${col(k)}"/>`});
+  return `<svg viewBox="0 0 320 300" width="100%"><text x="160" y="14" text-anchor="middle" font-size="13" fill="#6b6880">八種傾向雷達圖</text>${g}</svg>`;
+}
+/* 甜甜圈：8 種傾向佔總得分比例 */
+function donut(sc){
+  const keys=['E','I','S','N','T','F','J','P'], tot=keys.reduce((s,k)=>s+sc[k],0)||1;
+  const cx=160, cy=150, r=78, sw=36, L=2*Math.PI*r; let off=0, g='';
+  keys.forEach(k=>{const len=sc[k]/tot*L; if(len>0){
+    g+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${col(k)}" stroke-width="${sw}" stroke-dasharray="${len} ${L-len}" stroke-dashoffset="${-off}" transform="rotate(-90 ${cx} ${cy})"/>`;
+    const mid=(off+len/2)/L*2*Math.PI-Math.PI/2;
+    if(len/L>0.05) g+=`<text x="${cx+r*Math.cos(mid)}" y="${cy+r*Math.sin(mid)+5}" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">${k}</text>`;
+    off+=len}});
+  return `<svg viewBox="0 0 320 300" width="100%"><text x="160" y="14" text-anchor="middle" font-size="13" fill="#6b6880">八種傾向得分佔比</text>${g}<text x="${cx}" y="${cy+5}" text-anchor="middle" font-size="14" fill="#6b6880">總分 ${tot}</text></svg>`;
+}
+
+/* ===== 本機儲存（localStorage，只存在使用者自己的瀏覽器）===== */
+function ld(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+const HK='hub.mbti.history';
+function saveRes(code,pct){const h=ld(HK,[]);h.unshift({t:Date.now(),code,pct});sv(HK,h.slice(0,10));}
+function renderHist(){
+  const h=ld(HK,[]), box=$('hist'); if(!box) return;
+  if(!h.length){box.innerHTML='';return}
+  box.innerHTML='<h2 style="margin-top:26px">📜 我的歷史結果（僅存在這台裝置）</h2>'+h.map(r=>{
+    const d=new Date(r.t).toLocaleString('zh-TW',{hour12:false});
+    return '<div class="box" style="margin-bottom:8px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><span><b style="font-size:18px;color:var(--main)">'+esc(r.code)+'</b> '+esc((TYPES[r.code]||{}).n||'')+'（'+esc((ANIMAL[r.code]||['',''])[1])+'）</span><span style="color:var(--mute);font-size:13px">'+d+'</span></div>'}).join('')+
+    '<p style="text-align:center"><button class="btn ghost" style="padding:6px 18px;font-size:14px" onclick="if(confirm(&quot;清除全部歷史結果？&quot;)){sv(HK,[]);renderHist()}">清除紀錄</button></p>';
+}
+renderHist();
+
+let lastRes=null;
+async function saveCard(){
+  const {code,pct}=lastRes, T=TYPES[code], W=900, H=1300, F=HubKit.FONT;
+  const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,W,H); g.addColorStop(0,'#f5f3ff'); g.addColorStop(1,'#e0f2fe'); x.fillStyle=g; x.fillRect(0,0,W,H);
+  HubKit.rr(x,40,40,W-80,H-80,36); x.fillStyle='#fff'; x.fill();
+  x.textAlign='center'; x.fillStyle='#6b6880'; x.font='30px '+F; x.fillText('我的 MBTI 性格',W/2,115);
+  const im=await HubKit.svgToImg(avatar(code).replace('class="av"','width="400" height="400"')); x.drawImage(im,W/2-200,140,400,400);
+  const tg=x.createLinearGradient(250,0,650,0); tg.addColorStop(0,'#6c4cf1'); tg.addColorStop(1,'#ec4899');
+  x.fillStyle=tg; x.font='bold 120px '+F; x.fillText(code,W/2,690);
+  x.fillStyle='#1f1b2e'; x.font='bold 42px '+F; x.fillText(T.n+'・守護動物：'+ANIMAL[code][1],W/2,760);
+  x.fillStyle='#6b6880'; x.font='28px '+F; x.fillText(T.t,W/2,812);
+  ['EI','SN','TF','JP'].forEach((dm,i)=>{
+    const [a,b]=DIMS[dm].p, y=880+i*88, bx=110, bw=W-220, wa=bw*pct[a]/100;
+    x.textAlign='left'; x.fillStyle=col(a); x.font='bold 26px '+F; x.fillText(DIMS[dm].names[0].split(' ')[0]+' '+pct[a]+'%',bx,y);
+    x.textAlign='right'; x.fillStyle=col(b); x.fillText(pct[b]+'% '+DIMS[dm].names[1].split(' ')[0],bx+bw,y);
+    HubKit.rr(x,bx,y+12,bw,28,14); x.save(); x.clip(); x.fillStyle=col(a); x.fillRect(bx,y+12,wa,28); x.fillStyle=col(b); x.fillRect(bx+wa,y+12,bw-wa,28); x.restore();
+    x.textAlign='center'; x.fillStyle='#fff'; x.font='bold 20px '+F;
+    if(pct[a]>=12) x.fillText(a,bx+wa/2,y+33);
+    if(pct[b]>=12) x.fillText(b,bx+wa+(bw-wa)/2,y+33);
+  });
+  x.textAlign='center'; x.fillStyle='#9a96ad'; x.font='22px '+F;
+  x.fillText(new Date().toLocaleDateString('zh-TW')+'　此圖片內含備份資料，可到首頁「匯入」還原',W/2,H-90);
+  await HubKit.download(c,'MBTI-'+code+'.png');
+}
+</script>
+</body>
+</html>
