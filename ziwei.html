@@ -198,7 +198,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
 const $=id=>document.getElementById(id);
 const fx=s=>String(s).replace(/闰/g,'閏').replace(/腊/g,'臘');
 const pname=n=>n.endsWith('宮')?n:n+'宮';
-const pkey=n=>n.replace('宮','');
+const pkey=n=>n==='命宮'?n:n.replace('宮','');
 let A=null, MODE='solar', SEL='命宮', SHOW_ADJ=true, SHOW_KW=true, SHOW_12=false, INFO=null;
 
 /* ========== 排盤 ========== */
