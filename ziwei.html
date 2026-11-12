@@ -77,6 +77,23 @@ details{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-
 summary{cursor:pointer;font-weight:700;color:var(--pur)}
 details p{margin:8px 0 4px;line-height:1.85;font-size:14px}
 .plain{font-size:11px;color:#8a7bb8;font-weight:400;margin-left:4px}
+.pname{font-size:15px}
+.rt{font-size:11.5px;font-weight:700;letter-spacing:1px}
+.r5{color:#15803d}.r4{color:#4d7c0f}.r3{color:#a16207}.r2{color:#c2410c}.r1{color:#b91c1c}
+.ogrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-top:10px}
+.ocard{background:#fff;border:1px solid var(--line);border-left:6px solid #cbd5e1;border-radius:12px;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:5px}
+.ocard:hover{box-shadow:0 4px 14px rgba(91,63,209,.18)}
+.ocard.r5{border-left-color:#16a34a}.ocard.r4{border-left-color:#84cc16}.ocard.r3{border-left-color:#eab308}.ocard.r2{border-left-color:#f97316}.ocard.r1{border-left-color:#ef4444}
+.otop{display:flex;gap:10px;align-items:center}
+.oico{font-size:26px}
+.oname{font-weight:800;font-size:16px}
+.osub{font-size:12px;color:var(--mute)}
+.ocard .rt{font-size:15px}
+.oreason{font-size:13px;line-height:1.7;color:#3b3355}
+.omore{font-size:12px;color:var(--pur);margin-top:auto}
+.ratebox{border-radius:12px;padding:10px 14px;margin:8px 0;background:#faf7ff;border:1px solid #e4dbff}
+.ratebox p{margin:6px 0 0;font-size:14px;line-height:1.8}
+.rbtitle{font-weight:700}
 .kwline{font-size:11px;color:#a16207;line-height:1.3}
 .guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:12px}
 .guide div{background:#faf7ff;border:1px solid #e4dbff;border-radius:10px;padding:8px 12px;font-size:13.5px;line-height:1.7}
@@ -191,6 +208,17 @@ const GLOSSARY=[
  ['來因宮（進階）','命盤上標「來因」的格子，是依出生年天干推出的特殊宮位，用於進階推論，新手可先略過。']
 ];
 
+/* ========== 最後防線：殘留的 undefined/NaN/null 一律改成空白 ========== */
+(function(){
+  const TEST=/undefined|NaN|\bnull\b/, ALL=/undefined|NaN|\bnull\b/g;
+  const fixNode=n=>{if(n.nodeValue&&TEST.test(n.nodeValue)) n.nodeValue=n.nodeValue.replace(ALL,'')};
+  const scrub=root=>{ if(root.nodeType===3){fixNode(root);return} const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let n; while((n=w.nextNode())) fixNode(n) };
+  new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(scrub))).observe(document.documentElement,{childList:true,subtree:true});
+  const ft=CanvasRenderingContext2D.prototype.fillText;
+  CanvasRenderingContext2D.prototype.fillText=function(txt,...a){return ft.call(this,String(txt).replace(ALL,''),...a)};
+  window.__scrub=()=>scrub(document.body);
+})();
+
 /* ========== 共用小工具 ========== */
 function ld(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
 function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
@@ -230,11 +258,12 @@ function cellHTML(p){
   const badges=(p.name==='命宮'?'<span class="badge">命</span>':'')+(p.isBodyPalace?'<span class="badge sh">身</span>':'')+(p.isOriginalPalace?'<span class="badge ly">來因</span>':'');
   const mj=p.majorStars.map(s=>`<span class="st m">${s.name}${brTag(s.brightness)}${huaTag(s.mutagen)}</span>`).join('')||'<span class="st b" style="font-size:12px">（無主星）</span>';
   const mn=p.minorStars.map(s=>`<span class="st ${minorCls(s)}">${s.name}${brTag(s.brightness)}${huaTag(s.mutagen)}</span>`).join('');
+  const rt=rate(p);
   const kwl=SHOW_KW&&p.majorStars.length?`<div class="kwline">${p.majorStars.map(s=>KW[s.name]).join('・')}</div>`:'';
   const adj=SHOW_ADJ&&p.adjectiveStars.length?`<div class="adj">${p.adjectiveStars.map(s=>`<span>${s.name}</span>`).join('')}</div>`:'';
   const tw=SHOW_12?`<div class="twelve">${p.changsheng12}・${p.boshi12}・${p.jiangqian12}・${p.suiqian12}</div>`:'';
   return `<div class="cell ${p.name==='命宮'?'ming':''} ${pkey(p.name)===pkey(SEL)?'sel':''}" data-n="${pkey(p.name)}" style="grid-area:${r}/${c}">
-    <div class="pname">${pname(p.name)}${badges}<span class="plain">${dom(p)}</span></div><div>${mj}</div>${kwl}<div>${mn}</div>${adj}${tw}
+    <div class="pname">${dom(p)}<span class="plain">${pname(p.name)}</span>${badges}</div><div class="rt ${rt.cls}">${starsTxt(rt)} ${rt.label}</div><div>${mj}</div>${kwl}<div>${mn}</div>${adj}${tw}
     <div class="dx">大限 ${p.decadal.range[0]}–${p.decadal.range[1]}</div><div class="pgz">${p.heavenlyStem}${p.earthlyBranch}</div></div>`;
 }
 const AREA={5:[1,1],6:[1,2],7:[1,3],8:[1,4],4:[2,1],9:[2,4],3:[3,1],10:[3,4],2:[4,1],1:[4,2],0:[4,3],11:[4,4]};
@@ -254,12 +283,14 @@ function drawChart(){
 function render(){
   const soul=palOf('命宮');
   $('out').innerHTML=`
+  <section class="card" id="overview"></section>
   <section class="card" id="summary"></section>
   <section class="card"><h2>🪐 完整命盤</h2>
     <div class="opts"><label><input type="checkbox" id="oKw" ${SHOW_KW?'checked':''}>顯示星的白話關鍵字</label><label><input type="checkbox" id="oAdj" ${SHOW_ADJ?'checked':''}>顯示雜曜</label><label><input type="checkbox" id="o12" ${SHOW_12?'checked':''}>顯示十二神（長生・博士・將前・歲前）</label></div>
     <div class="chartwrap"><div class="chart" id="chart"></div></div>
     <div class="guide">
-      <div><b>① 每一格＝人生的一個領域</b>左上角寫領域名，例如「財帛宮」＝賺錢，旁邊小字是白話說明。</div>
+      <div><b>① 每一格＝人生的一個領域</b>左上角粗體字是白話領域名（例如「賺錢・理財」），旁邊小字是傳統宮名（財帛宮）。</div>
+      <div><b>⭐ 星星＝這個領域的整體狀態</b>越多顆越順手；少顆代表功課較多、需要多用心（不是注定不好）。</div>
       <div><b>② 紅色大字＝主星</b>是這個領域的「主要個性」，下方小字是白話關鍵字。</div>
       <div><b>③ 星名右上角小字＝力量強弱</b><sup class="br br-廟">廟</sup><sup class="br br-旺">旺</sup>強　<sup class="br br-得">得</sup><sup class="br br-利">利</sup>中　<sup class="br br-平">平</sup>普通　<sup class="br br-陷">陷</sup>弱。</div>
       <div><b>④ 綠色＝貴人與才華，灰色＝挑戰與磨練</b>，細小灰字是生活細節（雜曜）。</div>
@@ -273,11 +304,55 @@ function render(){
   <section class="card" id="huaread"></section>
   <section class="card" id="horo"></section>
   <section class="card"><h2>📚 名詞白話說明</h2>${GLOSSARY.map(g=>`<details><summary>${g[0]}</summary><p>${g[1]}</p></details>`).join('')}</section>`;
-  renderSummary(); drawChart(); renderDetail(); renderSoul(); renderHua(); renderHoro();
+  renderOverview(); renderSummary(); drawChart(); renderDetail(); renderSoul(); renderHua(); renderHoro();
   $('chart').onclick=e=>{const c=e.target.closest('.cell[data-n]');if(c){SEL=c.dataset.n;drawChart();renderDetail();$('detail').scrollIntoView({behavior:'smooth',block:'nearest'})}};
   $('oAdj').onchange=e=>{SHOW_ADJ=e.target.checked;drawChart()};
   $('oKw').onchange=e=>{SHOW_KW=e.target.checked;drawChart()};
   $('o12').onchange=e=>{SHOW_12=e.target.checked;drawChart()};
+}
+
+/* ----- 各領域運勢評分（簡化規則，見「怎麼算的？」說明）----- */
+const GOODM=['左輔','右弼','天魁','天鉞','文昌','文曲','祿存'], BADM=['擎羊','陀羅','火星','鈴星','地空','地劫'];
+const BRPT={廟:2,旺:1.5,得:1,利:.5,平:0,陷:-1.5}, HUAPT={祿:1.5,權:1,科:1,忌:-2};
+function ptsOf(p){
+  let s=0; const up=[],dn=[];
+  p.majorStars.forEach(x=>{const v=BRPT[x.brightness]||0; s+=v; if(v>=1.5)up.push(x.name+'（'+x.brightness+'）力量強'); if(v<=-1)dn.push(x.name+'（'+x.brightness+'）力量偏弱');});
+  [...p.majorStars,...p.minorStars].forEach(x=>{ if(x.mutagen){const v=HUAPT[x.mutagen]; s+=v; (v>0?up:dn).push(x.name+'化'+x.mutagen+(x.mutagen==='祿'?'（機會）':x.mutagen==='權'?'（主導）':x.mutagen==='科'?'（好名聲）':'（糾結壓力）'));} });
+  p.minorStars.forEach(x=>{ if(GOODM.includes(x.name)){s+=1;up.push(x.name+' 吉星相助')} else if(BADM.includes(x.name)){s-=1;dn.push(x.name+' 煞星帶來考驗')} else if(x.name==='天馬') s+=.3; });
+  return {s,up,dn};
+}
+const RLEVEL=[{min:6.5,stars:5,label:'很順',cls:'r5'},{min:4.3,stars:4,label:'不錯',cls:'r4'},{min:1.5,stars:3,label:'普通',cls:'r3'},{min:-0.8,stars:2,label:'需多留意',cls:'r2'},{min:-99,stars:1,label:'功課較多',cls:'r1'}];
+function rate(p){
+  const own=ptsOf(p), sur=A.surroundedPalaces(p.name);
+  let s=own.s; const up=own.up.slice(), dn=own.dn.slice(), borrowed=!p.majorStars.length;
+  if(borrowed){ const o=ptsOf(sur.opposite); s+=0.7*o.s; o.up.slice(0,2).forEach(t=>up.push('對面格：'+t)); o.dn.slice(0,2).forEach(t=>dn.push('對面格：'+t)); }
+  [sur.opposite,sur.wealth,sur.career].forEach((x,i)=>{ if(borrowed&&i===0) return; const q=ptsOf(x); s+=0.5*q.s; if(q.s>=2.5) up.push('呼應的「'+x.name.replace('宮','')+'」格狀態不錯'); if(q.s<=-2.5) dn.push('呼應的「'+x.name.replace('宮','')+'」格有些考驗'); });
+  const lv=RLEVEL.find(l=>s>=l.min);
+  return {s,stars:lv.stars,label:lv.label,cls:lv.cls,up:up.slice(0,4),dn:dn.slice(0,4),borrowed};
+}
+
+const ICON={命宮:'🧭',官祿:'💼',財帛:'💰',夫妻:'❤️',福德:'🌿',遷移:'🚀',僕役:'🤝',疾厄:'🩺',田宅:'🏠',父母:'👪',兄弟:'👫',子女:'🧒'};
+const ORDER=['命宮','官祿','財帛','夫妻','福德','遷移','僕役','疾厄','田宅','父母','兄弟','子女'];
+const starsTxt=r=>'★'.repeat(r.stars)+'☆'.repeat(5-r.stars);
+function pickPal(n){SEL=n;drawChart();renderDetail();$('detail').scrollIntoView({behavior:'smooth',block:'start'})}
+function ratingBox(p){
+  const r=rate(p);
+  return '<div class="ratebox '+r.cls+'"><div class="rbtitle">這個領域的整體狀態：<span class="rt '+r.cls+'" style="font-size:16px">'+starsTxt(r)+' '+r.label+'</span></div>'+
+   (r.up.length?'<p>👍 <b>有利的地方：</b>'+r.up.join('；')+'</p>':'')+
+   (r.dn.length?'<p>⚠️ <b>需要留意：</b>'+r.dn.join('；')+'</p>':'')+
+   (!r.up.length&&!r.dn.length?'<p>沒有特別突出的助力或考驗，屬於平穩發展。</p>':'')+
+   (r.borrowed?'<p style="color:#7a7090">（這一格沒有主星，評分有參考對面格的星。）</p>':'')+'</div>';
+}
+function renderOverview(){
+  const rows=ORDER.map(n=>{const p=palOf(n);return {n,p,r:rate(p)}});
+  const best=rows.slice().sort((a,b)=>b.r.s-a.r.s).slice(0,3).map(x=>'<b>'+PLAINPAL[x.n]+'</b>'), worst=rows.slice().sort((a,b)=>a.r.s-b.r.s).slice(0,3).map(x=>'<b>'+PLAINPAL[x.n]+'</b>');
+  $('overview').innerHTML='<h2>📊 各領域運勢一覽：哪裡順、哪裡要多用心</h2>'+
+   '<div class="explain"><b>這是什麼？</b>命盤的 12 個格子，各管人生的一個領域（例如「事業・工作」、「感情・婚姻」）。下面把每個領域的狀態用 1～5 顆星表示：<b>星越多代表這方面越順手、越有助力；星少代表功課比較多、需要多用心</b>——不代表一定不好，只是提醒你要多花力氣。<br><b>一句話：</b>你目前盤上最順的是 '+best.join('、')+'；最需要多用心的是 '+worst.join('、')+'。</div>'+
+   '<div class="ogrid">'+rows.map(({n,p,r})=>'<div class="ocard '+r.cls+'" onclick="pickPal(\''+n+'\')"><div class="otop"><span class="oico">'+ICON[n]+'</span><div><div class="oname">'+PLAINPAL[n]+'</div><div class="osub">'+pname(p.name)+'</div></div></div>'+
+     '<div class="rt '+r.cls+'">'+starsTxt(r)+'　'+r.label+'</div>'+
+     '<div class="oreason">'+(r.up.length?'👍 '+r.up.slice(0,2).join('；'):'')+(r.up.length&&r.dn.length?'<br>':'')+(r.dn.length?'⚠️ '+r.dn.slice(0,2).join('；'):'')+(!r.up.length&&!r.dn.length?'平穩，沒有特別突出的助力或考驗':'')+'</div>'+
+     '<div class="omore">點我看詳細 →</div></div>').join('')+'</div>'+
+   '<details style="margin-top:12px"><summary>這個星星是怎麼算的？（點開看）</summary><p>先看這一格裡的星，再參考「對面格」和兩個呼應格（各算一半）：<br>① 主星的力量：廟＋2、旺＋1.5、得＋1、利＋0.5、平 0、陷－1.5。<br>② 吉星（左輔、右弼、天魁、天鉞、文昌、文曲、祿存）每顆＋1；煞星（擎羊、陀羅、火星、鈴星、地空、地劫）每顆－1。<br>③ 生年四化：化祿＋1.5、化權＋1、化科＋1、化忌－2。<br>④ 沒有主星的格子，借對面格的星來算（七成）。<br>⑤ 總分換成 1～5 顆星：很順（5）、不錯（4）、普通（3）、需多留意（2）、功課較多（1）。<br><b>重要提醒：</b>這是依常見解盤原則設計的「簡化評分」，目的是讓你一眼看出同一張盤裡<b>哪些領域相對順、哪些相對要用心</b>，不是傳統的標準答案，也不能預測確切事件。完整解讀還要看大限、流年與整體組合。</p></details>';
 }
 
 /* ----- 白話輔助 ----- */
@@ -325,6 +400,7 @@ function renderDetail(){
   const sur=A.surroundedPalaces(p.name), {ms,b}=mainFor(p);
   let h=`<h2>🔎 ${pname(p.name)}｜${dom(p)}</h2>
   <div class="explain"><b>這一格在看什麼？</b>${LIFEQ[nm]}<br>（${PALMEAN[nm]}）<br>👆 想看別格，直接點上方命盤的其他格子。</div>
+  ${ratingBox(p)}
   <p class="p">走到這一格的大限是 <b>${p.decadal.range[0]}–${p.decadal.range[1]} 歲</b>：那十年，生活重心會偏向這個領域。</p>`;
   h+=`<h3>🌟 這個領域的核心特質（主星）</h3>`;
   if(ms.length){
