@@ -76,6 +76,16 @@ tr.yr{cursor:pointer}tr.yr:hover td{background:#faf7ff}
 details{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-bottom:8px;background:#fff}
 summary{cursor:pointer;font-weight:700;color:var(--pur)}
 details p{margin:8px 0 4px;line-height:1.85;font-size:14px}
+.plain{font-size:11px;color:#8a7bb8;font-weight:400;margin-left:4px}
+.kwline{font-size:11px;color:#a16207;line-height:1.3}
+.guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:12px}
+.guide div{background:#faf7ff;border:1px solid #e4dbff;border-radius:10px;padding:8px 12px;font-size:13.5px;line-height:1.7}
+.guide b{display:block;color:var(--pur)}
+.sumgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:700px){.sumgrid{grid-template-columns:1fr}}
+.sumitem{display:flex;gap:10px;background:#faf7ff;border:1px solid #e4dbff;border-radius:12px;padding:12px 14px}
+.sico{font-size:26px;line-height:1.2}
+.sumitem p{margin:4px 0 0;line-height:1.8;font-size:14px}
 .note{font-size:12.5px;color:#cfc7ee;text-align:center;line-height:1.8;margin-top:6px}
 .note a{color:#e6e0ff}
 </style>
@@ -84,8 +94,14 @@ details p{margin:8px 0 4px;line-height:1.85;font-size:14px}
 <div class="wrap">
 <p style="margin:0 0 10px"><a href="index.html" style="color:#cfc7ee;text-decoration:none">← 回首頁</a></p>
   <h1>🌌 紫微斗數命盤・精準版</h1>
-  <p class="lead">十二宮、十四主星、六吉六煞、雜曜、星曜廟旺利陷、生年四化、大限小限流年<br>每個名詞都附白話解釋，點命盤中任一宮可看詳細說明</p>
+  <p class="lead">輸入出生資料，會得到一份看得懂的白話命盤解讀<br>個性、事業、財運、感情、健康、目前的人生階段，一次看完</p>
 
+  <section class="card"><details open><summary style="font-size:17px">🔰 第一次看紫微斗數？30 秒看懂</summary>
+    <p><b>它是什麼？</b>紫微斗數是中國傳統用來了解「性格傾向與人生各階段重點」的工具。依你的出生年月日時，排出一張有 <b>12 個格子</b>的命盤。</p>
+    <p><b>怎麼看？</b>① 每一個格子＝人生的一個領域（你本人、感情、賺錢、事業、朋友、健康、家庭…）。② 格子裡的星星＝這個領域的個性特質，例如「紫微」像領導者、「天機」像聰明軍師。③ 星名旁邊的小字（廟旺得利平陷）＝這顆星在此「使不使得上力」。④ 彩色小標籤（祿權科忌）＝依出生年產生的運氣色彩。</p>
+    <p><b>你會得到什麼？</b>最上面有「一分鐘看懂你的命盤」，用一般人聽得懂的話整理個性、事業、財運、感情、健康與目前的人生階段；往下可以看完整命盤，每個名詞都有白話說明。</p>
+    <p><b>請記得：</b>這是傳統文化裡看「傾向」的工具，不能預測確切的事件，也不是注定。把它當作認識自己的一面鏡子就好。</p>
+  </details></section>
   <section class="card" id="formcard">
     <div class="tabs">
       <button class="tab on" id="tabS" onclick="setMode('solar')">國曆（陽曆）生日</button>
@@ -152,19 +168,27 @@ const HNAME=['祿','權','科','忌'];
 const HMEAN={祿:'財運與機緣，順遂的助力',權:'掌控力與成就，主動爭取的領域',科:'名聲與貴人，帶來好口碑',忌:'執著與課題，需要多留意的地方'};
 const HMEAN2={祿:'帶來機會與順利',權:'帶來掌控與主動',科:'帶來好口碑與貴人',忌:'帶來阻礙、執著與壓力，宜謹慎'};
 const HCOL={祿:'#16a34a',權:'#2563eb',科:'#d97706',忌:'#dc2626'};
+const PLAINPAL={命宮:'你本人',兄弟:'兄弟姊妹・同事',夫妻:'感情・婚姻',子女:'子女・晚輩・桃花',財帛:'賺錢・理財',疾厄:'健康・壓力',遷移:'外出・社會形象',僕役:'朋友・下屬',官祿:'事業・工作',田宅:'家庭・房產',福德:'心靈・享福',父母:'長輩・上司'};
+const LIFEQ={命宮:'你是怎樣的人？天生的個性、才華與人生基調。',兄弟:'和兄弟姊妹、同輩、合夥人相處得如何？',夫妻:'你在感情裡是什麼樣子？適合怎樣的伴侶？',子女:'和子女、晚輩的緣分如何？也代表創造力與桃花。',財帛:'你怎麼賺錢、怎麼花錢、理財風格是什麼？',疾厄:'身體與心理壓力比較容易出現在哪裡？',遷移:'出門在外、面對社會時的運勢與形象。',僕役:'朋友、下屬、合作對象，以及貴人或小人。',官祿:'適合做什麼工作？在事業上怎麼表現？',田宅:'家庭環境、買房置產與存錢能力。',福德:'內心的滿足感、興趣與享福的能力。',父母:'和長輩、上司的關係，以及從家庭得到的影響。'};
+const KW={紫微:'領導者',天機:'聰明軍師',太陽:'熱情大太陽',武曲:'務實實幹家',天同:'樂天福星',廉貞:'有魅力的拚搏者',天府:'穩重管家',太陰:'溫柔月亮',貪狼:'多才交際家',巨門:'分析辯論家',天相:'貼心輔佐者',天梁:'長輩型守護者',七殺:'開路先鋒',破軍:'改革創新者'};
+const HEALTH={紫微:'腸胃、脾胃',天機:'神經、肝膽、手腳',太陽:'眼睛、頭部、心血管',武曲:'呼吸道、骨骼、牙齒',天同:'泌尿、腎臟、水分代謝',廉貞:'血液循環、發炎',天府:'腸胃、脾',太陰:'內分泌、睡眠、婦科',貪狼:'肝、飲食與酒',巨門:'口腔、消化',天相:'皮膚、泌尿',天梁:'消化、免疫力',七殺:'呼吸、外傷',破軍:'泌尿、外傷'};
+const HPLAIN={祿:'機會',權:'主導',科:'好名聲',忌:'糾結壓力'};
+const LUCKY={祿:'（帶「機緣」色彩：這方面容易遇到好機會、比較順利）',權:'（帶「主導」色彩：你會想掌控、主動爭取表現）',科:'（帶「好名聲」色彩：容易得到口碑與別人的幫助）',忌:'（帶「糾結」色彩：這方面較容易執著、有壓力，是需要多用心的功課）'};
 const GLOSSARY=[
- ['廟、旺、得、利、平、陷（星曜亮度）','同一顆星落在不同宮位，力量不同。依序是：<b>廟＞旺＞得＞利＞平＞陷</b>。廟旺代表這顆星的優點容易發揮；陷代表缺點較容易冒出來，需要後天補強。這不是好壞判決，而是「這顆星在這裡使不使得上力」。'],
- ['命宮與身宮','<b>命宮</b>是整張盤的核心，代表先天性格與命格基調。<b>身宮</b>代表後天的人生重心與發展傾向（約三十歲後更明顯），會落在某一個宮位，例如落在「官祿宮」就代表後天特別重視事業。'],
- ['五行局','由命宮的天干地支決定，共有水二、木三、金四、土五、火六局。數字是<b>起運年齡</b>，也用來推算紫微星的位置。'],
- ['命主與身主','<b>命主</b>由命宮地支決定，是先天性格的底色；<b>身主</b>由出生年地支決定，是後天成長的傾向。它們各是一顆星，可以當作補充的性格線索。'],
- ['十四主星','紫微、天機、太陽、武曲、天同、廉貞、天府、太陰、貪狼、巨門、天相、天梁、七殺、破軍。主星決定各宮的主要風格。'],
- ['六吉星與六煞星','<b>六吉</b>：左輔、右弼、文昌、文曲、天魁、天鉞（貴人、才華）。<b>六煞</b>：擎羊、陀羅、火星、鈴星、地空、地劫（衝突、磨練）。另有祿存（財祿）與天馬（變動）。吉星多的宮位順手，煞星多的宮位多磨練，但磨練也可能鍛鍊出實力。'],
- ['雜曜（輔助小星）','紅鸞、天喜、咸池、華蓋、天刑…等較小的星，補充細節（桃花、孤獨、口舌…），影響比主星細微。命盤上預設以灰色小字顯示，可用上方開關關閉。'],
- ['四化：祿、權、科、忌','依「出生年天干」把四顆星各貼上一個標籤：<b style="color:#16a34a">祿</b>（機緣財運）、<b style="color:#2563eb">權</b>（掌控成就）、<b style="color:#d97706">科</b>（名聲貴人）、<b style="color:#dc2626">忌</b>（執著課題）。看這四顆星落在哪一宮，就知道人生的哪個領域特別有這種色彩。'],
- ['三方四正','看一個宮位時，不只看它本身，還要看它的對宮（對面）以及三合的兩個宮位（例如命宮對應財帛宮、官祿宮、遷移宮）。這四個宮位的星合起來才是完整的判斷。'],
- ['大限、小限、流年','<b>大限</b>：每十年一個階段，走到哪一宮，那十年的重心就偏向該宮。<b>小限</b>：一年一宮的虛歲小運。<b>流年</b>：以該年天干重新排的四化與流星，看那一年哪個領域有機會或壓力。'],
- ['長生十二神與博士十二神','長生十二神（長生、沐浴、冠帶…）描述宮位的能量階段；博士十二神是另一組輔助的星。屬於進階內容，一般解讀可先略過，可用上方開關顯示。'],
- ['來因宮','命盤中標示「來因」的宮位，是依出生年天干推出的特殊宮位，用於進階推論，一般可先略過。']
+ ['這張圖到底是什麼？','把它想成一張「人生地圖」。依出生的年、月、日、時，排出 12 個格子。<b>每一格代表人生的一個領域</b>（你本人、感情、賺錢、事業、朋友、健康、家庭…），格子裡的<b>星星代表這個領域的個性特質</b>。傳統上用它來了解性格傾向與人生各階段的重點，並不是預言。'],
+ ['十二宮（12 個格子）','命宮＝你本人；兄弟＝兄弟姊妹與同事；夫妻＝感情婚姻；子女＝晚輩與桃花；財帛＝賺錢理財；疾厄＝健康與壓力；遷移＝外出與社會形象；僕役（交友）＝朋友與下屬；官祿＝事業工作；田宅＝家庭房產；福德＝心靈與享福；父母＝長輩與上司。'],
+ ['主星（紅色大字）','共 14 顆，是各領域的「主要個性」。例如紫微像領導者、天機像聰明軍師、太陽像熱情的大太陽、武曲像務實的實幹家。一個格子可能有 0、1 或 2 顆主星。'],
+ ['廟、旺、得、利、平、陷（星名右上角小字）','同一顆星放在不同格子，「使得上力」的程度不同，就像人在擅長或不擅長的場合表現不同。強弱依序是：<b>廟＞旺＞得＞利＞平＞陷</b>。廟旺＝特質容易發揮；陷＝缺點較容易浮現，需要後天多加把勁。這不是好壞判決。'],
+ ['吉星與煞星（綠色與灰色小字）','<b>吉星</b>（左輔、右弼、文昌、文曲、天魁、天鉞）像是貴人與才華；<b>煞星</b>（擎羊、陀羅、火星、鈴星、地空、地劫）像是挑戰與磨練。另外祿存代表穩定財祿，天馬代表變動奔波。吉星多的領域比較順手，煞星多的領域考驗較多，但磨練也可能把你鍛鍊得更強。'],
+ ['雜曜（灰色細小字）','許多較小的星，補充生活細節，例如紅鸞（桃花喜事）、華蓋（孤高愛思考）、天刑（自律）。影響比主星小，覺得太雜可以用上方開關關掉。'],
+ ['命宮與身宮','<b>命宮</b>是整張盤最重要的一格，代表先天的你。<b>身宮</b>代表後天的人生重心（約 30 歲後更明顯）。例如身宮落在「官祿宮」，代表你後來會特別重視事業。'],
+ ['五行局（水二、木三、金四、土五、火六）','由命宮推算出來的「節奏類型」。後面的數字是<b>你第一個十年階段從幾歲開始</b>，例如「土五局」就是 5 歲起運。排盤時也用它來決定紫微星的位置。'],
+ ['命主與身主','各是一顆星：<b>命主</b>是先天性格的底色；<b>身主</b>是後天成長的傾向，可當作補充的性格線索。'],
+ ['四化：祿、權、科、忌（彩色小標籤）','出生年的天干會讓四顆星各帶一種「運氣色彩」：<b style="color:#16a34a">祿</b>＝機會與財運、<b style="color:#2563eb">權</b>＝主導與掌控、<b style="color:#d97706">科</b>＝好名聲與貴人、<b style="color:#dc2626">忌</b>＝執著與壓力。哪一格有這個標籤，那個領域就特別有這種色彩。「忌」不是壞事，而是提醒你這是需要多用心的功課。'],
+ ['三方四正（一起參考的宮位）','看一個領域，不會只看那一格，還會同時參考它的「對面格」和兩個互相呼應的格子。就像評估一個人，不只看他的工作，也看他的生活與人際，合起來才完整。'],
+ ['大限、小限、流年','<b>大限</b>：每十年一個階段，走到哪一格，那十年生活重心就偏向那個領域。<b>流年</b>：某一年的運勢重點，會重新標出該年的機會（祿）與壓力（忌）落在哪裡。<b>小限</b>：一歲一格的小運。'],
+ ['長生十二神、博士十二神（進階）','描述每一格的「能量階段」（例如成長、巔峰、衰退）。屬於進階內容，一般解讀可先略過，可用命盤上方的開關顯示。'],
+ ['來因宮（進階）','命盤上標「來因」的格子，是依出生年天干推出的特殊宮位，用於進階推論，新手可先略過。']
 ];
 
 /* ========== 共用小工具 ========== */
@@ -175,7 +199,7 @@ const $=id=>document.getElementById(id);
 const fx=s=>String(s).replace(/闰/g,'閏').replace(/腊/g,'臘');
 const pname=n=>n.endsWith('宮')?n:n+'宮';
 const pkey=n=>n.replace('宮','');
-let A=null, MODE='solar', SEL='命宮', SHOW_ADJ=true, SHOW_12=false, INFO=null;
+let A=null, MODE='solar', SEL='命宮', SHOW_ADJ=true, SHOW_KW=true, SHOW_12=false, INFO=null;
 
 /* ========== 排盤 ========== */
 function compute(){
@@ -206,10 +230,11 @@ function cellHTML(p){
   const badges=(p.name==='命宮'?'<span class="badge">命</span>':'')+(p.isBodyPalace?'<span class="badge sh">身</span>':'')+(p.isOriginalPalace?'<span class="badge ly">來因</span>':'');
   const mj=p.majorStars.map(s=>`<span class="st m">${s.name}${brTag(s.brightness)}${huaTag(s.mutagen)}</span>`).join('')||'<span class="st b" style="font-size:12px">（無主星）</span>';
   const mn=p.minorStars.map(s=>`<span class="st ${minorCls(s)}">${s.name}${brTag(s.brightness)}${huaTag(s.mutagen)}</span>`).join('');
+  const kwl=SHOW_KW&&p.majorStars.length?`<div class="kwline">${p.majorStars.map(s=>KW[s.name]).join('・')}</div>`:'';
   const adj=SHOW_ADJ&&p.adjectiveStars.length?`<div class="adj">${p.adjectiveStars.map(s=>`<span>${s.name}</span>`).join('')}</div>`:'';
   const tw=SHOW_12?`<div class="twelve">${p.changsheng12}・${p.boshi12}・${p.jiangqian12}・${p.suiqian12}</div>`:'';
   return `<div class="cell ${p.name==='命宮'?'ming':''} ${pkey(p.name)===pkey(SEL)?'sel':''}" data-n="${pkey(p.name)}" style="grid-area:${r}/${c}">
-    <div class="pname">${pname(p.name)}${badges}</div><div>${mj}</div><div>${mn}</div>${adj}${tw}
+    <div class="pname">${pname(p.name)}${badges}<span class="plain">${dom(p)}</span></div><div>${mj}</div>${kwl}<div>${mn}</div>${adj}${tw}
     <div class="dx">大限 ${p.decadal.range[0]}–${p.decadal.range[1]}</div><div class="pgz">${p.heavenlyStem}${p.earthlyBranch}</div></div>`;
 }
 const AREA={5:[1,1],6:[1,2],7:[1,3],8:[1,4],4:[2,1],9:[2,4],3:[3,1],10:[3,4],2:[4,1],1:[4,2],0:[4,3],11:[4,4]};
@@ -229,13 +254,18 @@ function drawChart(){
 function render(){
   const soul=palOf('命宮');
   $('out').innerHTML=`
-  <section class="card"><h2>🪐 命盤</h2>
-    <div class="opts"><label><input type="checkbox" id="oAdj" ${SHOW_ADJ?'checked':''}>顯示雜曜</label><label><input type="checkbox" id="o12" ${SHOW_12?'checked':''}>顯示十二神（長生・博士・將前・歲前）</label></div>
+  <section class="card" id="summary"></section>
+  <section class="card"><h2>🪐 完整命盤</h2>
+    <div class="opts"><label><input type="checkbox" id="oKw" ${SHOW_KW?'checked':''}>顯示星的白話關鍵字</label><label><input type="checkbox" id="oAdj" ${SHOW_ADJ?'checked':''}>顯示雜曜</label><label><input type="checkbox" id="o12" ${SHOW_12?'checked':''}>顯示十二神（長生・博士・將前・歲前）</label></div>
     <div class="chartwrap"><div class="chart" id="chart"></div></div>
-    <div class="legend"><span>紅色大字＝十四主星</span><span style="color:#15803d">綠＝吉星</span><span style="color:#475569">灰＝煞星</span><span style="color:#0369a1">藍＝天馬</span>
-      <span>星名右上角：<sup class="br br-廟">廟</sup><sup class="br br-旺">旺</sup>強 <sup class="br br-得">得</sup><sup class="br br-利">利</sup>中 <sup class="br br-平">平</sup>普通 <sup class="br br-陷">陷</sup>弱</span>
-      <span><span class="hua 祿">祿</span><span class="hua 權">權</span><span class="hua 科">科</span><span class="hua 忌">忌</span> 生年四化</span></div>
-    <div class="info">👆 點任一宮位，下方會顯示該宮的詳細解釋。</div>
+    <div class="guide">
+      <div><b>① 每一格＝人生的一個領域</b>左上角寫領域名，例如「財帛宮」＝賺錢，旁邊小字是白話說明。</div>
+      <div><b>② 紅色大字＝主星</b>是這個領域的「主要個性」，下方小字是白話關鍵字。</div>
+      <div><b>③ 星名右上角小字＝力量強弱</b><sup class="br br-廟">廟</sup><sup class="br br-旺">旺</sup>強　<sup class="br br-得">得</sup><sup class="br br-利">利</sup>中　<sup class="br br-平">平</sup>普通　<sup class="br br-陷">陷</sup>弱。</div>
+      <div><b>④ 綠色＝貴人與才華，灰色＝挑戰與磨練</b>，細小灰字是生活細節（雜曜）。</div>
+      <div><b>⑤ <span class="hua 祿">祿</span><span class="hua 權">權</span><span class="hua 科">科</span><span class="hua 忌">忌</span></b>＝依出生年產生的運氣色彩：機會、主導、好名聲、糾結壓力。</div>
+    </div>
+    <div class="info">👆 點任一格，下方會用白話顯示那一格的詳細說明。</div>
     <div class="center-btns"><button class="btn" onclick="saveProfile()">💾 儲存這個命盤到此裝置</button><button class="btn ghost" onclick="saveCard()">🖼 儲存命盤圖片</button></div>
   </section>
   <section class="card" id="detail"></section>
@@ -243,88 +273,125 @@ function render(){
   <section class="card" id="huaread"></section>
   <section class="card" id="horo"></section>
   <section class="card"><h2>📚 名詞白話說明</h2>${GLOSSARY.map(g=>`<details><summary>${g[0]}</summary><p>${g[1]}</p></details>`).join('')}</section>`;
-  drawChart(); renderDetail(); renderSoul(); renderHua(); renderHoro();
+  renderSummary(); drawChart(); renderDetail(); renderSoul(); renderHua(); renderHoro();
   $('chart').onclick=e=>{const c=e.target.closest('.cell[data-n]');if(c){SEL=c.dataset.n;drawChart();renderDetail();$('detail').scrollIntoView({behavior:'smooth',block:'nearest'})}};
   $('oAdj').onchange=e=>{SHOW_ADJ=e.target.checked;drawChart()};
+  $('oKw').onchange=e=>{SHOW_KW=e.target.checked;drawChart()};
   $('o12').onchange=e=>{SHOW_12=e.target.checked;drawChart()};
 }
 
+/* ----- 白話輔助 ----- */
+const bnote=s=>!s.brightness?'':(s.brightness==='廟'||s.brightness==='旺')?'（這顆星在此力量強，特質容易發揮）':s.brightness==='陷'?'（這顆星在此力量偏弱，特質較難順暢發揮，需要後天多加把勁）':'';
+const dom=p=>PLAINPAL[pkey(p.name)];
+function mainFor(p){let ms=p.majorStars,b=false; if(!ms.length){ms=A.surroundedPalaces(p.name).opposite.majorStars;b=true} return {ms,b}}
+const GOODS=['左輔','右弼','天魁','天鉞','文昌','文曲'], BADS=['擎羊','陀羅','火星','鈴星','地空','地劫'];
+function mutagenPlace(h){let r=null;A.palaces.forEach(p=>[...p.majorStars,...p.minorStars].forEach(s=>{if(s.mutagen===h)r={p,s:s.name}}));return r}
+
+/* ----- 一分鐘看懂 ----- */
+function renderSummary(){
+  const soul=palOf('命宮'), sm=mainFor(soul);
+  const li=(ic,ti,tx)=>`<div class="sumitem"><div class="sico">${ic}</div><div><b>${ti}</b><p>${tx}</p></div></div>`;
+  const dm=(n,key)=>{const q=mainFor(palOf(n));return q.ms.length?q.ms.map(s=>`<b>${KW[s.name]}</b>：${STAR[s.name][key]}${bnote(s)}`).join('<br>'):'這個領域沒有明顯主導的星，發展比較自由，看你自己怎麼選擇。'};
+  const items=[];
+  items.push(li('🧭','你的個性',sm.ms.length?`你是<b>${sm.ms.map(s=>KW[s.name]).join('＋')}</b>型的人。${sm.ms.map(s=>STAR[s.name].t+bnote(s)).join('<br>')}${sm.b?'<br><small>（命宮沒有主星，改參考對面格的星。）</small>':''}`:'命宮與對面都沒有主星，個性比較有彈性，容易受環境與身邊的人影響。'));
+  items.push(li('💼','事業與工作',dm('官祿','w')));
+  items.push(li('💰','賺錢與理財',dm('財帛','w')));
+  items.push(li('❤️','感情與伴侶',dm('夫妻','l')));
+  const grp=['命宮','財帛','官祿','遷移'].map(palOf), cnt=l=>grp.reduce((a,p)=>a+p.minorStars.filter(s=>l.includes(s.name)).length,0);
+  const g=cnt(GOODS), b=cnt(BADS);
+  items.push(li('🤝','貴人與人生磨練',(g>=4?'貴人運很不錯，遇到困難常有人出手幫忙。':g>=2?'有一些貴人與才華加持。':'比較靠自己努力，貴人需要主動去結識。')+(b>=4?'人生的挑戰與變動不少，但也容易因此鍛鍊出實力。':b>=2?'偶爾會遇到小阻礙與考驗。':'整體比較平順，很少有大衝突。')));
+  const hp=mainFor(palOf('疾厄')).ms;
+  items.push(li('🩺','健康提醒',hp.length?`傳統說法裡，${hp.map(s=>'「'+KW[s.name]+'」型').join('、')}的人容易在<b>${hp.map(s=>HEALTH[s.name]).join('、')}</b>方面累積壓力，平時多留意。<br><small>這是傳統說法，僅供參考，健康問題請以醫師意見為準。</small>`:'健康領域沒有明顯主星，一般性保養即可。'));
+  const hs=HNAME.map(h=>({h,r:mutagenPlace(h)}));
+  const lu=hs[0].r, ji=hs[3].r;
+  const hline={祿:'容易遇到好機會，也比較順利',權:'你會想主動掌控、爭取表現',科:'容易得到好口碑與別人的幫助',忌:'比較容易執著、有壓力，是需要多用心的人生功課'};
+  items.push(li('✨','你的運氣色彩（四化）',hs.map(x=>x.r?`<span class="hua ${x.h}">${x.h}</span> 「${PLAINPAL[pkey(x.r.p.name)]}」領域：${hline[x.h]}`:'').join('<br>')));
+  const H=A.horoscope(new Date()), dec=A.palaces[H.decadal.index];
+  items.push(li('⏳','你現在的人生階段',`你現在虛歲 <b>${H.age.nominalAge}</b> 歲，正處在 <b>${dec.decadal.range[0]}–${dec.decadal.range[1]} 歲</b>這個十年階段，這十年生活重心偏向「<b>${PLAINPAL[pkey(dec.name)]}</b>」。`));
+  $('summary').innerHTML=`<h2>🌟 一分鐘看懂你的命盤</h2>
+    <div class="explain"><b>一句話總結：</b>你是${sm.ms.length?'<b>'+sm.ms.map(s=>KW[s.name]).join('＋')+'</b>':'彈性十足'}型的人${lu?`；人生最容易有機緣的領域是「<b>${PLAINPAL[pkey(lu.p.name)]}</b>」`:''}${ji?`；最需要用心經營的功課是「<b>${PLAINPAL[pkey(ji.p.name)]}</b>」`:''}。</div>
+    <div class="sumgrid">${items.join('')}</div>
+    <div class="info">以上是依命盤的傳統規則整理成白話，看的是「傾向」而不是「注定」。往下可以看完整命盤，點任一格還有更詳細的說明。</div>`;
+}
+
 /* ----- 單宮詳解 ----- */
-function starLine(s,key,borrow){
-  const info=STAR[s.name], br=s.brightness;
-  let txt=info?info[key]:'';
-  const eff=br&&BR[br]?`<span class="tag">${s.name}・${br}</span> ${BR[br]}。`:'';
-  const hua=s.mutagen?` <span class="hua ${s.mutagen}">${s.mutagen}</span> 化${s.mutagen}：${HMEAN[s.mutagen]}。`:'';
-  return `<p>${eff}${txt}${hua}</p>`;
+function starLine(s,key){
+  const info=STAR[s.name];
+  return `<p><span class="tag">${s.name}・${KW[s.name]}${s.brightness?'・'+s.brightness:''}</span>${info?info[key]:''}${bnote(s)}${s.mutagen?` <span class="hua ${s.mutagen}">${s.mutagen}</span>${LUCKY[s.mutagen]}`:''}</p>`;
 }
 function renderDetail(){
   const p=palOf(SEL), nm=pkey(p.name);
   const key=(nm==='財帛'||nm==='官祿')?'w':nm==='夫妻'?'l':'t';
-  const sur=A.surroundedPalaces(p.name);
-  let html=`<h2>🔎 ${pname(p.name)}（${p.heavenlyStem}${p.earthlyBranch}）詳解</h2>
-  <p class="p"><b>${pname(p.name)}代表：</b>${PALMEAN[nm]}。大限 ${p.decadal.range[0]}–${p.decadal.range[1]} 歲走到這一宮。</p>`;
-  let ms=p.majorStars, borrowed=false;
-  if(!ms.length){ms=sur.opposite.majorStars;borrowed=true}
+  const sur=A.surroundedPalaces(p.name), {ms,b}=mainFor(p);
+  let h=`<h2>🔎 ${pname(p.name)}｜${dom(p)}</h2>
+  <div class="explain"><b>這一格在看什麼？</b>${LIFEQ[nm]}<br>（${PALMEAN[nm]}）<br>👆 想看別格，直接點上方命盤的其他格子。</div>
+  <p class="p">走到這一格的大限是 <b>${p.decadal.range[0]}–${p.decadal.range[1]} 歲</b>：那十年，生活重心會偏向這個領域。</p>`;
+  h+=`<h3>🌟 這個領域的核心特質（主星）</h3>`;
   if(ms.length){
-    html+=`<h3>主星${borrowed?'（本宮無主星，借對宮'+pname(sur.opposite.name)+'的星來看）':''}</h3>`+ms.map(s=>starLine(s,key)).join('');
-  }else html+=`<div class="explain">本宮與對宮都沒有主星，這代表此領域的特質較受輔星、煞星與環境影響，彈性大、可塑性高。</div>`;
-  if(p.minorStars.length) html+=`<h3>輔星與煞星</h3>`+p.minorStars.map(s=>`<p><span class="tag">${s.name}${s.brightness?'・'+s.brightness:''}</span>${SM[s.name]||''}${s.mutagen?` <span class="hua ${s.mutagen}">${s.mutagen}</span>`:''}</p>`).join('');
-  if(p.adjectiveStars.length) html+=`<h3>雜曜（補充細節）</h3><p>`+p.adjectiveStars.map(s=>`<span class="tag">${s.name}</span>${ADJ[s.name]||'輔助性小星'}　`).join('')+`</p>`;
-  html+=`<h3>三方四正（要一起看）</h3><div class="grid2">`+[['本宮',sur.target],['對宮',sur.opposite],['財帛位',sur.wealth],['官祿位',sur.career]].map(([l,x])=>`<div class="box"><h3>${l}：${pname(x.name)}</h3><p>${x.majorStars.map(s=>s.name+(s.brightness?'（'+s.brightness+'）':'')).join('、')||'無主星'}</p></div>`).join('')+`</div>`;
-  html+=`<div class="explain">十二神：${p.changsheng12}（${CS[p.changsheng12]||''}）、博士十二神「${p.boshi12}」。屬進階參考，可先略過。</div>`;
-  $('detail').innerHTML=html;
+    if(b) h+=`<div class="explain">這一格沒有主星。傳統做法是參考「對面的格子」——對面是<b>${pname(sur.opposite.name)}</b>，它的星如下。</div>`;
+    h+=ms.map(s=>starLine(s,key)).join('');
+  }else h+=`<div class="explain">這一格和對面都沒有主星，代表這個領域沒有明顯固定的風格，比較自由，也更受你的選擇與環境影響。</div>`;
+  if(p.minorStars.length){
+    h+=`<h3>🍀 助力與考驗（輔星・煞星）</h3><div class="explain">綠色的星是貴人與才華，灰色的星是挑戰與磨練。</div>`+p.minorStars.map(s=>`<p><span class="tag" style="${BADS.includes(s.name)?'background:#e5e7eb;color:#475569':GOODS.includes(s.name)||s.name==='祿存'?'background:#dcfce7;color:#15803d':''}">${s.name}${s.brightness?'・'+s.brightness:''}</span>${SM[s.name]||''}${s.mutagen?` <span class="hua ${s.mutagen}">${s.mutagen}</span>`:''}</p>`).join('');
+  }
+  if(p.adjectiveStars.length) h+=`<h3>🔹 生活細節補充（雜曜）</h3><div class="explain">這些是影響較小的補充星，只是點綴性質。</div><p>`+p.adjectiveStars.map(s=>`<span class="tag">${s.name}</span>${ADJ[s.name]||'輔助性小星'}　`).join('')+`</p>`;
+  h+=`<h3>🧩 一起參考的另外三格（三方四正）</h3><div class="explain">傳統上看一個領域，不會只看那一格，還會同時參考它的「對面格」，以及兩個互相呼應的格子。就像看一個人，不只看他的工作，也看他的生活和人際，合起來才完整。</div><div class="grid2">`+[['本格',sur.target],['對面格',sur.opposite],['呼應格 ①',sur.wealth],['呼應格 ②',sur.career]].map(([l,x])=>`<div class="box"><h3>${l}：${pname(x.name)}｜${dom(x)}</h3><p>${x.majorStars.map(s=>s.name+(s.brightness?'（'+s.brightness+'）':'')).join('、')||'沒有主星'}</p></div>`).join('')+`</div>`;
+  h+=`<details><summary>進階：這一格的十二神</summary><p>長生十二神：<b>${p.changsheng12}</b>（${CS[p.changsheng12]||''}）；博士十二神：${p.boshi12}。屬於進階參考，新手可略過。</p></details>`;
+  $('detail').innerHTML=h;
 }
 
-/* ----- 命宮整體解讀 ----- */
+/* ----- 命宮與重點領域 ----- */
 function renderSoul(){
-  const p=palOf('命宮'), sur=A.surroundedPalaces('命宮'), body=A.palaces.find(x=>x.isBodyPalace);
-  let ms=p.majorStars, borrow=false; if(!ms.length){ms=sur.opposite.majorStars;borrow=true}
-  const txt=s=>{let t=STAR[s.name].t; if(s.brightness==='陷')t+='（此星落陷，上述特質較難順暢發揮，需要後天磨練。）'; else if(s.brightness==='廟'||s.brightness==='旺')t+='（廟旺，特質容易正面發揮。）'; return `<b>${s.name}${s.brightness?'（'+s.brightness+'）':''}</b>：${t}`};
-  const w=sur.wealth.majorStars.map(s=>s.name).join('、')||'無主星', c=sur.career.majorStars.map(s=>s.name).join('、')||'無主星', o=sur.opposite.majorStars.map(s=>s.name).join('、')||'無主星';
-  $('soulread').innerHTML=`<h2>🔮 命宮解讀</h2>
-  <p class="p"><b>命宮在${p.earthlyBranch}宮（${p.heavenlyStem}${p.earthlyBranch}）</b>，${A.fiveElementsClass}，起運年齡 ${p.decadal.range[0]} 歲。${borrow?'命宮無主星，借對宮（遷移宮）的星曜來看。':''}</p>
-  ${ms.map(s=>`<p class="p">${txt(s)}</p>`).join('')||'<p class="p">命宮與對宮皆無主星，性格較受輔星煞星與環境影響。</p>'}
-  <div class="explain"><b>命主 ${A.soul}</b>：先天性格底色。<b>身主 ${A.body}</b>：後天發展傾向。<br><b>身宮</b>落在<b>${pname(body.name)}</b>（${body.earthlyBranch}宮）：後天（約 30 歲後）人生重心偏向「${PALMEAN[pkey(body.name)]}」。</div>
-  <h3>三方四正總覽</h3>
-  <p class="p">命宮三方四正的主星：對宮遷移宮 ${o}；財帛宮 ${w}；官祿宮 ${c}。這四個位置合起來，描繪你的整體格局：<b>遷移</b>是外在環境與社會形象，<b>財帛</b>是賺錢能力，<b>官祿</b>是事業舞台。</p>
-  <div class="grid2">${['財帛','官祿','夫妻','福德'].map(n=>{const q=palOf(n), m=q.majorStars.length?q.majorStars:A.surroundedPalaces(q.name).opposite.majorStars, k=(n==='財帛'||n==='官祿')?'w':n==='夫妻'?'l':'t';
-    return `<div class="box"><h3>${n}宮｜${q.majorStars.map(s=>s.name).join('、')||'無主星（借對宮）'}</h3><p style="color:var(--mute)">${PALMEAN[n]}</p><p>${m.map(s=>STAR[s.name][k]).join(' ')||'此宮無主星，彈性較大。'}</p></div>`}).join('')}</div>`;
+  const p=palOf('命宮'), sur=A.surroundedPalaces('命宮'), body=A.palaces.find(x=>x.isBodyPalace), sm=mainFor(p);
+  const line=s=>`<p class="p"><b>${s.name}（${KW[s.name]}${s.brightness?'・'+s.brightness:''}）</b>：${STAR[s.name].t}${bnote(s)}</p>`;
+  $('soulread').innerHTML=`<h2>🔮 命宮：你天生是什麼樣的人</h2>
+  <div class="explain"><b>命宮</b>是整張盤最重要的一格，代表「你本人」：天生的個性、才華，還有一生的基調。</div>
+  <p class="p">你的命宮在 <b>${p.earthlyBranch}</b> 位（${p.heavenlyStem}${p.earthlyBranch}）。${sm.b?'命宮沒有主星，傳統做法是改看對面格的星：':''}</p>
+  ${sm.ms.map(line).join('')||'<p class="p">命宮與對面都沒有主星，個性比較受身邊的人與環境影響，可塑性很高。</p>'}
+  <div class="grid2">
+   <div class="box"><h3>五行局：${A.fiveElementsClass}</h3><p>可以想成你人生的「節奏類型」。數字代表<b>你第一個十年階段從 ${p.decadal.range[0]} 歲開始</b>。</p></div>
+   <div class="box"><h3>命主與身主</h3><p><b>命主 ${A.soul}</b>：先天性格的底色。<br><b>身主 ${A.body}</b>：後天成長的傾向。</p></div>
+   <div class="box"><h3>身宮：${pname(body.name)}｜${dom(body)}</h3><p>身宮代表「後天的人生重心」。你約 30 歲之後，會越來越把重心放在「${dom(body)}」。</p></div>
+   <div class="box"><h3>對面格：${pname(sur.opposite.name)}｜${dom(sur.opposite)}</h3><p>${sur.opposite.majorStars.map(s=>s.name+'（'+KW[s.name]+'）').join('、')||'沒有主星'}。命宮對面的格子，是別人眼中、以及外在環境給你的感覺。</p></div>
+  </div>
+  <h3>四個最受關注的領域</h3>
+  <div class="grid2">${['財帛','官祿','夫妻','福德'].map(n=>{const q=palOf(n), m=mainFor(q), k=(n==='財帛'||n==='官祿')?'w':n==='夫妻'?'l':'t';
+    return `<div class="box"><h3>${PLAINPAL[n]}（${n}宮）｜${m.ms.map(s=>s.name).join('、')||'無主星'}${m.b?'（借對面）':''}</h3><p style="color:var(--mute)">${LIFEQ[n]}</p><p>${m.ms.map(s=>STAR[s.name][k]).join(' ')||'這個領域沒有明顯主導的星，比較自由。'}</p></div>`}).join('')}</div>`;
 }
 
 /* ----- 生年四化 ----- */
 function renderHua(){
-  const items=[]; A.palaces.forEach(p=>[...p.majorStars,...p.minorStars].forEach(s=>{if(s.mutagen)items.push({m:s.mutagen,s:s.name,p})}));
-  const stem=A.chineseDate[0];
-  $('huaread').innerHTML=`<h2>✨ 生年四化（${stem}年）</h2><div class="explain">四化是依「出生年天干」把四顆星貼上標籤，看它們落在哪個宮位，就知道人生的哪個領域特別有這種色彩。</div><div class="sihua">`+
-   HNAME.map(h=>{const it=items.find(x=>x.m===h); if(!it) return ''; return `<div class="shi" style="background:${HCOL[h]}"><b>${it.s}化${h}</b>　落${pname(it.p.name)}<small>${HMEAN[h]}<br>${pname(it.p.name)}：${PALMEAN[pkey(it.p.name)]}</small></div>`}).join('')+`</div>`;
+  const stem=A.chineseDate[0], hl={祿:'你容易遇到好機會，也比較順利',權:'你會想主動掌控、爭取表現',科:'容易得到好口碑與別人的幫助',忌:'比較容易執著、有壓力，是需要多用心的功課（不是壞事，而是提醒）'};
+  $('huaread').innerHTML=`<h2>✨ 你的運氣色彩（${stem}年出生的四化）</h2>
+  <div class="explain">出生年的天干，會讓四顆星各帶一種「運氣色彩」：<b style="color:#16a34a">祿</b>＝機會、<b style="color:#2563eb">權</b>＝主導、<b style="color:#d97706">科</b>＝好名聲、<b style="color:#dc2626">忌</b>＝糾結壓力。哪一格有這個標籤，那個領域就特別有這種色彩。</div>
+  <div class="sihua">`+HNAME.map(h=>{const r=mutagenPlace(h); if(!r) return ''; return `<div class="shi" style="background:${HCOL[h]}"><b>${r.s} 化${h}</b>　落在「${pname(r.p.name)}」<small>${PLAINPAL[pkey(r.p.name)]}領域：${hl[h]}。</small></div>`}).join('')+`</div>`;
 }
 
-/* ----- 運限：大限、小限、流年 ----- */
+/* ----- 運限 ----- */
 function renderHoro(){
   const lunarY=A.rawDates.lunarDate.lunarYear, nowY=new Date().getFullYear();
   if(!A._ry) A._ry=Math.min(Math.max(nowY,lunarY),lunarY+100);
   const ry=A._ry, H=A.horoscope(new Date(ry,5,15));
   const dec=A.palaces[H.decadal.index], yr=A.palaces[H.yearly.index], age=A.palaces[H.age.index];
-  const where=(star)=>{const q=starPalace(star);return q?pname(q.name):'—'};
-  const huaList=(mut)=>mut.map((s,i)=>`<span class="hua ${HNAME[i]}">${HNAME[i]}</span> ${s} → 本命${where(s)}`).join('<br>');
-  const yearlyStars=H.yearly.stars.map((arr,i)=>arr.filter(s=>['流祿','流羊','流陀','流昌','流曲','流魁','流鉞','流馬'].includes(s.name)).map(s=>s.name+'→'+pname(A.palaces[i].name))).flat();
-  const yearsInDec=[]; for(let a=dec.decadal.range[0];a<=dec.decadal.range[1];a++) yearsInDec.push(a);
-  const rows=yearsInDec.map(a=>{const y=lunarY-1+a, h=A.horoscope(new Date(y,5,15)), q=A.palaces[h.yearly.index];
-    return `<tr class="yr ${y===ry?'cur':''}" onclick="setYear(${y})"><td>${y}</td><td>${a} 歲</td><td>${pname(q.name)}（${h.yearly.heavenlyStem}${h.yearly.earthlyBranch}）</td><td>${h.yearly.mutagen.map((s,i)=>`<span class="hua ${HNAME[i]}">${HNAME[i]}</span>${s}`).join(' ')}</td></tr>`}).join('');
-  $('horo').innerHTML=`<h2>⏳ 運限（大限・小限・流年）</h2>
-  <div class="row" style="align-items:end;max-width:420px"><div><label>想看哪一年（西元）</label><input type="number" id="ryear" value="${ry}" min="${lunarY}" max="${lunarY+110}" onchange="setYear(+this.value)"></div>
+  const where=star=>{const q=starPalace(star);return q?q:null};
+  const mutList=mut=>mut.map((s,i)=>{const q=where(s);return q?`<span class="hua ${HNAME[i]}">${HNAME[i]}</span> <b>${s}</b>（${HPLAIN[HNAME[i]]}）落在本命「${pname(q.name)}」＝${dom(q)}`:''}).join('<br>');
+  const tips=mut=>{const f=i=>{const q=where(mut[i]);return q?dom(q):null}, a=f(0), b=f(3);return (a?`🍀 這一年「<b>${a}</b>」方面容易有好機會。`:'')+(b?`<br>⚠️ 這一年「<b>${b}</b>」方面要特別留意、多用心。`:'')};
+  const yearlyStars=H.yearly.stars.map((arr,i)=>arr.filter(s=>['流祿','流羊','流陀','流馬'].includes(s.name)).map(s=>s.name+'→'+dom(A.palaces[i]))).flat();
+  const ages=[]; for(let a=dec.decadal.range[0];a<=dec.decadal.range[1];a++) ages.push(a);
+  const rows=ages.map(a=>{const y=lunarY-1+a, h=A.horoscope(new Date(y,5,15)), q=A.palaces[h.yearly.index], lq=where(h.yearly.mutagen[0]), jq=where(h.yearly.mutagen[3]);
+    return `<tr class="yr ${y===ry?'cur':''}" onclick="setYear(${y})"><td>${y}</td><td>${a} 歲</td><td>${dom(q)}</td><td>${lq?dom(lq):'—'}</td><td>${jq?dom(jq):'—'}</td></tr>`}).join('');
+  $('horo').innerHTML=`<h2>⏳ 人生階段與流年：什麼時候該注意什麼</h2>
+  <div class="explain"><b>大限</b>＝每十年一個階段，那十年生活重心偏向某個領域。<b>流年</b>＝某一年的運勢重點，會標出那一年「機會」和「壓力」落在哪個領域。<b>小限</b>＝一歲一格的小運。</div>
+  <div class="row" style="align-items:end;max-width:440px"><div><label>想看哪一年（西元）</label><input type="number" id="ryear" value="${ry}" min="${lunarY}" max="${lunarY+110}" onchange="setYear(+this.value)"></div>
   <div style="display:flex;gap:8px"><button class="tab" onclick="setYear(${ry-1})">◀ 前一年</button><button class="tab" onclick="setYear(${ry+1})">後一年 ▶</button></div></div>
   <p class="p" style="margin-top:12px">${ry} 年，你虛歲 <b>${H.age.nominalAge}</b> 歲。</p>
   <div class="grid2">
-   <div class="box"><h3>大限（十年運）</h3><p>${dec.decadal.range[0]}–${dec.decadal.range[1]} 歲，走到本命<b>${pname(dec.name)}</b>（${dec.heavenlyStem}${dec.earthlyBranch}）。<br>這十年重心偏向：${PALMEAN[pkey(dec.name)]}。</p>
-    <p style="font-size:13px">大限四化：<br>${huaList(H.decadal.mutagen)}</p></div>
-   <div class="box"><h3>流年（${ry}）</h3><p>流年命宮落在本命<b>${pname(yr.name)}</b>（${H.yearly.heavenlyStem}${H.yearly.earthlyBranch}）。這一年的重心偏向：${PALMEAN[pkey(yr.name)]}。</p>
-    <p style="font-size:13px">流年四化：<br>${huaList(H.yearly.mutagen)}</p>${yearlyStars.length?`<p style="font-size:13px">流年星：${yearlyStars.join('、')}</p>`:''}</div>
-   <div class="box"><h3>小限（${H.age.nominalAge} 歲）</h3><p>小限落在本命<b>${pname(age.name)}</b>（${H.age.heavenlyStem}${H.age.earthlyBranch}），代表這一歲較顯著的生活主題：${PALMEAN[pkey(age.name)]}。</p></div>
+   <div class="box"><h3>📅 這個十年（大限）</h3><p><b>${dec.decadal.range[0]}–${dec.decadal.range[1]} 歲</b>：生活重心偏向「<b>${dom(dec)}</b>」（本命${pname(dec.name)}）。</p><p style="font-size:13px">這十年的運氣色彩：<br>${mutList(H.decadal.mutagen)}</p></div>
+   <div class="box"><h3>🗓 ${ry} 年（流年）</h3><p>這一年的生活重心偏向「<b>${dom(yr)}</b>」（本命${pname(yr.name)}）。</p><p style="font-size:13px">${tips(H.yearly.mutagen)}</p><p style="font-size:13px">運氣色彩：<br>${mutList(H.yearly.mutagen)}</p>${yearlyStars.length?`<p style="font-size:12.5px;color:var(--mute)">當年的流動星：${yearlyStars.join('、')}</p>`:''}</div>
+   <div class="box"><h3>🔸 這一歲（小限）</h3><p>虛歲 ${H.age.nominalAge} 歲的生活小主題偏向「<b>${dom(age)}</b>」（本命${pname(age.name)}）。</p></div>
   </div>
-  <div class="explain"><b>怎麼看四化落宮？</b>流年的「<b style="color:#dc2626">忌</b>」落入哪個宮位，那個領域這一年容易有壓力或需要多留意；「<b style="color:#16a34a">祿</b>」落入的宮位，代表機會與順利；「<b style="color:#2563eb">權</b>」是主動掌控、「<b style="color:#d97706">科</b>」是好口碑與貴人。</div>
-  <h3>這個大限的十年流年一覽（點一列切換年份）</h3>
-  <div style="overflow-x:auto"><table><tr><th>年份</th><th>虛歲</th><th>流年命宮落本命</th><th>流年四化</th></tr>${rows}</table></div>`;
+  <h3>這個十年，每一年的重點（點一列切換年份）</h3>
+  <div style="overflow-x:auto"><table><tr><th>年份</th><th>虛歲</th><th>這年生活重心</th><th>🍀 機會在</th><th>⚠️ 要留意</th></tr>${rows}</table></div>`;
 }
 function setYear(y){ if(!A) return; A._ry=y; renderHoro(); }
 
