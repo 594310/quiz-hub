@@ -44,6 +44,9 @@ input,select,textarea{font:inherit;padding:10px 12px;border:1.5px solid var(--li
 .yin{width:96px;height:12px;display:flex;justify-content:space-between}
 .yin i{width:42px;height:12px;background:#2a2420;border-radius:3px;display:block}
 .mk{width:22px;font-size:15px;color:#c2410c;font-weight:800;text-align:left}
+.mtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.mt{padding:9px 14px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font:inherit;cursor:pointer}
+.mt.on{background:var(--jade);color:#fff;border-color:var(--jade);font-weight:700}
 .hname{font-size:20px;font-weight:800;color:var(--jade)}
 .verdict{border-radius:14px;padding:14px 16px;margin:10px 0;border:2px solid}
 .verdict .big{font-size:26px;font-weight:800}
@@ -83,6 +86,10 @@ input,select,textarea{font:inherit;padding:10px 12px;border:1.5px solid var(--li
   <div class="row">
    <div><label>這件事屬於</label><select id="cat"></select></div>
   </div>
+  <label>選擇起卦方式</label>
+  <div class="mtabs"><button class="mt on" id="m_coin" onclick="setMethod('coin')">🪙 擲錢</button><button class="mt" id="m_time" onclick="setMethod('time')">🕐 梅花易數（時間）</button><button class="mt" id="m_num" onclick="setMethod('num')">🔢 數字起卦</button></div>
+  <div id="pCoin">
+   <div class="explain"><b>擲錢（六爻）</b>：傳統最常用的方式。擲三枚銅錢六次，得到六條爻，其中「老陽、老陰」會變，所以可能有好幾個變爻，資訊最豐富。</div>
   <div class="c">
    <div class="coins" id="coins"></div>
    <div id="linesSoFar" class="lines"></div>
@@ -90,7 +97,22 @@ input,select,textarea{font:inherit;padding:10px 12px;border:1.5px solid var(--li
    <button class="btn ghost" id="tossAll" onclick="tossAllNow()">一次擲完</button>
    <button class="btn ghost" id="resetBtn" onclick="resetToss()">重來</button>
   </div>
-  <div class="info">請專心想著你的問題再擲。同一件事通常只問一次，反覆問到滿意的答案，就失去占卜的意義了。</div>
+  </div>
+  <div id="pTime" class="hidden">
+   <div class="explain"><b>梅花易數（時間起卦）</b>：相傳是宋代邵雍所創。依你<b>發問的那一刻</b>（年、月、日、時）直接算出一個卦和一個變爻，不用擲錢，一鍵就有結果。時間預設是現在，也可以自己改。<br>算法會把所有步驟列給你看，你可以自己驗算。</div>
+   <label>起卦時間</label><input type="datetime-local" id="dt">
+   <div class="c"><button class="btn" onclick="castTime()">🕐 依時間起卦</button></div>
+  </div>
+  <div id="pNum" class="hidden">
+   <div class="explain"><b>數字起卦</b>：心裡專注想著問題，隨意想兩個（或三個）數字。第一個數決定上卦、第二個數決定下卦，第三個數（沒填就用前兩數的和）決定哪一爻變。想不出來可以按「隨機給我」。</div>
+   <div class="row">
+    <div><label>第一個數字（上卦）</label><input type="number" id="n1" min="1" step="1" placeholder="例如 38"></div>
+    <div><label>第二個數字（下卦）</label><input type="number" id="n2" min="1" step="1" placeholder="例如 21"></div>
+    <div><label>第三個數字（動爻，可不填）</label><input type="number" id="n3" min="1" step="1" placeholder="可留空"></div>
+   </div>
+   <div class="c"><button class="btn" onclick="castNum()">🔢 依數字起卦</button><button class="btn ghost" onclick="randNums()">隨機給我</button></div>
+  </div>
+  <div class="info">請專心想著你的問題再起卦。同一件事通常只問一次，反覆問到滿意的答案，就失去占卜的意義了。</div>
  </section>
  <div id="result"></div>
  <section class="card hidden" id="histCard"><h2>📜 我的占卜紀錄（僅存在這台裝置）</h2><div id="hist" class="hist"></div><div class="c"><button class="btn ghost" style="font-size:14px;padding:6px 18px" onclick="clearHist()">清除紀錄</button></div></section>
@@ -248,11 +270,13 @@ function showCoins(t){
 function needQ(){ if(!$('q').value.trim()){ alert('請先寫下你想做的事或想問的問題'); $('q').focus(); return false } return true }
 function tossOne(){
   if(tosses.length>=6||!needQ()) return;
+  NOTE='';
   const t=rand3(); tosses.push(t); showCoins(t); renderSoFar();
   if(tosses.length===6) setTimeout(finish,700);
 }
 function tossAllNow(){
   if(!needQ()) return;
+  NOTE='';
   while(tosses.length<6) tosses.push(rand3());
   showCoins(tosses[5]); renderSoFar(); setTimeout(finish,300);
 }
@@ -291,7 +315,7 @@ function finish(){
    '<div class="c info">○＝老陽（會變）、×＝老陰（會變）。本卦＝現在的狀況；變卦＝事情的走向。</div>'+
    '<div class="verdict '+LVL[score][1]+'"><div class="big">這件事的整體運勢：'+LVL[score][0]+'</div>'+
    '<p>'+trend+'</p><p><b>針對「'+esc(cat)+'」：</b>'+CATADV[cat][grp]+'</p><p><b>行動建議：</b>'+ben[6]+'</p></div>'+
-   '<h3>📜 本卦：'+fullName(ben)+'</h3><div class="gua">'+ben[3]+'</div><p class="p"><b>白話：</b>'+ben[4]+'</p>'+
+   (NOTE?'<div class="explain"><b>起卦依據（可自己驗算）：</b>'+NOTE+'</div>':'')+'<h3>📜 本卦：'+fullName(ben)+'</h3><div class="gua">'+ben[3]+'</div><p class="p"><b>白話：</b>'+ben[4]+'</p>'+
    '<h3>🎯 這一次要特別看哪裡？</h3><div class="box">'+focusRule(ch)+'</div>'+
    (chg?'<h3>➜ 變卦：'+fullName(chg)+'</h3><div class="gua">'+chg[3]+'</div><p class="p"><b>白話：</b>'+chg[4]+'<br><b>意思是：</b>事情之後會朝「'+chg[0]+'」的方向發展。'+chg[6]+'</p>':'')+
    '<div class="explain"><b>說明：</b>這個版本收錄 64 卦的卦辭與白話解釋，用變爻的位置來判斷重點，沒有收錄 384 條爻辭。運勢等級是依各卦傳統象義的吉凶傾向整理，用來幫你整理思緒，不是保證。</div>'+
@@ -432,13 +456,61 @@ async function saveDivCard(){
   await HubKit.download(c,'行前占卜-'+LAST.ben+'.png');
 }
 
+/* ========== 梅花易數與數字起卦 ========== */
+let NOTE='';
+function setMethod(m){ [['coin','pCoin'],['time','pTime'],['num','pNum']].forEach(([k,p])=>{ $(p).classList.toggle('hidden',k!==m); $('m_'+k).classList.toggle('on',k===m) }) }
+const XT={1:'乾',2:'兌',3:'離',4:'震',5:'巽',6:'坎',7:'艮',8:'坤'};   // 先天八卦數
+const bitsOf=tri=>Object.keys(TBITS).find(k=>TBITS[k]===tri).split('').map(Number);
+const m8=n=>{const r=n%8;return r===0?8:r}, m6=n=>{const r=n%6;return r===0?6:r};
+const BR12='子丑寅卯辰巳午未申酉戌亥';
+function castFrom(upN,lowN,dong,note){
+  const yb=[...bitsOf(XT[lowN]),...bitsOf(XT[upN])];
+  tosses=yb.map((y,i)=>({coins:[],v:i===dong-1?(y?9:6):(y?7:8)}));
+  NOTE=note; $('coins').innerHTML=''; renderSoFar(); finish();
+}
+async function loadIztro(){
+  if(window.iztro) return true;
+  return new Promise(r=>{const s=document.createElement('script');s.src='iztro.bundle.js';s.onload=()=>r(true);s.onerror=()=>r(false);document.head.appendChild(s)});
+}
+function lunarFallback(d){
+  const LM={'正月':1,'二月':2,'三月':3,'四月':4,'五月':5,'六月':6,'七月':7,'八月':8,'九月':9,'十月':10,'冬月':11,'臘月':12};
+  const p=new Intl.DateTimeFormat('zh-TW-u-ca-chinese',{year:'numeric',month:'numeric',day:'numeric'}).formatToParts(d), g=k=>(p.find(x=>x.type===k)||{}).value||'';
+  const ms=g('month'); return {y:+g('relatedYear'),m:LM[ms.replace('閏','')],d:+g('day'),leap:ms.startsWith('閏')};
+}
+async function castTime(){
+  if(!needQ()) return;
+  const v=$('dt').value, d=v?new Date(v):new Date(); if(isNaN(d)){alert('時間格式不正確');return}
+  let L; if(await loadIztro()){ const a=iztro.astro.bySolar(d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(),0,'男',true,'zh-TW'), r=a.rawDates.lunarDate; L={y:r.lunarYear,m:r.lunarMonth,d:r.lunarDay,leap:r.isLeap} } else L=lunarFallback(d);
+  if(!L||!L.m){alert('無法換算農曆，請改用其他起卦方式');return}
+  const yb=((L.y-4)%12+12)%12+1, hb=(((d.getHours()+1)%24)>>1)+1, s3=yb+L.m+L.d, s4=s3+hb, up=m8(s3), low=m8(s4), dong=m6(s4);
+  const pad=n=>String(n).padStart(2,'0');
+  castFrom(up,low,dong,'起卦時間 '+d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+pad(d.getHours())+':'+pad(d.getMinutes())+'，換成農曆是 '+L.y+'年'+(L.leap?'閏':'')+L.m+'月'+L.d+'日、'+BR12[hb-1]+'時。<br>'+
+   '年支「'+BR12[yb-1]+'」＝'+yb+'，農曆月＝'+L.m+'，農曆日＝'+L.d+'，時支「'+BR12[hb-1]+'」＝'+hb+'。<br>'+
+   '① 年＋月＋日＝'+s3+'，除以 8 餘 '+up+' → <b>上卦「'+XT[up]+'」</b><br>'+
+   '② 再加時數＝'+s4+'，除以 8 餘 '+low+' → <b>下卦「'+XT[low]+'」</b><br>'+
+   '③ '+s4+' 除以 6 餘 '+dong+' → <b>動爻是第 '+dong+' 爻</b>（餘 0 時取 8 或 6）');
+}
+function castNum(){
+  if(!needQ()) return;
+  const n1=parseInt($('n1').value), n2=parseInt($('n2').value), raw=$('n3').value.trim(), n3=raw===''?null:parseInt(raw);
+  if(!(n1>0)||!(n2>0)){alert('請至少輸入兩個正整數');return}
+  if(n3!==null&&!(n3>0)){alert('第三個數字請輸入正整數，或留空');return}
+  const up=m8(n1), low=m8(n2), dong=n3!==null?m6(n3):m6(n1+n2);
+  castFrom(up,low,dong,'你想的數字：'+n1+'、'+n2+(n3!==null?'、'+n3:'')+'。<br>'+
+   '① 第一個數 '+n1+' 除以 8 餘 '+up+' → <b>上卦「'+XT[up]+'」</b><br>'+
+   '② 第二個數 '+n2+' 除以 8 餘 '+low+' → <b>下卦「'+XT[low]+'」</b><br>'+
+   '③ '+(n3!==null?'第三個數 '+n3:'兩數相加 '+(n1+n2))+' 除以 6 餘 '+dong+' → <b>動爻是第 '+dong+' 爻</b>（餘 0 時取 8 或 6）');
+}
+function randNums(){const r=new Uint32Array(3);crypto.getRandomValues(r);$('n1').value=r[0]%900+100;$('n2').value=r[1]%900+100;$('n3').value=r[2]%900+100}
+function nowLocal(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())}
+
 /* ========== 初始化 ========== */
 (function(){
   const dp=document.getElementById('dirbtns');
   DIRS.forEach((d,i)=>{const b=document.createElement('button');b.textContent=d;b.onclick=()=>setHeading(i*45,true);dp.appendChild(b)});
   const p=ld('hub.fs.profile',null);
   if(p){$('fbirth').value=p.birth;$('fgender').value=p.g;const [y,m,d]=p.birth.split('-').map(Number);const r=mingGua(y,m,d,p.g);PROFILE={y,m,d,g:p.g,tri:r.tri,k:r.k};applyProfile()}
-  drawDial(); setHeading(0,false); renderSoFar(); renderHist();
+  $('dt').value=nowLocal(); drawDial(); setHeading(0,false); renderSoFar(); renderHist();
 })();
 </script>
 </body>
