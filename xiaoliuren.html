@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小六壬・現在適合做嗎？</title>
+<style>
+:root{--ink:#2b2320;--mute:#7b7268;--gold:#c8a24a;--red:#9f1d1d;--card:#fffdf6;--line:#eadfc6}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;color:var(--ink);
+ background:radial-gradient(circle at 20% 0,#5b1a1a 0,#1c0c0c 62%) fixed;min-height:100vh}
+.wrap{max-width:860px;margin:0 auto;padding:22px 14px 60px}
+.card{background:var(--card);border-radius:18px;padding:22px;box-shadow:0 10px 36px rgba(0,0,0,.45);margin-bottom:18px}
+h1{margin:0 0 6px;font-size:28px;color:#fff;text-align:center;letter-spacing:4px}
+.lead{color:#e8cfcf;text-align:center;margin:0 0 16px;line-height:1.7}
+h2{font-size:19px;margin:0 0 12px;padding-left:10px;border-left:5px solid var(--gold)}
+h3{margin:14px 0 6px;font-size:16px;color:var(--red)}
+label{display:block;font-size:14px;color:var(--mute);margin:10px 0 4px}
+input,select,textarea{font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;width:100%}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.btn{display:inline-block;margin:14px 6px 0;background:linear-gradient(135deg,#9f1d1d,#dc2626);color:#fff;border:0;border-radius:12px;padding:12px 30px;font:inherit;font-size:17px;font-weight:700;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--red);border:2px solid var(--red)}
+.c{text-align:center}
+.hidden{display:none}
+.explain{background:#fff8e6;border-left:4px solid var(--gold);padding:8px 12px;border-radius:6px;font-size:13.5px;line-height:1.8;color:#5a4a1a;margin:8px 0}
+.p{line-height:1.9;margin:0 0 10px;font-size:15px}
+.info{font-size:13px;color:var(--mute);line-height:1.7;margin-top:10px}
+.note{font-size:12.5px;color:#e8cfcf;text-align:center;line-height:1.8;margin-top:6px}
+.verdict{border-radius:14px;padding:14px 16px;margin:10px 0;border:2px solid}
+.verdict .big{font-size:26px;font-weight:800}
+.verdict p{margin:6px 0 0;color:var(--ink);font-size:14.5px;line-height:1.8}
+.v5{background:#ecfdf5;border-color:#34d399;color:#065f46}.v4{background:#f0fdf4;border-color:#86efac;color:#166534}
+.v3{background:#fefce8;border-color:#facc15;color:#854d0e}.v2{background:#fff7ed;border-color:#fb923c;color:#9a3412}.v1{background:#fef2f2;border-color:#f87171;color:#991b1b}
+.gong{display:inline-block;font-size:30px;font-weight:800;letter-spacing:3px}
+.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.slot{border-radius:10px;padding:8px 6px;text-align:center;border:2px solid transparent;font-size:13px;line-height:1.5}
+.slot b{display:block;font-size:15px}
+.slot.now{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.2)}
+.s5{background:#d1fae5;color:#065f46}.s4{background:#ecfccb;color:#3f6212}.s3{background:#fef9c3;color:#854d0e}.s2{background:#ffedd5;color:#9a3412}.s1{background:#fee2e2;color:#991b1b}
+.top{display:flex;flex-direction:column;gap:8px}
+.topi{display:flex;gap:10px;align-items:center;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:10px 12px}
+.topi .n{font-size:22px;font-weight:800;color:#15803d;width:30px;text-align:center}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th,.tbl td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.chip{display:inline-block;border-radius:99px;padding:1px 9px;font-size:12.5px;margin:1px 3px 1px 0}
+.six{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
+.six div{border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13.5px;line-height:1.7;background:#fff}
+.six b{font-size:16px}
+.hist{font-size:14px;line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+<p style="margin:0 0 10px"><a href="index.html" style="color:#e8cfcf;text-decoration:none">← 回首頁</a></p>
+<h1>🖐 小六壬・現在適合做嗎？</h1>
+<p class="lead">民間「掐指一算」的那一種<br>寫下想做的事，看現在適不適合，也找出最近比較好的時間</p>
+
+<section class="card">
+ <h2>先寫下想做的事</h2>
+ <div class="explain"><b>怎麼用？</b>① 寫下想做的事。② 選類別（會影響吉凶判斷的重點）。③ 時間預設是「現在」，也可以改成你打算進行的時間。④ 按「起課」。<br>
+ <b>先講清楚小六壬的特性：</b>它只依<b>時間</b>（農曆月、日、時辰）推算，所以同一個時刻、不同人問不同的事，得到的是同一個宮。類別只是用來調整判斷的重點。也因此它特別適合回答「<b>這個時間點</b>適不適合做」和「<b>哪個時間</b>比較好」。</div>
+ <label>想做的事</label>
+ <textarea id="q" rows="2" maxlength="80" placeholder="例如：和客戶談合約、去面試、告白、搬家、投資…"></textarea>
+ <div class="row">
+  <div><label>這件事屬於</label><select id="cat"></select></div>
+  <div><label>想問的時間（預設現在）</label><input type="datetime-local" id="dt"></div>
+ </div>
+ <div class="c"><button class="btn" onclick="run()">🖐 起課</button><button class="btn ghost" onclick="$('dt').value=nowLocal()">改回現在</button></div>
+</section>
+
+<div id="out"></div>
+
+<section class="card hidden" id="histCard"><h2>📜 我的紀錄（僅存在這台裝置）</h2><div id="hist" class="hist"></div><div class="c"><button class="btn ghost" style="font-size:14px;padding:6px 18px" onclick="clearHist()">清除紀錄</button></div></section>
+
+<section class="card">
+ <h2>📚 小六壬是什麼？</h2>
+ <div class="explain">傳統上相傳是諸葛亮所創，用手掌六個位置掐算，所以叫「掐指一算」。只有 6 種結果（六宮），簡單、快速，也最容易自己驗算。</div>
+ <div class="six" id="six"></div>
+ <h3>怎麼算（頁面都會把步驟列出來給你驗算）</h3>
+ <p class="p">① <b>月上起日</b>：從「大安」開始，依序數到<b>農曆月份</b>，停在哪個宮就是「月宮」。<br>
+ ② 從月宮開始算「初一」，依序數到<b>農曆日期</b>，停下的是「日宮」。<br>
+ ③ 從日宮開始算「子時」，依序數到<b>時辰</b>（子時＝1，丑時＝2，…亥時＝12），停下的是「時宮」。<b>時宮就是這一刻的答案</b>，月宮和日宮是過程，也代表這個月、這一天的大背景。<br>
+ 六宮的順序是：大安 → 留連 → 速喜 → 赤口 → 小吉 → 空亡，數完空亡再回到大安。</p>
+</section>
+<p class="note">※ 小六壬是傳統民間的占算方法，沒有科學上可驗證的預測力，結果只作為「選個心安的時間」的參考。請勿用來取代醫療、法律或重大投資的專業判斷。</p>
+</div>
+
+<script src="hubkit.js"></script>
+<script>
+/* 最後防線：殘留的 undefined/NaN/null 一律改成空白 */
+(function(){
+  const TEST=/undefined|NaN|\bnull\b/, ALL=/undefined|NaN|\bnull\b/g;
+  const fixNode=n=>{if(n.nodeValue&&TEST.test(n.nodeValue)) n.nodeValue=n.nodeValue.replace(ALL,'')};
+  const scrub=root=>{ if(root.nodeType===3){fixNode(root);return} const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let n; while((n=w.nextNode())) fixNode(n) };
+  new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(scrub))).observe(document.documentElement,{childList:true,subtree:true});
+  const ft=CanvasRenderingContext2D.prototype.fillText;
+  CanvasRenderingContext2D.prototype.fillText=function(txt,...a){return ft.call(this,String(txt).replace(ALL,''),...a)};
+})();
+const $=id=>document.getElementById(id);
+function ld(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+/* ========== 六宮資料 ========== */
+const GONG=['大安','留連','速喜','赤口','小吉','空亡'];
+const GINFO={
+ 大安:{base:4.8,tag:'吉',mean:'平安穩當、事情順利，適合穩穩地推進。',ico:'🟢'},
+ 留連:{base:2.5,tag:'偏凶',mean:'容易拖延、糾纏、反覆，事情會比較慢，需要耐心。',ico:'🟡'},
+ 速喜:{base:5,tag:'吉',mean:'好消息很快到來、效率高，適合盡快行動、速戰速決。',ico:'🟢'},
+ 赤口:{base:2,tag:'凶',mean:'容易有口舌、爭執與是非，談判、簽約、表態要特別小心。',ico:'🔴'},
+ 小吉:{base:4,tag:'吉',mean:'小有收穫、有貴人相助，順利但規模不大。',ico:'🟢'},
+ 空亡:{base:1,tag:'凶',mean:'容易落空、白忙一場、事與願違，不宜做重要決定。',ico:'🔴'}
+};
+const CATS=['事業工作','財運投資','感情關係','考試學習','出行搬遷','健康身體','簽約交易','其他'];
+const CATFIT={
+ 事業工作:{good:['大安','速喜'],bad:['赤口','空亡'],tip:'事業上宜穩健推進或等好消息；要避開容易起爭執與落空的時段。'},
+ 財運投資:{good:['大安','小吉'],bad:['空亡','赤口'],tip:'財務決定宜穩、宜小額；落空與糾紛的時段不要下重手。'},
+ 感情關係:{good:['速喜','大安','小吉'],bad:['赤口','留連'],tip:'談感情宜挑氣氛好的時段；避開容易口角與糾纏拖延的時段。'},
+ 考試學習:{good:['速喜','大安'],bad:['空亡','留連'],tip:'讀書、考試宜選專注順暢的時段；避開容易分心拖延的時段。'},
+ 出行搬遷:{good:['大安','速喜'],bad:['留連','空亡'],tip:'出行搬家宜選順利的時段；避開容易耽擱與落空的時段。'},
+ 健康身體:{good:['大安','小吉'],bad:['赤口','空亡'],tip:'求診、調養宜選平穩時段；占算不能取代醫師，不舒服請及早就醫。'},
+ 簽約交易:{good:['大安','速喜'],bad:['赤口','空亡','留連'],tip:'簽約、交易最怕爭議與落空，宜選大安、速喜的時段，並細讀條款。'},
+ 其他:{good:['大安','速喜','小吉'],bad:['赤口','空亡'],tip:'選順利的時段進行，避開容易落空與起爭執的時段。'}
+};
+const BR12='子丑寅卯辰巳午未申酉戌亥';
+const RANGE=['23:00–00:59','01:00–02:59','03:00–04:59','05:00–06:59','07:00–08:59','09:00–10:59','11:00–12:59','13:00–14:59','15:00–16:59','17:00–18:59','19:00–20:59','21:00–22:59'];
+const SLOTSTART=[0,1,3,5,7,9,11,13,15,17,19,21];   // 排序用的開始小時（子時以 0 點計）
+const SLOTLEN=[1,2,2,2,2,2,2,2,2,2,2,2];
+const WEEK='日一二三四五六';
+CATS.forEach(c=>$('cat').add(new Option(c,c)));
+$('six').innerHTML=GONG.map((g,i)=>'<div><b>'+GINFO[g].ico+' '+g+'</b>（第 '+(i+1)+' 宮・'+GINFO[g].tag+'）<br>'+GINFO[g].mean+'</div>').join('');
+
+/* ========== 算法 ========== */
+const hourBranch=h=>(((h+1)%24)>>1)+1;                // 子時=1 … 亥時=12（23:00–00:59 為子時）
+function xlr(m,d,hb){ const a=(m-1)%6, b=(a+d-1)%6, c=(b+hb-1)%6; return {a,b,c} }
+function score(g,cat){
+  const name=GONG[g], f=CATFIT[cat]; let s=GINFO[name].base;
+  if(f.good.includes(name)) s+=0.7; if(f.bad.includes(name)) s-=0.7; return s;
+}
+function verdictOf(s){
+  if(s>=4.5) return {txt:'非常適合',cls:'v5',lv:5};
+  if(s>=3.5) return {txt:'適合',cls:'v4',lv:4};
+  if(s>=2.5) return {txt:'可以，但要留意',cls:'v3',lv:3};
+  if(s>=1.5) return {txt:'不太適合',cls:'v2',lv:2};
+  return {txt:'建議暫緩',cls:'v1',lv:1};
+}
+const slotCls=s=>s>=4.5?'s5':s>=3.5?'s4':s>=2.5?'s3':s>=1.5?'s2':'s1';
+const slotLabel=s=>s>=4.5?'很順':s>=3.5?'順':s>=2.5?'普通':s>=1.5?'要小心':'不宜';
+
+/* ========== 農曆換算（優先用 iztro 曆表）========== */
+async function loadIztro(){
+  if(window.iztro) return true;
+  return new Promise(r=>{const s=document.createElement('script');s.src='iztro.bundle.js';s.onload=()=>r(true);s.onerror=()=>r(false);document.head.appendChild(s)});
+}
+function lunarFallback(d){
+  const LM={'正月':1,'二月':2,'三月':3,'四月':4,'五月':5,'六月':6,'七月':7,'八月':8,'九月':9,'十月':10,'冬月':11,'臘月':12};
+  const p=new Intl.DateTimeFormat('zh-TW-u-ca-chinese',{year:'numeric',month:'numeric',day:'numeric'}).formatToParts(d), g=k=>(p.find(x=>x.type===k)||{}).value||'';
+  const ms=g('month'); return {y:+g('relatedYear'),m:LM[ms.replace('閏','')],d:+g('day'),leap:ms.startsWith('閏')};
+}
+let HAS=null;
+async function lunarOf(d){
+  if(HAS===null) HAS=await loadIztro();
+  if(HAS){ const a=iztro.astro.bySolar(d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(),0,'男',true,'zh-TW'), r=a.rawDates.lunarDate; return {y:r.lunarYear,m:r.lunarMonth,d:r.lunarDay,leap:r.isLeap} }
+  return lunarFallback(d);
+}
+function nowLocal(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())}
+const pad=n=>String(n).padStart(2,'0');
+const dstr=d=>(d.getMonth()+1)+'/'+d.getDate()+'（'+WEEK[d.getDay()]+'）';
+
+/* ========== 起課 ========== */
+let LAST=null;
+async function run(){
+  const q=$('q').value.trim(); if(!q){alert('請先寫下想做的事');$('q').focus();return}
+  const cat=$('cat').value, v=$('dt').value, T=v?new Date(v):new Date(); if(isNaN(T)){alert('時間格式不正確');return}
+  $('out').innerHTML='<section class="card c">起課中…</section>';
+  const days=[];
+  for(let i=0;i<7;i++){
+    const d=new Date(T.getFullYear(),T.getMonth(),T.getDate()+i,12), L=await lunarOf(d);
+    if(!L||!L.m){alert('無法換算農曆，請稍後再試');return}
+    const slots=[]; for(let h=1;h<=12;h++){ const r=xlr(L.m,L.d,h); slots.push({hb:h,g:r.c,s:score(r.c,cat)}) }
+    const base=xlr(L.m,L.d,1);
+    days.push({date:d,L,a:base.a,b:base.b,slots});
+  }
+  const hb=hourBranch(T.getHours()), d0=days[0], cur=d0.slots[hb-1], cs=cur.s, vd=verdictOf(cs);
+  LAST={t:T.getTime(),q,cat,gong:GONG[cur.g],score:cs,label:vd.txt};
+  const hist=ld('hub.xlr.history',[]); hist.unshift(LAST); sv('hub.xlr.history',hist.slice(0,20));
+  render(days,T,cat,q,hb,cur,vd); renderHist();
+}
+function slotWhen(day,slot){ // 該時段的開始時間（排序用）與結束
+  const st=new Date(day.date.getFullYear(),day.date.getMonth(),day.date.getDate(),SLOTSTART[slot.hb-1],0,0), en=new Date(st.getTime()+SLOTLEN[slot.hb-1]*3600*1000);
+  return {st,en};
+}
+function render(days,T,cat,q,hb,cur,vd){
+  const d0=days[0], L=d0.L, f=CATFIT[cat], gname=GONG[cur.g], gi=GINFO[gname];
+  const fitNote=f.good.includes(gname)?'這個宮對「'+cat+'」特別有利。':f.bad.includes(gname)?'這個宮對「'+cat+'」不太有利，要多留意。':'這個宮對「'+cat+'」沒有特別加分或扣分。';
+  let h='<section class="card"><h2>🖐 現在適合嗎？</h2>'+
+   '<div class="p" style="color:var(--mute)">問題：<b style="color:var(--ink)">'+esc(q)+'</b>（'+esc(cat)+'）<br>起課時間：'+T.getFullYear()+'/'+(T.getMonth()+1)+'/'+T.getDate()+' '+pad(T.getHours())+':'+pad(T.getMinutes())+'（'+BR12[hb-1]+'時 '+RANGE[hb-1]+'）</div>'+
+   '<div class="verdict '+vd.cls+'"><div style="font-size:15px">這個時刻的結果</div><div class="gong">'+gi.ico+' '+gname+'</div><div class="big">'+vd.txt+'</div>'+
+   '<p><b>'+gname+'的意思：</b>'+gi.mean+'</p><p><b>針對「'+esc(cat)+'」：</b>'+fitNote+f.tip+'</p></div>'+
+   '<div class="explain"><b>起課過程（可自己驗算）：</b>農曆 '+L.y+'年'+(L.leap?'閏':'')+L.m+'月'+L.d+'日、'+BR12[hb-1]+'時。<br>'+
+   '① 月上起日：從「大安」數到農曆 '+L.m+' 月 → <b>月宮「'+GONG[d0.a]+'」</b><br>'+
+   '② 從月宮數到農曆 '+L.d+' 日 → <b>日宮「'+GONG[d0.b]+'」</b>（今天的大背景：'+GINFO[GONG[d0.b]].tag+'）<br>'+
+   '③ 從日宮數到第 '+hb+' 個時辰（'+BR12[hb-1]+'時）→ <b>時宮「'+gname+'」</b>＝這一刻的答案</div></section>';
+  // 今天的 12 個時辰
+  h+='<section class="card"><h2>🕐 '+dstr(d0.date)+' 的 12 個時辰</h2><div class="explain">顏色越綠越順、越紅越要小心。藍色框是你起課的那個時辰。</div><div class="slots">'+
+   d0.slots.map(s=>'<div class="slot '+slotCls(s.s)+(s.hb===hb?' now':'')+'"><b>'+BR12[s.hb-1]+'時</b>'+RANGE[s.hb-1]+'<br>'+GONG[s.g]+'・'+slotLabel(s.s)+(s.hb===hb?'<br>👈 現在':'')+'</div>').join('')+'</div>';
+  const todayGood=d0.slots.filter(s=>s.s>=3.5), todayBad=d0.slots.filter(s=>s.s<2.5);
+  h+='<p class="p" style="margin-top:12px">'+(todayGood.length?'✅ <b>今天比較好的時段：</b>'+todayGood.map(s=>BR12[s.hb-1]+'時（'+RANGE[s.hb-1]+'）').join('、'):'今天沒有特別順的時段，若不急，建議改天。')+
+   '<br>'+(todayBad.length?'⚠️ <b>今天要避開的時段：</b>'+todayBad.map(s=>BR12[s.hb-1]+'時（'+RANGE[s.hb-1]+'）').join('、'):'今天沒有特別要避開的時段。')+'</p></section>';
+  // 最近的好時機
+  const fut=[]; days.forEach(dy=>dy.slots.forEach(s=>{const w=slotWhen(dy,s); if(w.en>T) fut.push({dy,s,st:w.st})}));
+  const best=fut.filter(x=>x.s.s>=3.5).sort((a,b)=>b.s.s-a.s.s||a.st-b.st).slice(0,3);
+  h+='<section class="card"><h2>⏰ 什麼時候做比較好？</h2>'+
+   (best.length?'<div class="explain">從你起課的時間算起，未來 7 天裡，最適合做「'+esc(cat)+'」的前三個時段：</div><div class="top">'+best.map((x,i)=>'<div class="topi"><div class="n">'+(i+1)+'</div><div><b>'+dstr(x.dy.date)+' '+BR12[x.s.hb-1]+'時 '+RANGE[x.s.hb-1]+'</b><br>'+GONG[x.s.g]+'：'+GINFO[GONG[x.s.g]].mean+'</div></div>').join('')+'</div>':'<div class="explain">未來 7 天沒有特別順的時段。若這件事不急，建議放慢；急的話，就選相對平穩的時段並多做準備。</div>')+
+   '<h3>📅 未來 7 天總覽</h3><div style="overflow-x:auto"><table class="tbl"><tr><th>日期</th><th>農曆</th><th>今天整體（日宮）</th><th>最好的時段</th><th>要避開</th></tr>'+
+   days.map(dy=>{const bs=dy.slots.filter(s=>s.s>=3.5).sort((a,b)=>b.s-a.s||a.hb-b.hb).slice(0,2), bad=dy.slots.filter(s=>s.s<2.5);
+     return '<tr><td><b>'+dstr(dy.date)+'</b></td><td>'+dy.L.m+'月'+dy.L.d+'日</td><td>'+GINFO[GONG[dy.b]].ico+' '+GONG[dy.b]+'</td><td>'+(bs.length?bs.map(s=>'<span class="chip '+slotCls(s.s)+'">'+BR12[s.hb-1]+'時 '+RANGE[s.hb-1]+'</span>').join(''):'—')+'</td><td>'+(bad.length?bad.map(s=>BR12[s.hb-1]).join('、')+'時':'—')+'</td></tr>'}).join('')+
+   '</table></div><div class="info">「時段」判斷是把同一套小六壬算法，套用在每一天的 12 個時辰上；並依你選的類別調整吉凶重點。23:00–00:59 為子時，這裡以當天 00:00 起算排序。</div>'+
+   '<div class="c"><button class="btn" onclick="saveCard()">🖼 儲存結果圖片</button></div></section>';
+  $('out').innerHTML=h; $('out').scrollIntoView({behavior:'smooth'});
+  window.__best=best; window.__days=days;
+}
+function renderHist(){
+  const h=ld('hub.xlr.history',[]); $('histCard').classList.toggle('hidden',!h.length);
+  $('hist').innerHTML=h.map(x=>'<div>'+new Date(x.t).toLocaleString('zh-TW',{hour12:false,month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})+'｜<b>'+esc(x.cat)+'</b>｜'+esc(x.q)+' → '+esc(x.gong)+'（'+esc(x.label)+'）</div>').join('');
+}
+function clearHist(){if(confirm('清除全部紀錄？')){sv('hub.xlr.history',[]);renderHist()}}
+
+/* ========== 結果圖片 ========== */
+async function saveCard(){
+  if(!LAST) return; const F=HubKit.FONT, W=900, H=1180, c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,W,H); g.addColorStop(0,'#5b1a1a'); g.addColorStop(1,'#1c0c0c'); x.fillStyle=g; x.fillRect(0,0,W,H);
+  HubKit.rr(x,40,40,W-80,H-80,32); x.fillStyle='#fffdf6'; x.fill();
+  x.textAlign='center'; x.fillStyle='#9f1d1d'; x.font='bold 40px '+F; x.fillText('小六壬・現在適合做嗎？',W/2,120);
+  x.fillStyle='#7b7268'; x.font='24px '+F; x.fillText(new Date(LAST.t).toLocaleString('zh-TW',{hour12:false})+'　'+LAST.cat,W/2,165);
+  x.fillStyle='#2b2320'; x.font='bold 30px '+F; const q=LAST.q.length>22?LAST.q.slice(0,22)+'…':LAST.q; x.fillText('「'+q+'」',W/2,230);
+  x.fillStyle='#9f1d1d'; x.font='bold 110px '+F; x.fillText(LAST.gong,W/2,390);
+  x.fillStyle='#2b2320'; x.font='bold 56px '+F; x.fillText(LAST.label,W/2,480);
+  x.fillStyle='#7b7268'; x.font='26px '+F; x.fillText(GINFO[LAST.gong].mean,W/2,545);
+  x.fillStyle='#9f1d1d'; x.font='bold 34px '+F; x.fillText('最近比較好的時間',W/2,640);
+  const best=window.__best||[]; x.fillStyle='#2b2320'; x.font='28px '+F;
+  if(best.length) best.forEach((b,i)=>x.fillText((i+1)+'. '+dstr(b.dy.date)+' '+BR12[b.s.hb-1]+'時 '+RANGE[b.s.hb-1]+'（'+GONG[b.s.g]+'）',W/2,700+i*56)); else x.fillText('未來 7 天沒有特別順的時段',W/2,700);
+  x.fillStyle='#9a9387'; x.font='20px '+F; x.fillText('此圖片內含備份資料，可到首頁「匯入」還原　小六壬僅供參考',W/2,H-80);
+  await HubKit.download(c,'小六壬-'+LAST.gong+'.png');
+}
+$('dt').value=nowLocal(); renderHist();
+</script>
+</body>
+</html>

@@ -54,6 +54,13 @@ a.tool:hover{transform:translateY(-4px)}
       <div class="last" id="lastDiv">尚無紀錄</div>
       <span class="go">開始占卜 →</span>
     </a>
+    <a class="tool" href="xiaoliuren.html">
+      <div class="ico">🖐</div>
+      <h2>小六壬・現在適合做嗎？</h2>
+      <p>民間「掐指一算」的那一種。寫下想做的事，告訴你現在適不適合，並找出今天各時辰與未來 7 天裡最好的時間。</p>
+      <div class="last" id="lastXlr">尚無紀錄</div>
+      <span class="go">起課 →</span>
+    </a>
   </div>
 
   <div class="data">
@@ -81,6 +88,8 @@ function show(){
   const p=ld('hub.ziwei.profiles',[]);
   const dv=ld('hub.divine.history',[]), LV={5:'大吉',4:'吉',3:'平',2:'需謹慎',1:'暫緩為宜'};
   document.getElementById('lastDiv').innerHTML=dv.length?'上次占卜：「'+esc(dv[0].q.slice(0,14))+(dv[0].q.length>14?'…':'')+'」→ <b>'+esc(dv[0].ben)+'</b>（'+(LV[dv[0].score]||'')+'）・共 '+dv.length+' 筆':'尚無紀錄';
+  const xl=ld('hub.xlr.history',[]);
+  document.getElementById('lastXlr').innerHTML=xl.length?'上次起課：「'+esc(xl[0].q.slice(0,14))+(xl[0].q.length>14?'…':'')+'」→ <b>'+esc(xl[0].gong)+'</b>（'+esc(xl[0].label)+'）・共 '+xl.length+' 筆':'尚無紀錄';
   document.getElementById('lastZw').innerHTML=p.length?'已儲存 '+p.length+' 個命盤：'+p.slice(0,3).map(x=>esc(x.label)).join('、')+(p.length>3?'…':''):'尚無紀錄';
 }
 function keys(){const a=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('hub.'))a.push(k)}}catch(e){}return a}
