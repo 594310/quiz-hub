@@ -70,11 +70,27 @@ p.desc{line-height:1.9;margin:0}
 .gitem b{display:block;font-size:15px}
 .legend{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;font-size:13px;color:var(--mute)}
 .legend b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
+
+.back{display:inline-block;padding:10px 6px}
+button,select,input,textarea{-webkit-tap-highlight-color:transparent}
+@media(max-width:640px){
+ .wrap{padding:12px 10px 76px}
+ .card{padding:14px;border-radius:14px}
+ h1{font-size:23px;letter-spacing:2px}
+ h2{font-size:17px}
+ .lead{font-size:14px}
+ .btn{width:100%;margin:10px 0 0;padding:14px 18px;min-height:50px}
+ .tab,.mt,.dirbtns button{min-height:44px}
+ input,select,textarea{padding:12px;min-height:46px}
+ .explain{font-size:14px}
+}
+.link{padding:12px 10px;font-size:16px;min-height:44px}
+.opt{padding:16px}
 </style>
 </head>
 <body>
 <div class="wrap">
-<p style="margin:0 0 10px"><a href="index.html" style="color:#6c4cf1;text-decoration:none">← 回首頁</a></p>
+<p style="margin:0 0 10px"><a class="back" href="index.html" style="color:#6c4cf1;text-decoration:none">← 回首頁</a></p>
 
 <!-- 開始 -->
 <section id="start" class="card">

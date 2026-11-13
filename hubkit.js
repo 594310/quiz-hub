@@ -55,9 +55,29 @@
     return n;
   }
 
+
+  // 語音輸入（使用瀏覽器內建的語音辨識；不支援時會提示）
+  function voice(targetId,btnId,statusId){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    const btn=document.getElementById(btnId), ta=document.getElementById(targetId), st=document.getElementById(statusId);
+    if(!btn||!ta) return;
+    const IDLE='🎤 語音輸入';
+    if(!SR){ btn.onclick=()=>{ if(st) st.textContent='這個瀏覽器不支援語音輸入。可以改用手機鍵盤上的麥克風按鈕，或換用 Chrome、Safari。' }; return }
+    let rec=null,on=false,base='',err='';
+    btn.onclick=()=>{
+      if(on){ try{rec.stop()}catch(e){} return }
+      rec=new SR(); rec.lang='zh-TW'; rec.interimResults=true; rec.continuous=false; rec.maxAlternatives=1; err='';
+      base=ta.value?ta.value.replace(/\s+$/,'')+' ':'';
+      rec.onstart=()=>{on=true;btn.classList.add('rec');btn.textContent='⏹ 停止（聆聽中…）';if(st)st.textContent='請開始說話…'};
+      rec.onresult=e=>{let txt='';for(let i=0;i<e.results.length;i++)txt+=e.results[i][0].transcript;const max=ta.maxLength>0?ta.maxLength:1000;ta.value=(base+txt).slice(0,max);ta.dispatchEvent(new Event('input',{bubbles:true}))};
+      rec.onerror=e=>{err=e.error==='not-allowed'||e.error==='service-not-allowed'?'沒有麥克風權限，請在瀏覽器網址列允許使用麥克風。':e.error==='no-speech'?'沒有聽到聲音，請再按一次再說話。':e.error==='network'?'語音辨識需要網路連線。':e.error==='aborted'?'':'語音輸入失敗（'+e.error+'），可以改用鍵盤輸入。';if(st)st.textContent=err};
+      rec.onend=()=>{on=false;btn.classList.remove('rec');btn.textContent=IDLE;if(st&&!err)st.textContent=ta.value?'已輸入，可以再按一次補充，或直接修改文字。':''};
+      try{rec.start()}catch(e){if(st)st.textContent='無法啟動語音輸入，請稍後再試。'}
+    };
+  }
   // 畫圖小工具
   function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
   function svgToImg(svg){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)})}
   const FONT='"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif';
-  window.HubKit={download,importFile,rr,svgToImg,FONT,allData};
+  window.HubKit={download,importFile,rr,svgToImg,FONT,allData,voice};
 })();

@@ -105,11 +105,58 @@ details p{margin:8px 0 4px;line-height:1.85;font-size:14px}
 .sumitem p{margin:4px 0 0;line-height:1.8;font-size:14px}
 .note{font-size:12.5px;color:#cfc7ee;text-align:center;line-height:1.8;margin-top:6px}
 .note a{color:#e6e0ff}
+
+.back{display:inline-block;padding:10px 6px}
+button,select,input,textarea{-webkit-tap-highlight-color:transparent}
+@media(max-width:640px){
+ .wrap{padding:12px 10px 76px}
+ .card{padding:14px;border-radius:14px}
+ h1{font-size:23px;letter-spacing:2px}
+ h2{font-size:17px}
+ .lead{font-size:14px}
+ .btn{width:100%;margin:10px 0 0;padding:14px 18px;min-height:50px}
+ .tab,.mt,.dirbtns button{min-height:44px}
+ input,select,textarea{padding:12px;min-height:46px}
+ .explain{font-size:14px}
+}
+
+.mcnt{display:none;font-size:12px}
+#jump{position:fixed;left:0;right:0;bottom:0;z-index:50;display:none;background:rgba(23,18,48,.96);padding:6px 6px calc(6px + env(safe-area-inset-bottom));gap:6px;justify-content:center}
+#jump button{flex:1;max-width:120px;min-height:42px;border:1.5px solid #6b5bd1;background:transparent;color:#fff;border-radius:10px;font:inherit;font-size:14px;cursor:pointer}
+#jump button:active{background:#5b3fd1}
+@media(max-width:700px){
+ .chart{min-width:0;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(104px,auto);gap:2px;border-width:2px}
+ .cell{min-width:0;overflow:hidden}
+ .rl{display:none}
+ .cell{padding:5px 4px 20px;font-size:12px}
+ .pname{font-size:13px;line-height:1.3}
+ .pname .plain,.pname .badge.ly{display:none}
+ .badge{font-size:12px;padding:0 3px}
+ .cell .rt{font-size:12px;letter-spacing:0;white-space:nowrap}
+ .st{margin-right:3px}
+ .st.m{font-size:14px}
+ .cell .kwline,.cell .adj,.cell .twelve,.cell .minorrow,.cell .dx{display:none}
+ .mcnt{display:block}
+ .hua{font-size:12px}
+ sup.br{font-size:12px}
+ .pgz{font-size:12px}
+ .center{padding:6px;font-size:12px;gap:2px}
+ .center h3{font-size:14px;margin-bottom:2px}
+ .center div:nth-of-type(1),.center div:nth-of-type(2),.center div:nth-of-type(4),.center div:nth-of-type(5){display:none}
+ .opts{display:none}
+ .guide div{font-size:13.5px}
+}
+.yrcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.yrcard{border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:#fff;cursor:pointer}
+.yrcard.cur{background:#f3edff;border-color:#8b72ff}
+.yh{display:flex;gap:10px;align-items:baseline}.yh b{font-size:17px}.yh span{color:var(--mute);font-size:13.5px}
+.yl{font-size:14px;line-height:1.8}
+small{font-size:12px}
 </style>
 </head>
 <body>
 <div class="wrap">
-<p style="margin:0 0 10px"><a href="index.html" style="color:#cfc7ee;text-decoration:none">← 回首頁</a></p>
+<p style="margin:0 0 10px"><a class="back" href="index.html" style="color:#cfc7ee;text-decoration:none">← 回首頁</a></p>
   <h1>🌌 紫微斗數命盤・精準版</h1>
   <p class="lead">輸入出生資料，會得到一份看得懂的白話命盤解讀<br>個性、事業、財運、感情、健康、目前的人生階段，一次看完</p>
 
@@ -145,6 +192,7 @@ details p{margin:8px 0 4px;line-height:1.85;font-size:14px}
 
   <section class="card hidden" id="savedcard"><h2>💾 已儲存的命盤（僅存在這台裝置）</h2><div id="saved"></div></section>
   <div id="out"></div>
+  <nav id="jump"><button onclick="jumpTo('overview')">📊 一覽</button><button onclick="jumpTo('summary')">🌟 白話</button><button onclick="jumpTo('chartcard')">🪐 命盤</button><button onclick="jumpTo('detail')">🔎 詳解</button><button onclick="jumpTo('horo')">⏳ 運限</button></nav>
   <p class="note">※ 排盤引擎：<a href="https://github.com/SylarLong/iztro" target="_blank" rel="noopener">iztro</a>（MIT 授權開源庫，三合派常見排法，含廟旺利陷與雜曜）。解讀文字為通則性簡述，僅供文化參考與娛樂，不是命運定論。</p>
 </div>
 
@@ -259,11 +307,13 @@ function cellHTML(p){
   const mj=p.majorStars.map(s=>`<span class="st m">${s.name}${brTag(s.brightness)}${huaTag(s.mutagen)}</span>`).join('')||'<span class="st b" style="font-size:12px">（無主星）</span>';
   const mn=p.minorStars.map(s=>`<span class="st ${minorCls(s)}">${s.name}${brTag(s.brightness)}${huaTag(s.mutagen)}</span>`).join('');
   const rt=rate(p);
+  const gN=p.minorStars.filter(s=>GOODM.includes(s.name)).length, bN=p.minorStars.filter(s=>BADM.includes(s.name)).length;
+  const mcnt=(gN?'<span style="color:#15803d">吉'+gN+'</span> ':'')+(bN?'<span style="color:#475569">煞'+bN+'</span>':'');
   const kwl=SHOW_KW&&p.majorStars.length?`<div class="kwline">${p.majorStars.map(s=>KW[s.name]).join('・')}</div>`:'';
   const adj=SHOW_ADJ&&p.adjectiveStars.length?`<div class="adj">${p.adjectiveStars.map(s=>`<span>${s.name}</span>`).join('')}</div>`:'';
   const tw=SHOW_12?`<div class="twelve">${p.changsheng12}・${p.boshi12}・${p.jiangqian12}・${p.suiqian12}</div>`:'';
   return `<div class="cell ${p.name==='命宮'?'ming':''} ${pkey(p.name)===pkey(SEL)?'sel':''}" data-n="${pkey(p.name)}" style="grid-area:${r}/${c}">
-    <div class="pname">${dom(p)}<span class="plain">${pname(p.name)}</span>${badges}</div><div class="rt ${rt.cls}">${starsTxt(rt)} ${rt.label}</div><div>${mj}</div>${kwl}<div>${mn}</div>${adj}${tw}
+    <div class="pname">${dom(p)}<span class="plain">${pname(p.name)}</span>${badges}</div><div class="rt ${rt.cls}">${starsTxt(rt)}<span class="rl"> ${rt.label}</span></div><div>${mj}</div>${kwl}<div class="minorrow">${mn}</div><div class="mcnt">${mcnt}</div>${adj}${tw}
     <div class="dx">大限 ${p.decadal.range[0]}–${p.decadal.range[1]}</div><div class="pgz">${p.heavenlyStem}${p.earthlyBranch}</div></div>`;
 }
 const AREA={5:[1,1],6:[1,2],7:[1,3],8:[1,4],4:[2,1],9:[2,4],3:[3,1],10:[3,4],2:[4,1],1:[4,2],0:[4,3],11:[4,4]};
@@ -285,7 +335,7 @@ function render(){
   $('out').innerHTML=`
   <section class="card" id="overview"></section>
   <section class="card" id="summary"></section>
-  <section class="card"><h2>🪐 完整命盤</h2>
+  <section class="card" id="chartcard"><h2>🪐 完整命盤</h2>
     <div class="opts"><label><input type="checkbox" id="oKw" ${SHOW_KW?'checked':''}>顯示星的白話關鍵字</label><label><input type="checkbox" id="oAdj" ${SHOW_ADJ?'checked':''}>顯示雜曜</label><label><input type="checkbox" id="o12" ${SHOW_12?'checked':''}>顯示十二神（長生・博士・將前・歲前）</label></div>
     <div class="chartwrap"><div class="chart" id="chart"></div></div>
     <div class="guide">
@@ -304,7 +354,7 @@ function render(){
   <section class="card" id="huaread"></section>
   <section class="card" id="horo"></section>
   <section class="card"><h2>📚 名詞白話說明</h2>${GLOSSARY.map(g=>`<details><summary>${g[0]}</summary><p>${g[1]}</p></details>`).join('')}</section>`;
-  renderOverview(); renderSummary(); drawChart(); renderDetail(); renderSoul(); renderHua(); renderHoro();
+  renderOverview(); renderSummary(); drawChart(); renderDetail(); renderSoul(); document.getElementById('jump').style.display='flex'; document.body.style.paddingBottom='62px'; renderHua(); renderHoro();
   $('chart').onclick=e=>{const c=e.target.closest('.cell[data-n]');if(c){SEL=c.dataset.n;drawChart();renderDetail();$('detail').scrollIntoView({behavior:'smooth',block:'nearest'})}};
   $('oAdj').onchange=e=>{SHOW_ADJ=e.target.checked;drawChart()};
   $('oKw').onchange=e=>{SHOW_KW=e.target.checked;drawChart()};
@@ -334,6 +384,7 @@ function rate(p){
 const ICON={命宮:'🧭',官祿:'💼',財帛:'💰',夫妻:'❤️',福德:'🌿',遷移:'🚀',僕役:'🤝',疾厄:'🩺',田宅:'🏠',父母:'👪',兄弟:'👫',子女:'🧒'};
 const ORDER=['命宮','官祿','財帛','夫妻','福德','遷移','僕役','疾厄','田宅','父母','兄弟','子女'];
 const starsTxt=r=>'★'.repeat(r.stars)+'☆'.repeat(5-r.stars);
+function jumpTo(id){const e=document.getElementById(id); if(e) e.scrollIntoView({behavior:'smooth',block:'start'})}
 function pickPal(n){SEL=n;drawChart();renderDetail();$('detail').scrollIntoView({behavior:'smooth',block:'start'})}
 function ratingBox(p){
   const r=rate(p);
@@ -399,6 +450,7 @@ function renderDetail(){
   const key=(nm==='財帛'||nm==='官祿')?'w':nm==='夫妻'?'l':'t';
   const sur=A.surroundedPalaces(p.name), {ms,b}=mainFor(p);
   let h=`<h2>🔎 ${pname(p.name)}｜${dom(p)}</h2>
+  <div style="margin-bottom:6px"><button class="tab" style="flex:none;padding:8px 16px" onclick="jumpTo('chartcard')">↑ 回命盤</button></div>
   <div class="explain"><b>這一格在看什麼？</b>${LIFEQ[nm]}<br>（${PALMEAN[nm]}）<br>👆 想看別格，直接點上方命盤的其他格子。</div>
   ${ratingBox(p)}
   <p class="p">走到這一格的大限是 <b>${p.decadal.range[0]}–${p.decadal.range[1]} 歲</b>：那十年，生活重心會偏向這個領域。</p>`;
@@ -455,7 +507,7 @@ function renderHoro(){
   const yearlyStars=H.yearly.stars.map((arr,i)=>arr.filter(s=>['流祿','流羊','流陀','流馬'].includes(s.name)).map(s=>s.name+'→'+dom(A.palaces[i]))).flat();
   const ages=[]; for(let a=dec.decadal.range[0];a<=dec.decadal.range[1];a++) ages.push(a);
   const rows=ages.map(a=>{const y=lunarY-1+a, h=A.horoscope(new Date(y,5,15)), q=A.palaces[h.yearly.index], lq=where(h.yearly.mutagen[0]), jq=where(h.yearly.mutagen[3]);
-    return `<tr class="yr ${y===ry?'cur':''}" onclick="setYear(${y})"><td>${y}</td><td>${a} 歲</td><td>${dom(q)}</td><td>${lq?dom(lq):'—'}</td><td>${jq?dom(jq):'—'}</td></tr>`}).join('');
+    return `<div class="yrcard ${y===ry?'cur':''}" onclick="setYear(${y})"><div class="yh"><b>${y}</b><span>${a} 歲${y===ry?'（目前選的年份）':''}</span></div><div class="yl">🎯 重心：${dom(q)}</div><div class="yl">🍀 機會：${lq?dom(lq):'—'}</div><div class="yl">⚠️ 要留意：${jq?dom(jq):'—'}</div></div>`}).join('');
   $('horo').innerHTML=`<h2>⏳ 人生階段與流年：什麼時候該注意什麼</h2>
   <div class="explain"><b>大限</b>＝每十年一個階段，那十年生活重心偏向某個領域。<b>流年</b>＝某一年的運勢重點，會標出那一年「機會」和「壓力」落在哪個領域。<b>小限</b>＝一歲一格的小運。</div>
   <div class="row" style="align-items:end;max-width:440px"><div><label>想看哪一年（西元）</label><input type="number" id="ryear" value="${ry}" min="${lunarY}" max="${lunarY+110}" onchange="setYear(+this.value)"></div>
@@ -467,7 +519,7 @@ function renderHoro(){
    <div class="box"><h3>🔸 這一歲（小限）</h3><p>虛歲 ${H.age.nominalAge} 歲的生活小主題偏向「<b>${dom(age)}</b>」（本命${pname(age.name)}）。</p></div>
   </div>
   <h3>這個十年，每一年的重點（點一列切換年份）</h3>
-  <div style="overflow-x:auto"><table><tr><th>年份</th><th>虛歲</th><th>這年生活重心</th><th>🍀 機會在</th><th>⚠️ 要留意</th></tr>${rows}</table></div>`;
+  <div class="yrcards">${rows}</div>`;
 }
 function setYear(y){ if(!A) return; A._ry=y; renderHoro(); }
 

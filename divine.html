@@ -66,11 +66,41 @@ input,select,textarea{font:inherit;padding:10px 12px;border:1.5px solid var(--li
 .good{color:#047857;font-weight:700}.bad{color:#b91c1c;font-weight:700}
 .dirbtns{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
 .dirbtns button{padding:6px 12px;border:1.5px solid var(--line);background:#fff;border-radius:8px;font:inherit;cursor:pointer}
+
+.back{display:inline-block;padding:10px 6px}
+button,select,input,textarea{-webkit-tap-highlight-color:transparent}
+@media(max-width:640px){
+ .wrap{padding:12px 10px 76px}
+ .card{padding:14px;border-radius:14px}
+ h1{font-size:23px;letter-spacing:2px}
+ h2{font-size:17px}
+ .lead{font-size:14px}
+ .btn{width:100%;margin:10px 0 0;padding:14px 18px;min-height:50px}
+ .tab,.mt,.dirbtns button{min-height:44px}
+ input,select,textarea{padding:12px;min-height:46px}
+ .explain{font-size:14px}
+}
+
+.dircards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:10px}
+.dircard{border-radius:12px;padding:9px 12px;border:1.5px solid}
+.dircard.g{background:#ecfdf5;border-color:#a7f3d0}.dircard.b{background:#fef2f2;border-color:#fecaca}
+.dircard .dh{display:flex;gap:10px;align-items:baseline}.dircard .dh b{font-size:17px}
+.dircard p{margin:4px 0 0;font-size:14px;line-height:1.7}
+.dirbtns button{min-width:56px}
+@media(max-width:640px){.mtabs .mt{flex:1 1 100%}.coin{width:52px;height:52px}.hexbox{gap:14px}}
+.voicebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
+.vbtn{padding:10px 18px;min-height:44px;border:2px solid var(--jade,var(--red));border-radius:12px;background:#fff;color:var(--jade,var(--red));font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.vbtn.rec{background:#dc2626;color:#fff;border-color:#dc2626;animation:vp 1.2s infinite}
+@keyframes vp{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}50%{box-shadow:0 0 0 8px rgba(220,38,38,0)}}
+.vst{font-size:13.5px;color:var(--mute)}
+@media(max-width:640px){.vbtn{flex:1 1 100%}}
+details.explain summary{cursor:pointer;font-size:15px;padding:4px 0}
+details.explain[open] summary{margin-bottom:6px}
 </style>
 </head>
 <body>
 <div class="wrap">
-<p style="margin:0 0 10px"><a href="index.html" style="color:#b8d8d3;text-decoration:none">← 回首頁</a></p>
+<p style="margin:0 0 10px"><a class="back" href="index.html" style="color:#b8d8d3;text-decoration:none">← 回首頁</a></p>
 <h1>☯ 行前占卜與風水羅盤</h1>
 <p class="lead">做一件事之前，先問一卦、看看方位<br>用易經六十四卦整理思緒，用八宅風水找出你的吉方</p>
 
@@ -80,9 +110,11 @@ input,select,textarea{font:inherit;padding:10px 12px;border:1.5px solid var(--li
 <div id="paneDiv">
  <section class="card" id="askCard">
   <h2>先想清楚你要問什麼</h2>
-  <div class="explain"><b>怎麼用？</b>① 寫下你想做的事（越具體越好，例如「下週要不要和客戶簽約」）。② 選類別。③ 按「擲錢」六次，每次擲三枚銅錢，擲完會得到一個卦。④ 看這件事的運勢與行動建議。<br><b>小提醒：</b>易經本來就是「提問＋自我反思」的工具。卦辭是象徵性的話，請當作整理思緒、提醒自己的參考，不是預言。</div>
+  <details class="explain"><summary><b>怎麼用？（點開看說明）</b></summary>① 寫下你想做的事（越具體越好，例如「下週要不要和客戶簽約」）。② 選類別。③ 按「擲錢」六次，每次擲三枚銅錢，擲完會得到一個卦。④ 看這件事的運勢與行動建議。<br><b>小提醒：</b>易經本來就是「提問＋自我反思」的工具。卦辭是象徵性的話，請當作整理思緒、提醒自己的參考，不是預言。</details>
   <label>想做的事 / 想問的問題</label>
   <textarea id="q" rows="2" maxlength="80" placeholder="例如：下週五要不要去面試這家公司？"></textarea>
+  <div class="voicebar"><button type="button" class="vbtn" id="vbtn">🎤 語音輸入</button><span class="vst" id="vst"></span></div>
+ <div class="info" style="margin-top:4px">語音由瀏覽器的語音辨識處理（Chrome 會把錄音傳到 Google，Safari 傳到 Apple），本站不會收到或儲存錄音。</div>
   <div class="row">
    <div><label>這件事屬於</label><select id="cat"></select></div>
   </div>
@@ -375,7 +407,7 @@ function applyProfile(){
   const P=PROFILE; MAP=bazhai(P.tri);
   const east=EAST.includes(P.tri);
   $('guaOut').innerHTML='<div class="verdict v4" style="margin-top:14px"><div class="big">你的命卦：'+P.tri+'命（'+P.k+'）・'+(east?'東四命':'西四命')+'</div><p>'+(east?'吉方多在北、東、東南、南。':'吉方多在西南、西、西北、東北。')+'（以立春為界，實際使用年份：'+(P.m<2||(P.m===2&&P.d<4)?P.y-1:P.y)+'）</p></div>'+
-   '<table class="tbl"><tr><th>方位</th><th>名稱</th><th>吉凶</th><th>怎麼用</th></tr>'+DIRS.map((d,i)=>{const n=MAP[i],g=GOODN.includes(n);return '<tr><td><b>'+d+'</b></td><td>'+n+'</td><td class="'+(g?'good':'bad')+'">'+DESC[n][0]+'</td><td>'+DESC[n][1]+'</td></tr>'}).join('')+'</table>'+
+   '<div class="dircards">'+DIRS.map((d,i)=>[d,i]).sort((x,y)=>(GOODN.includes(MAP[y[1]])?1:0)-(GOODN.includes(MAP[x[1]])?1:0)||x[1]-y[1]).map(([d,i])=>{const n=MAP[i],g=GOODN.includes(n);return '<div class="dircard '+(g?'g':'b')+'"><div class="dh"><b>'+d+'</b><span>'+n+'</span><span class="'+(g?'good':'bad')+'">'+DESC[n][0]+'</span></div><p>'+DESC[n][1]+'</p></div>'}).join('')+'</div>'+
    '<div class="info">這是「八宅風水」，只依出生年與性別推算，不考慮房子的實際格局與流年飛星，屬於入門級的方位參考。</div>';
 }
 function dirHint(cat){
@@ -513,5 +545,6 @@ function nowLocal(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.g
   $('dt').value=nowLocal(); drawDial(); setHeading(0,false); renderSoFar(); renderHist();
 })();
 </script>
+<script>HubKit.voice('q','vbtn','vst')</script>
 </body>
 </html>
