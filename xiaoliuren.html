@@ -82,6 +82,25 @@ button,select,input,textarea{-webkit-tap-highlight-color:transparent}
 @media(max-width:640px){.vbtn{flex:1 1 100%}}
 details.explain summary{cursor:pointer;font-size:15px;padding:4px 0}
 details.explain[open] summary{margin-bottom:6px}
+.handwrap{max-width:340px;margin:6px auto}
+#handSvg{width:100%;height:auto;display:block}
+.mk circle{fill:#fff;stroke:#9f1d1d;stroke-width:2.5;transition:all .2s}
+.mk text{font-size:13px;font-weight:800;fill:#2b2320;pointer-events:none}
+.mk.mA circle{stroke:#2563eb;stroke-width:5;fill:#dbeafe}
+.mk.mB circle{stroke:#16a34a;stroke-width:5;fill:#dcfce7}
+.mk.mC circle{stroke:#dc2626;stroke-width:5;fill:#fee2e2}
+.mk.fin circle{r:24;fill:#fde68a;stroke:#b91c1c;stroke-width:5}
+#ptr{transition:transform .2s ease}
+.pulse{animation:pls 1s infinite}
+@keyframes pls{0%{r:27;opacity:.9}100%{r:40;opacity:0}}
+.animcap{text-align:center;min-height:52px;font-size:15px;line-height:1.8;margin:6px 0}
+.stepchips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:4px}
+.sc{border-radius:99px;padding:4px 14px;font-size:14px;font-weight:700;color:#fff}
+.sc.mA{background:#2563eb}.sc.mB{background:#16a34a}.sc.mC{background:#dc2626}
+.hide{display:none!important}
+.resWrap.show{animation:rfade .5s ease}
+@keyframes rfade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pulse,.resWrap.show{animation:none}#ptr{transition:none}}
 </style>
 </head>
 <body>
@@ -258,8 +277,10 @@ function render(days,T,cat,q,hb,cur,vd){
        '<div class="dcl">⚠️ 避開：'+(bad.length?bad.map(s=>BR12[s.hb-1]).join('、')+'時':'沒有特別要避開的')+'</div></div>'}).join('')+
    '</div><div class="info">「時段」判斷是把同一套小六壬算法，套用在每一天的 12 個時辰上；並依你選的類別調整吉凶重點。23:00–00:59 為子時，這裡以當天 00:00 起算排序。</div>'+
    '<div class="c"><button class="btn" onclick="saveCard()">🖼 儲存結果圖片</button></div></section>';
-  $('out').innerHTML=h; $('out').scrollIntoView({behavior:'smooth'});
+  $('out').innerHTML=handCard()+'<div id="resWrap" class="resWrap hide">'+h+'</div>';
   window.__best=best; window.__days=days;
+  $('out').scrollIntoView({behavior:'smooth'});
+  playHand(d0.L.m,d0.L.d,hb);
 }
 function renderHist(){
   const h=ld('hub.xlr.history',[]); $('histCard').classList.toggle('hidden',!h.length);
@@ -284,6 +305,53 @@ async function saveCard(){
   x.fillStyle='#9a9387'; x.font='20px '+F; x.fillText('此圖片內含備份資料，可到首頁「匯入」還原　小六壬僅供參考',W/2,H-80);
   await HubKit.download(c,'小六壬-'+LAST.gong+'.png');
 }
+/* ========== 掐指動畫 ========== */
+const PTS=[[95,138],[135,138],[175,138],[205,205],[150,238],[95,205]];   // 大安 留連 速喜 赤口 小吉 空亡 在手掌上的位置
+function handSVG(){
+  let s='<svg id="handSvg" viewBox="0 0 300 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="掐指示意圖">';
+  s+='<g fill="#f6cfa6" stroke="#c9945f" stroke-width="3"><rect x="70" y="118" width="160" height="150" rx="42"/>';
+  [[78,40,34,100],[118,22,34,118],[158,32,34,108],[198,58,30,82]].forEach(a=>s+='<rect x="'+a[0]+'" y="'+a[1]+'" width="'+a[2]+'" height="'+a[3]+'" rx="17"/>');
+  s+='<ellipse cx="62" cy="190" rx="20" ry="46" transform="rotate(-30 62 190)"/></g>';
+  s+='<path d="M95 138 L175 138 L205 205 L150 238 L95 205 Z" fill="none" stroke="#b45309" stroke-width="2" stroke-dasharray="5 5" opacity=".65"/>';
+  PTS.forEach((p,i)=>s+='<g id="mk'+i+'" class="mk"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="20"/><text x="'+p[0]+'" y="'+(p[1]+5)+'" text-anchor="middle">'+GONG[i]+'</text></g>');
+  s+='<g id="ptr" style="transform:translate('+PTS[0][0]+'px,'+PTS[0][1]+'px)"><circle r="27" fill="none" stroke="#dc2626" stroke-width="4"/><circle r="27" fill="none" stroke="#dc2626" stroke-width="3" class="pulse"/><g id="bub" transform="translate(0,-36)"><rect x="-16" y="-15" width="32" height="25" rx="12" fill="#dc2626"/><text id="cnt" text-anchor="middle" y="3" fill="#fff" font-weight="800" font-size="16">1</text></g></g></svg>';
+  return s;
+}
+function handCard(){
+  return '<section class="card" id="animCard"><h2>🖐 掐指一算</h2><div class="explain">六個位置排成一圈，紅點像指尖，依序數過去。數完<b>月、日、時</b>三個階段，停下的位置就是答案。（位置排列只是示意，各家擺法略有不同，重點是「依序數」。）</div><div class="handwrap">'+handSVG()+'</div><div class="animcap" id="animCap">準備掐指…</div><div class="stepchips" id="stepChips"></div><div class="c"><button class="btn ghost" id="skipBtn" onclick="skipAnim()">⏩ 跳過動畫</button><button class="btn ghost hide" id="replayBtn" onclick="replayAnim()">🔁 再看一次</button></div></section>';
+}
+const ANIM={tok:0,skip:false,args:null};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function setPtr(pos,n){const p=document.getElementById('ptr'); if(!p) return; p.style.transform='translate('+PTS[pos][0]+'px,'+PTS[pos][1]+'px)'; document.getElementById('cnt').textContent=n; const b=document.getElementById('bub'); if(b) b.setAttribute('transform','translate(0,'+(pos<3?-36:38)+')')}
+async function playHand(m,d,hb){
+  const tok=++ANIM.tok; ANIM.skip=false; ANIM.args=[m,d,hb];
+  const reduce=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const r=xlr(m,d,hb), gap=n=>n>14?100:n>7?230:420;
+  const stages=[['月',m,0,'數農曆 '+m+' 月（從「大安」開始數 1）','mA'],['日',d,r.a,'數農曆 '+d+' 日（從月宮開始數 1）','mB'],['時',hb,r.b,'數第 '+hb+' 個時辰＝'+BR12[hb-1]+'時（從日宮開始數 1）','mC']];
+  document.querySelectorAll('#handSvg .mk').forEach(e=>e.setAttribute('class','mk'));
+  $('stepChips').innerHTML=''; $('replayBtn').classList.add('hide'); $('skipBtn').classList.remove('hide');
+  for(let s=0;s<3;s++){
+    const [nm,cnt,st,txt,cls]=stages[s];
+    $('animCap').innerHTML='<b>'+(s+1)+'. '+txt+'</b>';
+    if(!reduce) for(let n=1;n<=cnt;n++){
+      if(tok!==ANIM.tok) return; if(ANIM.skip) break;
+      const pos=(st+n-1)%6; setPtr(pos,n);
+      $('animCap').innerHTML='<b>'+(s+1)+'. '+txt+'</b><br>數到 <b>'+n+'</b> ／ '+cnt+'　（'+GONG[pos]+'）';
+      await sleep(gap(cnt));
+    }
+    if(tok!==ANIM.tok) return;
+    const end=(st+cnt-1)%6; setPtr(end,cnt); $('mk'+end).classList.add(cls);
+    $('stepChips').insertAdjacentHTML('beforeend','<span class="sc '+cls+'">'+nm+'宮：'+GONG[end]+'</span>');
+    if(!reduce&&!ANIM.skip) await sleep(850);
+  }
+  if(tok!==ANIM.tok) return;
+  $('mk'+r.c).classList.add('fin');
+  $('animCap').innerHTML='<b>時宮「'+GONG[r.c]+'」＝這一刻的答案</b>';
+  $('skipBtn').classList.add('hide'); $('replayBtn').classList.remove('hide');
+  const w=$('resWrap'); if(w&&w.classList.contains('hide')){ w.classList.remove('hide'); w.classList.add('show'); w.scrollIntoView({behavior:'smooth',block:'start'}) }
+}
+function skipAnim(){ANIM.skip=true}
+function replayAnim(){ if(ANIM.args) playHand(...ANIM.args) }
 $('dt').value=nowLocal(); renderHist();
 </script>
 <script>HubKit.voice('q','vbtn','vst')</script>
