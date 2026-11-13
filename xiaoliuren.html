@@ -228,7 +228,7 @@ const dstr=d=>(d.getMonth()+1)+'/'+d.getDate()+'（'+WEEK[d.getDay()]+'）';
 /* ========== 起課 ========== */
 let LAST=null;
 async function run(){
-  const q=$('q').value.trim()||'這件事';
+  const q=$('q').value.trim()||'這件事'; sv('hub.ask',{q:$('q').value.trim(),cat:$('cat').value});
   const cat=$('cat').value, v=$('dt').value, T=v?new Date(v):new Date(); if(isNaN(T)){alert('時間格式不正確');return}
   $('out').innerHTML='<section class="card c">起課中…</section>';
   const days=[];
@@ -352,6 +352,7 @@ async function playHand(m,d,hb){
 }
 function skipAnim(){ANIM.skip=true}
 function replayAnim(){ if(ANIM.args) playHand(...ANIM.args) }
+{const ak=ld('hub.ask',null); if(ak){ if(ak.q) $('q').value=ak.q; if(ak.cat&&CATS.includes(ak.cat)) setCat(ak.cat)}}
 $('dt').value=nowLocal(); renderHist();
 </script>
 <script>HubKit.voice('q','vbtn','vst')</script>

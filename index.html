@@ -47,6 +47,7 @@ button,select,input,textarea{-webkit-tap-highlight-color:transparent}
   <h1>🔮 性格與命理小測驗</h1>
   <p class="lead">選一個開始吧，全部免費，結果只有你自己看得到</p>
 
+  <div class="card" id="profCard" style="background:#fffdf8;border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:0 10px 30px rgba(0,0,0,.35)"></div>
   <div class="grid">
     <a class="tool" href="mbti.html">
       <div class="ico">🧠🐾</div>
@@ -76,10 +77,17 @@ button,select,input,textarea{-webkit-tap-highlight-color:transparent}
       <div class="last" id="lastXlr">尚無紀錄</div>
       <span class="go">起課 →</span>
     </a>
+    <a class="tool" href="fortune.html">
+      <div class="ico">🌙</div>
+      <h2>我的運勢：星座・生肖・紫微・易經</h2>
+      <p>四個系統一起看今天、這個月、今年的運勢，還有今天 12 個時辰的時段運勢，告訴你什麼時候做重要的事比較順。</p>
+      <div class="last" id="lastFortune">請先填寫上方「我的資料」</div>
+      <span class="go">看運勢 →</span>
+    </a>
   </div>
 
   <div class="data">
-    <h3>💾 我的資料</h3>
+    <h3>💾 資料備份與清除</h3>
     這個網站沒有伺服器、也沒有帳號，<b>你的測驗結果與命盤只會存在你這台裝置的瀏覽器裡</b>（localStorage），不會上傳給任何人，作者也看不到。<br>
     換手機、換瀏覽器、無痕模式或清除瀏覽器資料後，紀錄就不見了。想帶著走，可以「匯出備份圖片」，到另一台再用同一張圖片「匯入」。<br>
     備份圖片是一張好看的結果圖，資料藏在圖片裡；各測驗結果頁的「儲存圖片」按鈕存出的圖也可以拿來匯入。傳送時請用<b>「原圖／檔案」</b>方式，被 LINE 等 App 壓縮過的圖片會讀不到資料。
@@ -134,7 +142,18 @@ async function importData(inp){
   inp.value='';
 }
 function clearAll(){if(confirm('確定清除這台裝置上的全部測驗紀錄？無法復原。')){keys().forEach(k=>localStorage.removeItem(k));show()}}
-show();
+function renderProfile(){
+  const P=HubKit.profile.get(), box=document.getElementById('profCard');
+  const lf=document.getElementById('lastFortune'); if(lf) lf.innerHTML=P?'已有你的資料：<b>'+esc(P.name||'我')+'</b>，點進去直接看':'請先填寫上方「我的資料」';
+  if(P){ box.innerHTML='<div style="display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap"><div><b style="font-size:17px;color:#2a2140">👤 '+esc(P.name||'我')+'</b><div style="font-size:13px;color:#6b6880;margin-top:2px">'+esc(HubKit.profile.label(P))+'</div></div><button class="b" style="color:#5b3fd1;border-color:#5b3fd1" onclick="editProfile()">修改我的資料</button></div><div style="font-size:12.5px;color:#7a7090;margin-top:8px">這份資料只存在你這台裝置，紫微、風水、運勢等頁面都會自動帶入，不用重複輸入。</div>' }
+  else editProfile();
+}
+function editProfile(){
+  const box=document.getElementById('profCard');
+  box.innerHTML='<h3 style="margin:0 0 6px;color:#2a2140;font-size:18px">👤 我的資料（填一次，所有頁面通用）</h3><div style="font-size:13px;color:#6b6880;line-height:1.7;margin-bottom:8px">占卜與命盤需要的資料只要在這裡輸入一次：生日與時辰用在紫微、生肖、星座、風水；只存在你這台裝置，不會上傳。</div><div id="pfBox"></div>';
+  HubKit.profileForm('pfBox',()=>{show();renderProfile()});
+}
+show(); renderProfile();
 </script>
 </body>
 </html>

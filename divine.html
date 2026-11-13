@@ -332,7 +332,7 @@ let LAST=null;
 function finish(){
   const yang=tosses.map(t=>yangOf(t.v)), ch=tosses.map((t,i)=>(t.v===6||t.v===9)?i:-1).filter(i=>i>=0);
   const ben=hexFrom(yang), chg=ch.length?hexFrom(yang.map((y,i)=>ch.includes(i)?!y:y)):null;
-  const cat=$('cat').value, q=$('q').value.trim();
+  const cat=$('cat').value, q=$('q').value.trim(); sv('hub.ask',{q,cat});
   const base=ben[5], to=chg?chg[5]:base;
   const score=chg?Math.round(base*0.55+to*0.45):base;
   const trend=!chg?'卦象穩定，沒有明顯的轉變。':(to-base>=1?'走勢是<b>先難後易、漸入佳境</b>。':(to-base<=-1?'走勢是<b>先順後阻、後段要小心</b>。':'走勢<b>前後差不多</b>，維持原本節奏即可。'));
@@ -540,8 +540,9 @@ function nowLocal(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.g
 (function(){
   const dp=document.getElementById('dirbtns');
   DIRS.forEach((d,i)=>{const b=document.createElement('button');b.textContent=d;b.onclick=()=>setHeading(i*45,true);dp.appendChild(b)});
-  const p=ld('hub.fs.profile',null);
+  const hp=HubKit.profile.get(); const p=hp?{birth:hp.birth,g:hp.gender}:ld('hub.fs.profile',null);
   if(p){$('fbirth').value=p.birth;$('fgender').value=p.g;const [y,m,d]=p.birth.split('-').map(Number);const r=mingGua(y,m,d,p.g);PROFILE={y,m,d,g:p.g,tri:r.tri,k:r.k};applyProfile()}
+  {const ak=ld('hub.ask',null); if(ak){$('q').value=ak.q||''; if(ak.cat&&CATS.includes(ak.cat)) $('cat').value=ak.cat}}
   $('dt').value=nowLocal(); drawDial(); setHeading(0,false); renderSoFar(); renderHist();
 })();
 </script>

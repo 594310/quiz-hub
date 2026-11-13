@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的運勢：星座・生肖・紫微・易經</title>
+<style>
+:root{--ink:#241f3a;--mute:#756f8c;--gold:#d4a73c;--pur:#6d4cf0;--card:#fffdf8;--line:#e8e1cf}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;color:var(--ink);
+ background:radial-gradient(circle at 20% 0,#2d2468 0,#0f0b24 62%) fixed;min-height:100vh}
+.wrap{max-width:900px;margin:0 auto;padding:22px 14px 76px}
+.card{background:var(--card);border-radius:18px;padding:22px;box-shadow:0 10px 36px rgba(0,0,0,.45);margin-bottom:16px}
+h1{margin:0 0 6px;font-size:28px;color:#fff;text-align:center;letter-spacing:3px}
+.lead{color:#cfc8f0;text-align:center;margin:0 0 16px;line-height:1.7}
+h2{font-size:19px;margin:0 0 10px;padding-left:10px;border-left:5px solid var(--gold)}
+h3{margin:12px 0 6px;font-size:16px;color:var(--pur)}
+label{display:block;font-size:14px;color:var(--mute);margin:10px 0 4px}
+input,select{font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;width:100%}
+.back{display:inline-block;padding:10px 6px;color:#cfc8f0;text-decoration:none}
+.btn{display:inline-block;margin:12px 6px 0;background:linear-gradient(135deg,#6d4cf0,#8b5cf6);color:#fff;border:0;border-radius:12px;padding:12px 28px;font:inherit;font-size:17px;font-weight:700;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--pur);border:2px solid var(--pur)}
+.c{text-align:center}
+.hidden{display:none!important}
+.explain{background:#fff8e6;border-left:4px solid var(--gold);padding:8px 12px;border-radius:6px;font-size:13.5px;line-height:1.8;color:#5a4a1a;margin:8px 0}
+.p{line-height:1.9;margin:0 0 8px;font-size:15px}
+.info{font-size:13px;color:var(--mute);line-height:1.7;margin-top:8px}
+.note{font-size:12.5px;color:#cfc8f0;text-align:center;line-height:1.8;margin-top:6px}
+.pfgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.pfsave{margin-top:12px;background:linear-gradient(135deg,#6d4cf0,#8b5cf6);color:#fff;border:0;border-radius:12px;padding:12px 26px;font:inherit;font-size:16px;font-weight:700;cursor:pointer}
+.pfmsg{font-size:13.5px;color:#15803d;margin-top:8px;min-height:20px}
+.who{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.who b{font-size:17px}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tab{flex:1;padding:12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font:inherit;font-size:16px;cursor:pointer}
+.tab.on{background:var(--pur);color:#fff;border-color:var(--pur);font-weight:700}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;align-items:end}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
+.chip4{border-radius:12px;padding:10px 12px;color:#fff;font-size:14px;line-height:1.6}
+.chip4 b{display:block;font-size:15px}
+.k1{background:#6d4cf0}.k2{background:#0ea5a4}.k3{background:#d97706}.k4{background:#be185d}
+.sys{border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;background:#fff}
+.sys h2{margin:0 0 6px}
+.tag{display:inline-block;background:#ece8ff;color:var(--pur);border-radius:99px;padding:2px 12px;font-size:13.5px;margin:2px 4px 2px 0}
+.tag.g{background:#dcfce7;color:#15803d}.tag.r{background:#fee2e2;color:#b91c1c}.tag.y{background:#fef9c3;color:#854d0e}
+ul.pts{margin:6px 0 0;padding-left:20px;line-height:1.9;font-size:14.5px}
+.verdict{border-radius:12px;padding:10px 14px;margin:8px 0;border:2px solid}
+.v5{background:#ecfdf5;border-color:#34d399;color:#065f46}.v4{background:#f0fdf4;border-color:#86efac;color:#166534}
+.v3{background:#fefce8;border-color:#facc15;color:#854d0e}.v2{background:#fff7ed;border-color:#fb923c;color:#9a3412}.v1{background:#fef2f2;border-color:#f87171;color:#991b1b}
+.verdict .big{font-size:20px;font-weight:800}
+.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px}
+.slot{border-radius:10px;padding:8px 6px;text-align:center;border:2px solid transparent;font-size:13px;line-height:1.55}
+.slot b{display:block;font-size:15px}
+.slot.now{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.2)}
+.s5{background:#d1fae5;color:#065f46}.s4{background:#ecfccb;color:#3f6212}.s3{background:#fef9c3;color:#854d0e}.s2{background:#ffedd5;color:#9a3412}.s1{background:#fee2e2;color:#991b1b}
+.top{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.topi{display:flex;gap:10px;align-items:center;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.6}
+.topi .n{font-size:22px;font-weight:800;color:#15803d;width:28px;text-align:center}
+.moon{font-size:34px}
+details{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff;margin-top:10px}
+summary{cursor:pointer;font-weight:700;color:var(--pur)}
+details p{margin:8px 0 4px;line-height:1.85;font-size:14px}
+@media(max-width:640px){
+ .wrap{padding:12px 10px 76px}.card{padding:14px;border-radius:14px}h1{font-size:23px}h2{font-size:17px}
+ .btn,.pfsave{width:100%;margin:10px 0 0;min-height:50px}
+ .tab{min-height:46px}input,select{padding:12px;min-height:46px}
+ .slots{grid-template-columns:repeat(2,1fr)}
+}
+small{font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="index.html">← 回首頁</a>
+<h1>🌙 我的運勢</h1>
+<p class="lead">星座・生肖・紫微・易經，四個系統一起看<br>今天、這個月、今年，還有今天每個時辰的時段運勢</p>
+
+<section class="card" id="profCard"></section>
+
+<section class="card hidden" id="ctlCard">
+ <div class="tabs"><button class="tab on" id="t_day" onclick="setScope('day')">今天</button><button class="tab" id="t_month" onclick="setScope('month')">這個月</button><button class="tab" id="t_year" onclick="setScope('year')">今年</button></div>
+ <div class="row"><div><label>想看哪一天（預設今天）</label><input type="date" id="tdate"></div><div><button class="btn" style="margin:0;width:100%" onclick="show()">🔮 看運勢</button></div></div>
+</section>
+
+<div id="out"></div>
+<p class="note">※ 星座、生肖、紫微、易經都是傳統文化與占星的參考工具，沒有科學上可驗證的預測力。請當作「整理思緒、提醒自己」的參考，不要用來取代醫療、法律或重大投資的專業判斷。</p>
+</div>
+
+<script src="iztro.bundle.js"></script>
+<script src="astro.bundle.js"></script>
+<script src="hubkit.js"></script>
+<script src="iching.js"></script>
+<script>
+/* 最後防線：殘留的 undefined/NaN/null 一律改成空白 */
+(function(){
+  const TEST=/undefined|NaN|\bnull\b/, ALL=/undefined|NaN|\bnull\b/g;
+  const fixNode=n=>{if(n.nodeValue&&TEST.test(n.nodeValue)) n.nodeValue=n.nodeValue.replace(ALL,'')};
+  const scrub=root=>{ if(root.nodeType===3){fixNode(root);return} const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let n; while((n=w.nextNode())) fixNode(n) };
+  new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(scrub))).observe(document.documentElement,{childList:true,subtree:true});
+})();
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const WEEK='日一二三四五六';
+const BRN='子丑寅卯辰巳午未申酉戌亥';
+const RANGE=['23:00–00:59','01:00–02:59','03:00–04:59','05:00–06:59','07:00–08:59','09:00–10:59','11:00–12:59','13:00–14:59','15:00–16:59','17:00–18:59','19:00–20:59','21:00–22:59'];
+const SLOTSTART=[0,1,3,5,7,9,11,13,15,17,19,21];
+
+/* ================= 天文（低精度公式，足夠判斷星座）================= */
+const rad=Math.PI/180, nrm=x=>((x%360)+360)%360;
+const jdOf=d=>d.getTime()/86400000+2440587.5;
+function sunLon(d){
+  const T=(jdOf(d)-2451545)/36525, L0=280.46646+36000.76983*T, M=(357.52911+35999.05029*T)*rad;
+  const C=(1.914602-0.004817*T)*Math.sin(M)+0.019993*Math.sin(2*M)+0.000289*Math.sin(3*M);
+  return nrm(L0+C-0.00569-0.00478*Math.sin((125.04-1934.136*T)*rad));
+}
+// 月亮黃經（Meeus 第 47 章，取主要項，誤差約 0.1 度）
+const MT=[[0,0,1,0,6288774],[2,0,-1,0,1274027],[2,0,0,0,658314],[0,0,2,0,213618],[0,1,0,0,-185116],[0,0,0,2,-114332],[2,0,-2,0,58793],[2,-1,-1,0,57066],[2,0,1,0,53322],[2,-1,0,0,45758],[0,1,-1,0,-40923],[1,0,0,0,-34720],[0,1,1,0,-30383],[2,0,0,-2,15327],[0,0,1,2,-12528],[0,0,1,-2,10980],[4,0,-1,0,10675],[0,0,3,0,10034],[4,0,-2,0,8548],[2,1,-1,0,-7888],[2,1,0,0,-6766],[1,0,-1,0,-5163],[1,1,0,0,4987],[2,-1,1,0,4036],[2,0,2,0,3994],[4,0,0,0,3861],[2,0,-3,0,3665],[0,1,-2,0,-2689],[2,0,-1,2,-2602],[2,-1,-2,0,2390],[1,0,1,0,-2348],[2,-2,0,0,2236],[0,1,2,0,-2120],[0,2,0,0,-2069],[2,-2,-1,0,2048]];
+function moonLon(d){
+  const T=(jdOf(d)-2451545)/36525;
+  const Lp=218.3164477+481267.88123421*T, D=(297.8501921+445267.1114034*T)*rad, M=(357.5291092+35999.0502909*T)*rad, Mp=(134.9633964+477198.8675055*T)*rad, F=(93.272095+483202.0175233*T)*rad;
+  const E=1-0.002516*T-0.0000074*T*T; let s=0;
+  MT.forEach(([d1,m1,mp1,f1,c])=>{ const e=Math.abs(m1)===1?E:Math.abs(m1)===2?E*E:1; s+=c*e*Math.sin(d1*D+m1*M+mp1*Mp+f1*F) });
+  const A1=(119.75+131.849*T)*rad, A2=(53.09+479264.29*T)*rad;
+  s+=3958*Math.sin(A1)+1962*Math.sin(Lp*rad-F)+318*Math.sin(A2);
+  return nrm(Lp+s/1e6);
+}
+/* ----- 行星位置（astronomy-engine，MIT 授權）----- */
+const planetLon=(body,d)=>Astronomy.Ecliptic(Astronomy.GeoVector(body,d,true)).elon;
+const fmtMD=d=>(d.getMonth()+1)+'/'+d.getDate();
+const DAY=86400000;
+// 慢速行星（木星、土星）：每 4 天取樣，星座有變化時再逐日找出換座日
+function segments(body,start,end){
+  const n=Math.round((end-start)/DAY), at=i=>new Date(start.getTime()+i*DAY), signAt=i=>Math.floor(planetLon(body,at(i))/30);
+  let lastI=0,lastS=signAt(0),cur={sign:lastS,from:at(0),to:at(0)}; const out=[cur];
+  for(let i=4;;i+=4){
+    const ii=Math.min(i,n), s=signAt(ii);
+    if(s!==lastS){ for(let j=lastI+1;j<=ii;j++){ const sj=signAt(j); if(sj!==cur.sign){ cur.to=at(j-1); cur={sign:sj,from:at(j),to:at(j)}; out.push(cur) } } }
+    lastI=ii; lastS=s; if(ii>=n) break;
+  }
+  cur.to=at(n); return out;
+}
+// 水星逆行：每天算一次黃經，用前後一天的差判斷是否逆行
+function retroRanges(body,start,end){
+  const n=Math.round((end-start)/DAY), arr=[]; for(let i=-1;i<=n+1;i++) arr.push(planetLon(body,new Date(start.getTime()+i*DAY)));
+  const out=[]; let cur=null;
+  for(let i=0;i<=n;i++){ const d=new Date(start.getTime()+i*DAY), ret=(((arr[i+2]-arr[i]+540)%360)-180)<0; if(ret){ if(!cur){cur={from:d,to:d};out.push(cur)} else cur.to=d } else cur=null }
+  return out;
+}
+const SIGNS=['牡羊','金牛','雙子','巨蟹','獅子','處女','天秤','天蠍','射手','摩羯','水瓶','雙魚'];
+const ELEM=['火','土','風','水','火','土','風','水','火','土','風','水'];
+const SKW=['積極直接、愛冒險','穩重務實、重享受','好奇多變、愛溝通','溫柔顧家、情感豐富','自信大方、愛表現','細心務實、愛分析','優雅平衡、重關係','深刻專注、情感強烈','樂觀自由、愛探索','踏實負責、有野心','獨立創新、重理想','感性浪漫、直覺敏銳'];
+const HOUSE=['','自己、狀態與形象','金錢、收入與價值觀','溝通、學習與身邊的人','家庭、住所與內心','戀愛、玩樂與創作','工作日常、健康與生活習慣','伴侶、合作與重要的人際','共同財務、深層情感與轉變','遠行、進修與開闊視野','事業、目標與社會形象','朋友、社群與願望','獨處、休息與潛意識'];
+const signIdx=lon=>Math.floor(nrm(lon)/30);
+const noonLocal=(y,m,d)=>new Date(y,m,d,12,0,0);
+function phaseOf(sun,moon){
+  const e=nrm(moon-sun);
+  const names=[['新月 🌑','適合重新開始、設定目標'],['眉月 🌒','適合起步、累積'],['上弦月 🌓','需要行動、克服阻礙'],['盈凸月 🌔','接近完成、做最後調整'],['滿月 🌕','情緒飽滿、容易有結果或衝突'],['虧凸月 🌖','適合分享、回饋與整理'],['下弦月 🌗','適合檢討、放下舊事'],['殘月 🌘','適合休息、收尾']];
+  return names[Math.floor(((e+22.5)%360)/45)];
+}
+
+/* ================= 生肖：地支關係 ================= */
+const PAIRS=(a)=>a.map(([x,y])=>[x,y]);
+const BREAK=[[0,9],[3,6],[4,1],[7,10],[2,11],[5,8]];
+const inPair=(l,a,b)=>l.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a));
+function relation(a,b){
+  const tags=[];
+  if(a===b) tags.push('同');
+  if((a+b)%12===1) tags.push('六合');
+  else if(a!==b&&(a-b+12)%4===0) tags.push('三合');
+  if((a-b+12)%12===6) tags.push('相沖');
+  if((a+b)%12===7) tags.push('相害');
+  if(inPair(BREAK,a,b)) tags.push('相破');
+  const xing=[[0,3],[2,5],[5,8],[2,8],[1,10],[10,7],[1,7]]; if(a!==b&&inPair(xing,a,b)) tags.push('相刑');
+  let s=3; if(tags.includes('六合')) s+=1.5; if(tags.includes('三合')) s+=1; if(tags.includes('相沖')) s-=1.5; if(tags.includes('相刑')) s-=1; if(tags.includes('相害')) s-=1; if(tags.includes('相破')) s-=0.8;
+  return {tags,s:Math.max(1,Math.min(5,s))};
+}
+const RTXT={同:'本命對本命，要重視調整、穩健行事',六合:'合作順利、容易得到助力與貴人',三合:'有同路人、助力多，互相支持',相沖:'變動較大、容易與人意見衝突，宜低調、放慢',相害:'容易有暗中的阻力或小誤會，多留意身邊的人',相破:'計畫容易被打亂、有小耗損，多留一點彈性',相刑:'容易有是非糾纏、反覆，凡事多溝通確認'};
+const ZNAME=['鼠','牛','虎','兔','龍','蛇','馬','羊','猴','雞','狗','豬'];
+function relHTML(r,scopeWord){
+  if(!r.tags.length) return '<span class="tag y">平常</span> 和你的生肖沒有特別的合沖關係，屬於平穩的'+scopeWord+'。';
+  return r.tags.map(t=>'<span class="tag '+(['六合','三合'].includes(t)?'g':t==='同'?'y':'r')+'">'+t+'</span>').join('')+'<br>'+r.tags.map(t=>RTXT[t]).join('；')+'。';
+}
+
+/* ================= 紫微（沿用 iztro 排盤）================= */
+const PLAINPAL={命宮:'你本人',兄弟:'兄弟姊妹・同事',夫妻:'感情・婚姻',子女:'子女・晚輩・桃花',財帛:'賺錢・理財',疾厄:'健康・壓力',遷移:'外出・社會形象',僕役:'朋友・下屬',官祿:'事業・工作',田宅:'家庭・房產',福德:'心靈・享福',父母:'長輩・上司'};
+const pkey=n=>n==='命宮'?n:n.replace('宮','');
+const dom=p=>PLAINPAL[pkey(p.name)];
+
+/* ================= 狀態與渲染 ================= */
+let P=null, SCOPE='day', A=null;
+function setScope(s){SCOPE=s;['day','month','year'].forEach(k=>$('t_'+k).classList.toggle('on',k===s)); if(A) show()}
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function parseDate(s){const [y,m,d]=s.split('-').map(Number);return {y,m,d}}
+async function lunarOf(y,m,d){const a=iztro.astro.bySolar(y+'-'+m+'-'+d,0,'男',true,'zh-TW'); const r=a.rawDates.lunarDate; return {L:{y:r.lunarYear,m:r.lunarMonth,d:r.lunarDay,leap:r.isLeap},pillars:a.rawDates.chineseDate}}
+const brIdx=ch=>BRN.indexOf(ch);
+
+function profileSummary(){
+  $('profCard').innerHTML='<div class="who"><div><b>👤 '+esc(P.name||'我')+'</b><div class="info" style="margin:2px 0 0">'+esc(HubKit.profile.label(P))+'</div></div><button class="btn ghost" style="margin:0" onclick="editProfile()">修改我的資料</button></div>';
+}
+function editProfile(){
+  $('profCard').innerHTML='<h2>👤 我的資料</h2><div class="explain">這份資料只存在你這台裝置，紫微、風水、運勢等頁面都會自動使用，不用重複輸入。</div><div id="pfBox"></div>';
+  HubKit.profileForm('pfBox',np=>{P=np;A=null;start()});
+}
+function start(){
+  P=HubKit.profile.get();
+  if(!P){ $('ctlCard').classList.add('hidden'); $('out').innerHTML=''; editProfile(); $('profCard').insertAdjacentHTML('afterbegin','<div class="explain" style="margin-top:0">請先填寫一次「我的資料」，之後就能直接看運勢。</div>'); return }
+  profileSummary(); $('ctlCard').classList.remove('hidden'); if(!$('tdate').value) $('tdate').value=todayStr(); show();
+}
+
+async function show(){
+  if(!P) return;
+  const td=parseDate($('tdate').value||todayStr());
+  const now=new Date(), isToday=(td.y===now.getFullYear()&&td.m===now.getMonth()+1&&td.d===now.getDate());
+  $('out').innerHTML='<section class="card c">計算中…</section>';
+  // 本命盤
+  const [by,bm,bd]=P.birth.split('-').map(Number);
+  A=iztro.astro.bySolar(by+'-'+bm+'-'+bd,P.shichen,P.gender==='M'?'男':'女',true,'zh-TW');
+  const birthBr=brIdx(A.rawDates.chineseDate.yearly[1]);
+  // 目標時間點
+  const anchor=SCOPE==='year'?new Date(td.y,5,15):SCOPE==='month'?new Date(td.y,td.m-1,15):new Date(td.y,td.m-1,td.d);
+  const H=A.horoscope(anchor);
+  const tl=await lunarOf(anchor.getFullYear(),anchor.getMonth()+1,anchor.getDate());
+  const tp=tl.pillars; // 目標日的年/月/日柱
+  const tYear=brIdx(tp.yearly[1]), tMonth=brIdx(tp.monthly[1]), tDay=brIdx(tp.daily[1]);
+  const scopeWord=SCOPE==='year'?'這一年':SCOPE==='month'?'這個月':'這一天';
+  const title=SCOPE==='year'?td.y+' 年':SCOPE==='month'?td.y+' 年 '+td.m+' 月':td.y+'/'+td.m+'/'+td.d+'（'+WEEK[new Date(td.y,td.m-1,td.d).getDay()]+'）';
+
+  /* --- 紫微 --- */
+  const hs=SCOPE==='day'?H.daily:SCOPE==='month'?H.monthly:H.yearly, pal=A.palaces[hs.index];
+  const where=s=>A.palaces.find(p=>[...p.majorStars,...p.minorStars].some(x=>x.name===s));
+  const mut=hs.mutagen, mp=i=>{const q=where(mut[i]);return q?dom(q):'—'};
+  const dec=A.palaces[H.decadal.index], yr=A.palaces[H.yearly.index], mo=A.palaces[H.monthly.index];
+  const zwPts=[ '🎯 '+scopeWord+'的生活重心偏向「<b>'+dom(pal)+'</b>」（本命'+pal.name.replace('宮','')+'宮）', '🍀 機會與順利：<b>'+mp(0)+'</b>（'+mut[0]+'化祿）', '💪 主導與表現：<b>'+mp(1)+'</b>（'+mut[1]+'化權）', '🌟 好口碑與貴人：<b>'+mp(2)+'</b>（'+mut[2]+'化科）', '⚠️ 需要留意、多用心：<b>'+mp(3)+'</b>（'+mut[3]+'化忌）' ];
+  const zwBack=[ '大限（'+dec.decadal.range[0]+'–'+dec.decadal.range[1]+' 歲）重心：'+dom(dec) ]; if(SCOPE!=='year') zwBack.push('流年重心：'+dom(yr)); if(SCOPE==='day') zwBack.push('流月重心：'+dom(mo));
+  const zwHTML='<div class="sys"><h2>🌌 紫微斗數</h2><p class="p" style="color:var(--mute)">命宮主星：'+A.palaces.find(p=>p.name==='命宮').majorStars.map(s=>s.name).join('、')+'（'+A.fiveElementsClass+'）</p><ul class="pts">'+zwPts.map(x=>'<li>'+x+'</li>').join('')+'</ul><div class="info">背景：'+zwBack.join('；')+'</div></div>';
+
+  /* --- 星座 --- */
+  const sunBirth=signIdx(sunLon(noonLocal(by,bm-1,bd))), sbName=SIGNS[sunBirth]+'座';
+  const dayNoon=noonLocal(td.y,td.m-1,td.d), sunNow=sunLon(dayNoon), moonNow=moonLon(dayNoon);
+  const moonSign=signIdx(moonNow), moonHouse=((moonSign-sunBirth+12)%12)+1;
+  const monthSun=signIdx(sunLon(noonLocal(td.y,td.m-1,15))), sunHouse=((monthSun-sunBirth+12)%12)+1;
+  const ph=phaseOf(sunNow,moonNow);
+  const hOf=s=>((s-sunBirth+12)%12)+1;
+  let jup=null,sat=null,merc=[];
+  if(SCOPE==='year'){const s0=new Date(td.y,0,1,12),e0=new Date(td.y,11,31,12);jup=segments('Jupiter',s0,e0);sat=segments('Saturn',s0,e0);merc=retroRanges('Mercury',s0,e0)}
+  else if(SCOPE==='month'){const s0=new Date(td.y,td.m-1,1,12),e0=new Date(td.y,td.m,0,12);jup=segments('Jupiter',s0,e0);sat=segments('Saturn',s0,e0);merc=retroRanges('Mercury',s0,e0)}
+  else merc=retroRanges('Mercury',dayNoon,dayNoon);
+  const segTxt=arr=>arr.map(s=>(arr.length>1?fmtMD(s.from)+'–'+fmtMD(s.to)+' ':'')+'在'+SIGNS[s.sign]+'座（第'+hOf(s.sign)+'宮「'+HOUSE[hOf(s.sign)]+'」）').join('；');
+  const jupLi=jup?'<li>♃ <b>木星</b>（擴張與機會）：'+segTxt(jup)+'。這個領域比較容易有成長、貴人與好機會。</li>':'';
+  const satLi=sat?'<li>♄ <b>土星</b>（責任與課題）：'+segTxt(sat)+'。這個領域需要踏實經營、承擔責任，是比較長期的功課，辛苦但會有累積。</li>':'';
+  const mercLi=SCOPE==='day'?(merc.length?'<li>☿ <b>水星今天逆行中</b>：溝通、合約、交通與電子產品容易出差錯，重要的事多確認，避免倉促決定。</li>':'<li>☿ 水星今天順行，溝通與交通沒有特別的星象提醒。</li>'):(merc.length?'<li>☿ <b>水星逆行</b>：'+merc.map(r=>fmtMD(r.from)+'–'+fmtMD(r.to)).join('、')+'。這段期間溝通、合約、交通與電子產品容易出差錯，重要的事多確認、避免倉促簽約。</li>':'<li>☿ '+(SCOPE==='year'?'今年':'這個月')+'沒有水星逆行。</li>');
+  let stHTML='<div class="sys"><h2>♈ 星座</h2><p class="p" style="color:var(--mute)">你的太陽星座：<b style="color:var(--ink)">'+sbName+'</b>（'+ELEM[sunBirth]+'象・'+SKW[sunBirth]+'）</p><ul class="pts">';
+  if(SCOPE==='day') stHTML+='<li>🌙 今天月亮在<b>'+SIGNS[moonSign]+'座</b>，走到你的第 <b>'+moonHouse+'</b> 宮「'+HOUSE[moonHouse]+'」，今天的情緒與注意力容易放在這個領域。</li><li>月相：<b>'+ph[0]+'</b>，'+ph[1]+'。</li>'+mercLi;
+  else if(SCOPE==='month') stHTML+='<li>☀️ 這個月（月中）太陽在<b>'+SIGNS[monthSun]+'座</b>，走到你的第 <b>'+sunHouse+'</b> 宮「'+HOUSE[sunHouse]+'」，整個月的能量與焦點偏向這個領域。</li>'+jupLi+satLi+mercLi;
+  else stHTML+=jupLi+satLi+mercLi+'<li>你的星座特質（'+sbName+'）：'+SKW[sunBirth]+'。</li>';
+  stHTML+='</ul><div class="info">算法：以你的太陽星座為第 1 宮，往後數 12 個星座當作 12 個領域；看月亮（每天）、太陽（每月）、木星與土星（每月／每年）走到哪一宮，就是當下的重點領域。行星位置用 astronomy-engine（MIT 授權開源天文計算庫）計算。生日剛好在星座交界時，請以實際出生時間為準。</div></div>';
+  const chipSt=SCOPE==='day'?'月亮在'+SIGNS[moonSign]+'・第'+moonHouse+'宮<br>'+ph[0]:SCOPE==='month'?'太陽在'+SIGNS[monthSun]+'・第'+sunHouse+'宮<br>木星第'+hOf(jup[jup.length-1].sign)+'宮':'木星第'+hOf(jup[jup.length-1].sign)+'宮・土星第'+hOf(sat[sat.length-1].sign)+'宮<br>'+(merc.length?'水逆 '+merc.length+' 次':'無水逆');
+
+  /* --- 生肖 --- */
+  const zYear=relation(birthBr,tYear), zMonth=relation(birthBr,tMonth), zDay=relation(birthBr,tDay);
+  const main=SCOPE==='year'?zYear:SCOPE==='month'?zMonth:zDay;
+  let sxHTML='<div class="sys"><h2>🐉 生肖</h2><p class="p" style="color:var(--mute)">你的生肖：<b style="color:var(--ink)">屬'+ZNAME[birthBr]+'</b>（'+BRN[birthBr]+'）</p>';
+  if(SCOPE==='year') sxHTML+='<p class="p">'+td.y+' 年是<b>'+tp.yearly[0]+tp.yearly[1]+'年（'+ZNAME[tYear]+'年）</b>：<br>'+relHTML(zYear,'一年')+(zYear.tags.some(t=>['同','相沖','相刑','相害','相破'].includes(t))?'<br><span class="info">傳統說法稱這種情況為「犯太歲」。重點是提醒自己這一年多留意、行事穩健，不需要過度擔心。</span>':'')+'</p>';
+  else if(SCOPE==='month') sxHTML+='<p class="p">這個月（月柱 <b>'+tp.monthly[0]+tp.monthly[1]+'</b>，月支屬'+ZNAME[tMonth]+'）：<br>'+relHTML(zMonth,'一個月')+'</p><p class="p info">今年（'+ZNAME[tYear]+'年）：'+(zYear.tags.length?zYear.tags.join('、'):'平常')+'</p>';
+  else sxHTML+='<p class="p">今天（日柱 <b>'+tp.daily[0]+tp.daily[1]+'</b>，日支屬'+ZNAME[tDay]+'）：<br>'+relHTML(zDay,'一天')+'</p><p class="p info">本月：'+(zMonth.tags.length?zMonth.tags.join('、'):'平常')+'　今年：'+(zYear.tags.length?zYear.tags.join('、'):'平常')+'</p>';
+  sxHTML+='<div class="info">算法：比對你的生肖（出生年支）與目標時間的地支，看有沒有六合、三合（吉）或相沖、相刑、相害、相破（需留意）。</div></div>';
+
+  /* --- 易經（梅花易數，時間起卦）--- */
+  const hasNow=(isToday&&SCOPE==='day')||SCOPE!=='day';
+  const eDate=SCOPE==='day'?(isToday?now:new Date(td.y,td.m-1,td.d,12)):now;   // 月／年：以「現在」起一卦
+  const eL=SCOPE==='day'&&!isToday?tl.L:(await lunarOf(eDate.getFullYear(),eDate.getMonth()+1,eDate.getDate())).L;
+  const eYb=((eL.y-4)%12+12)%12+1, eHb=(((eDate.getHours()+1)%24)>>1)+1, eCast=plumCast(eYb,eL.m,eL.d,eHb);
+  const lv=LVL[eCast.score];
+  const eHTML='<div class="sys"><h2>☯ 易經</h2><p class="p" style="color:var(--mute)">'+(SCOPE==='day'&&!isToday?'以 '+td.y+'/'+td.m+'/'+td.d+' 午時':'以現在（'+pad(eDate.getHours())+':'+pad(eDate.getMinutes())+'）')+' 起的一卦（梅花易數）</p>'+
+    '<div class="verdict '+lv[1]+'"><div class="big">'+eCast.benName+(eCast.chgName!==eCast.benName?' ➜ '+eCast.chgName:'')+'　'+lv[0]+'</div><div class="p" style="margin:6px 0 0"><b>卦辭：</b>'+eCast.ben[3]+'<br><b>白話：</b>'+eCast.ben[4]+'<br><b>行動建議：</b>'+eCast.ben[6]+'</div></div>'+
+    '<div class="info">易經的卦是依「起卦的那一刻」產生，所以月、年的運勢不會各有一卦；這裡統一用「現在」（或你選的那天午時）起一卦，當作當下的提醒。想問具體的事，請到「行前占卜」頁。</div></div>';
+
+  /* --- 總覽 --- */
+  const strip='<div class="strip"><div class="chip4 k1"><b>🌌 紫微</b>重心：'+dom(pal)+'<br>機會：'+mp(0)+'<br>留意：'+mp(3)+'</div><div class="chip4 k2"><b>♈ 星座</b>'+chipSt+'</div><div class="chip4 k3"><b>🐉 生肖</b>屬'+ZNAME[birthBr]+'<br>'+(main.tags.length?main.tags.join('、'):'平常')+'</div><div class="chip4 k4"><b>☯ 易經</b>'+eCast.benName+'<br>'+lv[0]+'</div></div>';
+
+  /* --- 今日 12 時辰（易經時卦 × 生肖）--- */
+  const slotDate=SCOPE==='day'?new Date(td.y,td.m-1,td.d):new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const sl=await lunarOf(slotDate.getFullYear(),slotDate.getMonth()+1,slotDate.getDate()), slYb=((sl.L.y-4)%12+12)%12+1;
+  const slIsToday=(slotDate.getFullYear()===now.getFullYear()&&slotDate.getMonth()===now.getMonth()&&slotDate.getDate()===now.getDate()), nowHb=(((now.getHours()+1)%24)>>1)+1;
+  const slots=[]; for(let hb=1;hb<=12;hb++){ const c=plumCast(slYb,sl.L.m,sl.L.d,hb), r=relation(birthBr,hb-1), s=0.65*c.score+0.35*r.s; slots.push({hb,c,r,s}) }
+  const cls=s=>s>=4.2?'s5':s>=3.5?'s4':s>=2.7?'s3':s>=2.1?'s2':'s1', lab=s=>s>=4.2?'很順':s>=3.5?'順':s>=2.7?'普通':s>=2.1?'要小心':'不宜';
+  const best=slots.filter(x=>x.s>=3.5).sort((a,b)=>b.s-a.s||a.hb-b.hb).slice(0,3), avoid=slots.filter(x=>x.s<2.1);
+  const slHTML='<div class="sys"><h2>🕐 '+(slIsToday?'今天':slotDate.getMonth()+1+'/'+slotDate.getDate())+'的時段運勢</h2><div class="explain">把一天分成 12 個時辰，每個時辰各用<b>易經時卦（佔 65%）</b>和<b>生肖與時辰的關係（佔 35%）</b>算出順不順。綠色越順、紅色越要小心；藍框是現在的時辰。</div><div class="slots">'+
+    slots.map(x=>'<div class="slot '+cls(x.s)+(slIsToday&&x.hb===nowHb?' now':'')+'"><b>'+BRN[x.hb-1]+'時</b>'+RANGE[x.hb-1]+'<br>'+x.c.benName+'<br>'+lab(x.s)+(x.r.tags.length?'<br><small>'+x.r.tags.join('・')+'</small>':'')+(slIsToday&&x.hb===nowHb?'<br>👈 現在':'')+'</div>').join('')+'</div>'+
+    '<h3>✅ 最適合做重要事的時段</h3>'+(best.length?'<div class="top">'+best.map((x,i)=>'<div class="topi"><div class="n">'+(i+1)+'</div><div><b>'+BRN[x.hb-1]+'時 '+RANGE[x.hb-1]+'</b>　'+x.c.benName+(x.c.chgName!==x.c.benName?' ➜ '+x.c.chgName:'')+'<br>'+x.c.ben[6]+'</div></div>').join('')+'</div>':'<p class="p">這一天沒有特別順的時段，重要的事建議改天。</p>')+
+    '<h3>⚠️ 要避開的時段</h3><p class="p">'+(avoid.length?avoid.map(x=>BRN[x.hb-1]+'時（'+RANGE[x.hb-1]+'）').join('、'):'沒有特別要避開的時段。')+'</p></div>';
+
+  $('out').innerHTML='<section class="card"><h2>📅 '+title+' 的運勢</h2><p class="p" style="color:var(--mute)">'+esc(P.name||'你')+'，四個系統的重點先看這裡：</p>'+strip+'</section>'+
+    '<section class="card">'+zwHTML+stHTML+sxHTML+eHTML+'</section><section class="card">'+slHTML+'</section>';
+  $('out').scrollIntoView({behavior:'smooth'});
+  window.__dbg={A,H,birthBr,tYear,tMonth,tDay,moonNow,sunNow,moonSign,sunBirth,moonHouse,sunHouse,eCast,slots,tp};
+}
+$('tdate').value=todayStr(); start();
+</script>
+</body>
+</html>

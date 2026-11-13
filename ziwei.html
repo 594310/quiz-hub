@@ -185,7 +185,7 @@ small{font-size:12px}
       <div><label>性別</label><select id="gender"><option value="M">男</option><option value="F">女</option></select></div>
       <div><label>稱呼（可不填）</label><input type="text" id="nm" maxlength="12" placeholder="例如：小明"></div>
     </div>
-    <div class="center-btns"><button class="btn" onclick="run()">排出命盤</button></div>
+    <div class="center-btns"><button class="btn" onclick="run()">排出命盤</button> <button class="btn ghost" onclick="useProfile()">👤 帶入我的資料</button></div>
     <div class="info">所有計算都在你的瀏覽器中完成，資料不會傳到任何地方。<br>
     晚子時（23:00–23:59）依多數排盤軟體的做法，日柱算隔天；本版以出生地的標準時間計算，不做真太陽時校正。</div>
   </section>
@@ -584,6 +584,8 @@ async function saveCard(){
 
 initSel();
 {const last=ld('hub.ziwei.last',null); if(last&&last.shichen!=null) setInp(last); renderSaved();}
+function useProfile(){const P=HubKit.profile.get(); if(!P){alert('請先到首頁填寫「我的資料」');return} setMode('solar'); $('sdate').value=P.birth; $('shichen').value=P.shichen; $('gender').value=P.gender; $('nm').value=P.name||''}
+{const P=HubKit.profile.get(); if(P) useProfile()}
 </script>
 </body>
 </html>

@@ -56,6 +56,32 @@
   }
 
 
+
+  // 共用的「我的資料」：輸入一次，各頁面都可帶入（只存在這台裝置）
+  const PKEY='hub.profile', SHI=['早子時 00:00–00:59','丑時 01:00–02:59','寅時 03:00–04:59','卯時 05:00–06:59','辰時 07:00–08:59','巳時 09:00–10:59','午時 11:00–12:59','未時 13:00–14:59','申時 15:00–16:59','酉時 17:00–18:59','戌時 19:00–20:59','亥時 21:00–22:59','晚子時 23:00–23:59'];
+  const profile={
+    get(){try{const p=JSON.parse(localStorage.getItem(PKEY));return p&&p.birth?p:null}catch(e){return null}},
+    set(p){try{localStorage.setItem(PKEY,JSON.stringify(p))}catch(e){}},
+    clear(){try{localStorage.removeItem(PKEY)}catch(e){}},
+    label(p){return p?((p.name?p.name+'｜':'')+(p.gender==='M'?'男':'女')+'｜'+p.birth+'｜'+(p.guess?'時辰不確定（以午時估算）':SHI[p.shichen])):''},
+    SHI
+  };
+  function profileForm(boxId,onSave){
+    const box=document.getElementById(boxId); if(!box) return; const p=profile.get()||{};
+    const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    if(!document.getElementById('pfcss')){const st=document.createElement('style');st.id='pfcss';st.textContent='.pfgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.pfgrid label{display:block;font-size:14px;color:#7a7090;margin:6px 0 4px}.pfgrid input,.pfgrid select{font:inherit;padding:11px 12px;border:1.5px solid #e5dcc8;border-radius:10px;background:#fff;width:100%;min-height:46px}.pfsave{margin-top:12px;background:linear-gradient(135deg,#5b3fd1,#8b5cf6);color:#fff;border:0;border-radius:12px;padding:13px 26px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;min-height:48px}.pfmsg{font-size:13.5px;color:#15803d;margin-top:8px;min-height:20px}@media(max-width:640px){.pfsave{width:100%}}';document.head.appendChild(st)}
+    box.innerHTML='<div class="pfgrid"><div><label>稱呼（可不填）</label><input type="text" id="pf_name" maxlength="12" value="'+esc(p.name)+'" placeholder="例如：小明"></div>'+
+     '<div><label>性別</label><select id="pf_gender"><option value="M"'+(p.gender!=='F'?' selected':'')+'>男</option><option value="F"'+(p.gender==='F'?' selected':'')+'>女</option></select></div>'+
+     '<div><label>國曆生日</label><input type="date" id="pf_birth" min="1900-01-01" max="2099-12-31" value="'+esc(p.birth||'')+'"></div>'+
+     '<div><label>出生時辰</label><select id="pf_shichen">'+SHI.map((t,i)=>'<option value="'+i+'"'+(!p.guess&&p.shichen===i?' selected':'')+'>'+t+'</option>').join('')+'<option value="g"'+(p.guess?' selected':'')+'>不知道（用午時估算）</option></select></div></div>'+
+     '<div class="pfbtns"><button type="button" class="pfsave" id="pf_save">💾 儲存我的資料</button></div><div class="pfmsg" id="pf_msg"></div>';
+    document.getElementById('pf_save').onclick=()=>{
+      const b=document.getElementById('pf_birth').value, sv=document.getElementById('pf_shichen').value, msg=document.getElementById('pf_msg');
+      if(!b){msg.textContent='請輸入國曆生日';return}
+      const guess=sv==='g', np={name:document.getElementById('pf_name').value.trim(),gender:document.getElementById('pf_gender').value,birth:b,shichen:guess?7:+sv,guess};
+      profile.set(np); msg.textContent='✅ 已儲存在這台裝置，其他頁面會自動帶入'; if(onSave) onSave(np);
+    };
+  }
   // 語音輸入（使用瀏覽器內建的語音辨識；不支援時會提示）
   function voice(targetId,btnId,statusId){
     const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -79,5 +105,5 @@
   function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
   function svgToImg(svg){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)})}
   const FONT='"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif';
-  window.HubKit={download,importFile,rr,svgToImg,FONT,allData,voice};
+  window.HubKit={download,importFile,rr,svgToImg,FONT,allData,voice,profile,profileForm};
 })();
