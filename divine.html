@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>行前占卜與風水羅盤</title>
+<style>
+:root{--ink:#2a2420;--mute:#7b7268;--gold:#c8a24a;--jade:#0f766e;--card:#fffdf6;--line:#e8dfc8}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;color:var(--ink);
+ background:radial-gradient(circle at 20% 0,#134e4a 0,#0b1f1d 60%) fixed;min-height:100vh}
+.wrap{max-width:860px;margin:0 auto;padding:22px 14px 60px}
+.card{background:var(--card);border-radius:18px;padding:22px;box-shadow:0 10px 36px rgba(0,0,0,.4);margin-bottom:18px}
+h1{margin:0 0 6px;font-size:28px;color:#fff;text-align:center;letter-spacing:4px}
+.lead{color:#b8d8d3;text-align:center;margin:0 0 16px;line-height:1.7}
+h2{font-size:19px;margin:0 0 12px;padding-left:10px;border-left:5px solid var(--gold)}
+h3{margin:14px 0 6px;font-size:16px;color:var(--jade)}
+label{display:block;font-size:14px;color:var(--mute);margin:10px 0 4px}
+input,select,textarea{font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;width:100%}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{flex:1;padding:11px;border:1.5px solid #3b7a74;border-radius:12px;background:transparent;color:#d6efeb;font:inherit;font-size:16px;cursor:pointer}
+.tab.on{background:var(--gold);color:#2a2420;border-color:var(--gold);font-weight:700}
+.btn{display:inline-block;margin:14px 6px 0;background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff;border:0;border-radius:12px;padding:12px 30px;font:inherit;font-size:17px;font-weight:700;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--jade);border:2px solid var(--jade)}
+.btn:disabled{opacity:.5;cursor:default}
+.c{text-align:center}
+.hidden{display:none}
+.explain{background:#fff8e6;border-left:4px solid var(--gold);padding:8px 12px;border-radius:6px;font-size:13.5px;line-height:1.8;color:#5a4a1a;margin:8px 0}
+.p{line-height:1.9;margin:0 0 10px;font-size:15px}
+.info{font-size:13px;color:var(--mute);line-height:1.7;margin-top:10px}
+.note{font-size:12.5px;color:#b8d8d3;text-align:center;line-height:1.8;margin-top:6px}
+/* 起卦 */
+.coins{display:flex;gap:14px;justify-content:center;margin:12px 0;min-height:64px}
+.coin{width:60px;height:60px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f5d77a,#b8891f);border:3px solid #8a6a14;display:flex;align-items:center;justify-content:center;font-weight:800;color:#5b4208;font-size:20px;box-shadow:inset 0 0 0 5px rgba(255,255,255,.18)}
+.coin.spin{animation:flip .6s ease}
+@keyframes flip{0%{transform:rotateY(0) scale(.7)}50%{transform:rotateY(540deg) scale(1.1)}100%{transform:rotateY(1080deg) scale(1)}}
+.hexbox{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.hexcol{text-align:center}
+.hexcol .t{font-size:13px;color:var(--mute);margin-bottom:4px}
+.lines{display:flex;flex-direction:column;gap:7px;align-items:center;margin:6px 0}
+.ln{display:flex;align-items:center;gap:8px}
+.yang{width:96px;height:12px;background:#2a2420;border-radius:3px}
+.yin{width:96px;height:12px;display:flex;justify-content:space-between}
+.yin i{width:42px;height:12px;background:#2a2420;border-radius:3px;display:block}
+.mk{width:22px;font-size:15px;color:#c2410c;font-weight:800;text-align:left}
+.hname{font-size:20px;font-weight:800;color:var(--jade)}
+.verdict{border-radius:14px;padding:14px 16px;margin:10px 0;border:2px solid}
+.verdict .big{font-size:26px;font-weight:800}
+.v5{background:#ecfdf5;border-color:#34d399;color:#065f46}.v4{background:#f0fdf4;border-color:#86efac;color:#166534}
+.v3{background:#fefce8;border-color:#facc15;color:#854d0e}.v2{background:#fff7ed;border-color:#fb923c;color:#9a3412}.v1{background:#fef2f2;border-color:#f87171;color:#991b1b}
+.verdict p{margin:6px 0 0;color:var(--ink);font-size:14.5px;line-height:1.8}
+.gua{font-size:17px;line-height:2;background:#f7f3e6;border-radius:10px;padding:8px 14px;color:#3b3226;letter-spacing:1px}
+.box{background:#faf7ee;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.box b{color:var(--jade)}
+.hist{font-size:14px;line-height:1.9}
+/* 羅盤 */
+.dialwrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+#dial{width:min(340px,92vw);height:auto;touch-action:none}
+.facing{font-size:18px;font-weight:800;text-align:center;line-height:1.7}
+.tbl{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+.tbl th,.tbl td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.good{color:#047857;font-weight:700}.bad{color:#b91c1c;font-weight:700}
+.dirbtns{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.dirbtns button{padding:6px 12px;border:1.5px solid var(--line);background:#fff;border-radius:8px;font:inherit;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+<p style="margin:0 0 10px"><a href="index.html" style="color:#b8d8d3;text-decoration:none">← 回首頁</a></p>
+<h1>☯ 行前占卜與風水羅盤</h1>
+<p class="lead">做一件事之前，先問一卦、看看方位<br>用易經六十四卦整理思緒，用八宅風水找出你的吉方</p>
+
+<div class="tabs"><button class="tab on" id="tDiv" onclick="showTab('div')">🪙 行前占卜</button><button class="tab" id="tFs" onclick="showTab('fs')">🧭 風水羅盤</button></div>
+
+<!-- ============ 行前占卜 ============ -->
+<div id="paneDiv">
+ <section class="card" id="askCard">
+  <h2>先想清楚你要問什麼</h2>
+  <div class="explain"><b>怎麼用？</b>① 寫下你想做的事（越具體越好，例如「下週要不要和客戶簽約」）。② 選類別。③ 按「擲錢」六次，每次擲三枚銅錢，擲完會得到一個卦。④ 看這件事的運勢與行動建議。<br><b>小提醒：</b>易經本來就是「提問＋自我反思」的工具。卦辭是象徵性的話，請當作整理思緒、提醒自己的參考，不是預言。</div>
+  <label>想做的事 / 想問的問題</label>
+  <textarea id="q" rows="2" maxlength="80" placeholder="例如：下週五要不要去面試這家公司？"></textarea>
+  <div class="row">
+   <div><label>這件事屬於</label><select id="cat"></select></div>
+  </div>
+  <div class="c">
+   <div class="coins" id="coins"></div>
+   <div id="linesSoFar" class="lines"></div>
+   <button class="btn" id="tossBtn" onclick="tossOne()">🪙 擲錢（第 1 爻）</button>
+   <button class="btn ghost" id="tossAll" onclick="tossAllNow()">一次擲完</button>
+   <button class="btn ghost" id="resetBtn" onclick="resetToss()">重來</button>
+  </div>
+  <div class="info">請專心想著你的問題再擲。同一件事通常只問一次，反覆問到滿意的答案，就失去占卜的意義了。</div>
+ </section>
+ <div id="result"></div>
+ <section class="card hidden" id="histCard"><h2>📜 我的占卜紀錄（僅存在這台裝置）</h2><div id="hist" class="hist"></div><div class="c"><button class="btn ghost" style="font-size:14px;padding:6px 18px" onclick="clearHist()">清除紀錄</button></div></section>
+</div>
+
+<!-- ============ 風水羅盤 ============ -->
+<div id="paneFs" class="hidden">
+ <section class="card">
+  <h2>① 算出你的命卦</h2>
+  <div class="explain"><b>什麼是八宅風水？</b>傳統風水的一種，用出生年份和性別算出每個人的「命卦」，再把 8 個方位分成 4 個吉方、4 個凶方。吉方適合放大門、書桌朝向、床頭；凶方則盡量避開。<br><b>命卦怎麼算：</b>依出生年（以立春，約 2 月 4 日為界）和性別推算，分成「東四命」和「西四命」兩大類。</div>
+  <div class="row">
+   <div><label>出生日期（國曆）</label><input type="date" id="fbirth" value="1995-06-15" min="1900-01-01" max="2099-12-31"></div>
+   <div><label>性別</label><select id="fgender"><option value="M">男</option><option value="F">女</option></select></div>
+  </div>
+  <div class="c"><button class="btn" onclick="calcGua()">算出我的命卦與吉方</button></div>
+  <div id="guaOut"></div>
+ </section>
+ <section class="card">
+  <h2>② 羅盤：這個方向好不好？</h2>
+  <div class="explain"><b>手機：</b>按「啟用手機羅盤」，手機平放，畫面上的羅盤會跟著轉動，上方的小箭頭指的就是你<b>面向</b>的方向。<br><b>電腦或沒有感應器：</b>用下方的滑桿或方位按鈕，手動選擇你面向的方向。<br>顏色：<span class="good">綠色＝吉方</span>、<span class="bad">紅色＝凶方</span>（要先完成上面的命卦計算）。</div>
+  <div class="dialwrap">
+   <svg id="dial" viewBox="0 0 340 340"></svg>
+   <div class="facing" id="facing">請先算出命卦</div>
+   <div class="c"><button class="btn" onclick="startCompass()">📱 啟用手機羅盤</button></div>
+   <div class="info" id="cmsg"></div>
+   <div style="width:min(340px,92vw)"><label>手動選擇面向角度：<b id="hdgTxt">0</b>°（0＝正北，90＝正東）</label><input type="range" id="hdg" min="0" max="359" value="0" oninput="setHeading(+this.value,true)"></div>
+   <div class="dirbtns" id="dirbtns"></div>
+  </div>
+  <div class="info">羅盤使用手機的磁力感應器，磁北和真北在台灣約差 4～5 度（磁偏角），附近有金屬或電器也會干擾，只能當作粗略參考。</div>
+ </section>
+</div>
+
+<p class="note">※ 易經占卜與風水是傳統文化與自我反思的工具，沒有科學上可驗證的預測力。請勿用來取代醫療、法律或重大投資的專業判斷。</p>
+</div>
+
+<script src="hubkit.js"></script>
+<script>
+/* ========== 最後防線：殘留的 undefined/NaN/null 一律改成空白 ========== */
+(function(){
+  const TEST=/undefined|NaN|\bnull\b/, ALL=/undefined|NaN|\bnull\b/g;
+  const fixNode=n=>{if(n.nodeValue&&TEST.test(n.nodeValue)) n.nodeValue=n.nodeValue.replace(ALL,'')};
+  const scrub=root=>{ if(root.nodeType===3){fixNode(root);return} const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let n; while((n=w.nextNode())) fixNode(n) };
+  new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(scrub))).observe(document.documentElement,{childList:true,subtree:true});
+  const ft=CanvasRenderingContext2D.prototype.fillText;
+  CanvasRenderingContext2D.prototype.fillText=function(txt,...a){return ft.call(this,String(txt).replace(ALL,''),...a)};
+})();
+const $=id=>document.getElementById(id);
+function ld(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function showTab(t){$('paneDiv').classList.toggle('hidden',t!=='div');$('paneFs').classList.toggle('hidden',t!=='fs');$('tDiv').classList.toggle('on',t==='div');$('tFs').classList.toggle('on',t==='fs')}
+
+/* ========== 八卦與六十四卦 ========== */
+const TBITS={'111':'乾','110':'兌','101':'離','100':'震','011':'巽','010':'坎','001':'艮','000':'坤'};
+const TSYM={乾:'☰',兌:'☱',離:'☲',震:'☳',巽:'☴',坎:'☵',艮:'☶',坤:'☷'};
+const TNAT={乾:'天',兌:'澤',離:'火',震:'雷',巽:'風',坎:'水',艮:'山',坤:'地'};
+// [卦名, 上卦, 下卦, 卦辭, 白話, 等級(1凶~5大吉), 行動建議]
+const HEX=[
+['乾','乾','乾','元亨利貞。','剛健主動、全力向上，有開創的好時機。',5,'宜主動出擊、設定大目標；忌驕傲冒進。'],
+['坤','坤','坤','元亨，利牝馬之貞。','柔順包容、配合支持，靠耐心累積而成。',4,'宜配合他人、穩步累積；忌搶先逞強。'],
+['屯','坎','震','元亨利貞，勿用有攸往，利建侯。','萬事起頭難，像草木剛冒芽，需要耐心與幫手。',2,'宜找夥伴、先打基礎；忌急著大動作。'],
+['蒙','艮','坎','亨。匪我求童蒙，童蒙求我。初筮告，再三瀆，瀆則不告。利貞。','懵懂未明，需要請教、學習與引導。',3,'宜虛心求教、先弄清楚；忌亂猜亂做。'],
+['需','坎','乾','有孚，光亨，貞吉。利涉大川。','時機未到，需要等待，有耐心就有收穫。',4,'宜耐心準備、等時機；忌躁進。'],
+['訟','乾','坎','有孚，窒。惕中吉。終凶。利見大人，不利涉大川。','容易起爭執、口舌或糾紛，退一步較有利。',2,'宜和解、守住底線；忌硬碰硬。'],
+['師','坤','坎','貞，丈人吉，無咎。','像帶兵作戰，需要紀律、正當名義與好領導。',3,'宜有組織有紀律；忌各行其是。'],
+['比','坎','坤','吉。原筮元永貞，無咎。不寧方來，後夫凶。','親近合作、互相扶持，找對夥伴就吉。',4,'宜結盟、主動親近貴人；忌猶豫太久。'],
+['小畜','巽','乾','亨。密雲不雨，自我西郊。','雲多雨少，力量暫時蓄積不足，小有累積。',3,'宜小規模進行、持續累積；忌大舉投入。'],
+['履','乾','兌','履虎尾，不咥人，亨。','如踩老虎尾巴卻不被咬，小心行事可平安。',3,'宜謹慎守禮、步步為營；忌輕忽大意。'],
+['泰','坤','乾','小往大來，吉亨。','天地相交、上下通暢，是順利的好時機。',5,'宜把握時機推動；忌因順利而鬆懈。'],
+['否','乾','坤','否之匪人，不利君子貞，大往小來。','閉塞不通、上下不交，時運低迷。',1,'宜保守自持、等待轉機；忌強求推進。'],
+['同人','乾','離','同人于野，亨。利涉大川，利君子貞。','與人同心、公開合作，志同道合者相助。',4,'宜公開透明、團隊合作；忌私下結黨。'],
+['大有','離','乾','元亨。','豐收盛大、擁有很多，宜謙虛守成。',5,'宜擴大、分享；忌自滿。'],
+['謙','坤','艮','亨，君子有終。','謙虛低調，反而處處受益、有始有終。',5,'宜謙遜、低調行事；忌自誇。'],
+['豫','震','坤','利建侯行師。','順勢而為、愉悅有準備，事前規劃易成。',4,'宜事先規劃、凝聚士氣；忌沉溺享樂。'],
+['隨','兌','震','元亨利貞，無咎。','順應時勢、跟隨正確的人事，可成。',4,'宜靈活變通、跟對人；忌盲從。'],
+['蠱','艮','巽','元亨，利涉大川。先甲三日，後甲三日。','長期積弊、需要整頓革新，重新出發。',2,'宜面對問題、整頓舊事；忌繼續拖延。'],
+['臨','坤','兌','元亨利貞。至于八月有凶。','好運逼近、有領導與擴張機會，但盛極需防。',4,'宜主動接近機會；忌久了就不防變化。'],
+['觀','巽','坤','盥而不薦，有孚顒若。','宜觀察、反省與等待，看清楚再行動。',3,'宜多看多聽；忌貿然行動。'],
+['噬嗑','離','震','亨。利用獄。','障礙需要咬斷、公正處理，解決阻礙。',3,'宜果斷處理卡關；忌姑息拖延。'],
+['賁','艮','離','亨。小利有攸往。','重外表包裝、小有成果，不宜只靠門面。',3,'宜美化包裝但顧實質；忌華而不實。'],
+['剝','艮','坤','不利有攸往。','根基被侵蝕、局勢衰退，不宜擴張。',1,'宜保守防守、保存實力；忌冒險行動。'],
+['復','坤','震','亨。出入無疾，朋來無咎。反復其道，七日來復，利有攸往。','低谷後回升、重新開始，慢慢好轉。',4,'宜重新出發、循序漸進；忌過度求快。'],
+['無妄','乾','震','元亨利貞。其匪正有眚，不利有攸往。','順應自然、不抱心機，不要妄想或亂動。',3,'宜守正、不投機；忌心存僥倖。'],
+['大畜','艮','乾','利貞。不家食吉，利涉大川。','大量累積、蓄積實力，待時而發。',4,'宜學習充電、累積資源；忌急著動用。'],
+['頤','艮','震','貞吉。觀頤，自求口實。','養身養德、注意言語飲食，看自己養什麼。',3,'宜調養、慎言慎食；忌貪多亂吃。'],
+['大過','兌','巽','棟橈，利有攸往，亨。','負擔過重、承受太大，需小心處理。',2,'宜減輕負荷、尋求支援；忌硬撐。'],
+['坎','坎','坎','習坎，有孚，維心亨，行有尚。','重重險難、困難疊加，但誠信堅持可通。',2,'宜小心謹慎、堅守誠信；忌冒險。'],
+['離','離','離','利貞，亨。畜牝牛吉。','光明依附、有熱情與明智，需有所依靠。',3,'宜借力、重視文化人際；忌過度急躁。'],
+['咸','兌','艮','亨，利貞，取女吉。','彼此感應、心意相通，利於感情與人際。',4,'宜真誠溝通、感動對方；忌虛情假意。'],
+['恆','震','巽','亨，無咎，利貞，利有攸往。','持之以恆、長久穩定，堅持就有成果。',4,'宜持續堅持、守常；忌三心二意。'],
+['遯','乾','艮','亨，小利貞。','宜退讓、暫避鋒芒，保存實力。',2,'宜適時撤退、轉換位置；忌硬撐。'],
+['大壯','震','乾','利貞。','力量強盛、氣勢旺，但要守正不可逞強。',3,'宜積極但守規矩；忌莽撞。'],
+['晉','離','坤','康侯用錫馬蕃庶，晝日三接。','如日出地上，進步升遷、受賞識。',4,'宜展現實力、爭取表現；忌驕傲。'],
+['明夷','坤','離','利艱貞。','光明受傷、處境艱難，宜韜光養晦。',1,'宜低調隱忍、保護自己；忌鋒芒外露。'],
+['家人','巽','離','利女貞。','家庭和睦、各安其位，從內部做起。',4,'宜先穩定內部、重視家人；忌忽視身邊人。'],
+['睽','離','兌','小事吉。','意見相左、背離，小事可成、大事難。',2,'宜求同存異、先做小事；忌強行合作。'],
+['蹇','坎','艮','利西南，不利東北；利見大人，貞吉。','前有險阻、行動不便，宜停下反省求助。',1,'宜停下來、求助貴人；忌硬闖。'],
+['解','震','坎','利西南。無所往，其來復吉。有攸往，夙吉。','困難解除、問題化解，宜及早處理。',4,'宜儘早解決懸而未決的事；忌拖到變嚴重。'],
+['損','艮','兌','有孚，元吉，無咎，可貞，利有攸往。','先減後增、取捨之間，有誠意可得吉。',3,'宜節制開銷、取捨；忌貪多。'],
+['益','巽','震','利有攸往，利涉大川。','增益有利、得到幫助，利於行動與擴展。',5,'宜積極行動、把握機會；忌懶散錯過。'],
+['夬','兌','乾','揚于王庭，孚號，有厲。告自邑，不利即戎，利有攸往。','果斷決裂、揭露問題，要謹慎處理。',3,'宜果斷但講理、公開處理；忌暴力衝突。'],
+['姤','乾','巽','女壯，勿用取女。','意外相遇、不宜輕易投入，防小人。',2,'宜保持距離、觀察對方；忌輕易承諾。'],
+['萃','兌','坤','亨。王假有廟，利見大人，亨，利貞。','聚集會合、人才匯聚，利於聚會與合作。',4,'宜凝聚人心、辦活動；忌失去防備。'],
+['升','坤','巽','元亨，用見大人，勿恤，南征吉。','逐步上升、穩定成長，努力有回報。',5,'宜一步一步往上；忌急著跳級。'],
+['困','兌','坎','亨，貞，大人吉，無咎。有言不信。','處境窘困、資源不足，說話不被相信。',1,'宜忍耐、守住底線；忌抱怨與衝動。'],
+['井','坎','巽','改邑不改井，無喪無得，往來井井。','如水井養人、穩定供給，需要維護更新。',3,'宜持續供給、維護基礎；忌放任不管。'],
+['革','兌','離','己日乃孚，元亨利貞，悔亡。','時機成熟的改革、改變，需取信於人。',3,'宜時機成熟再改變；忌倉促。'],
+['鼎','離','巽','元吉，亨。','鼎新取新、成就大事，運勢興旺。',5,'宜整合資源、創新；忌自滿。'],
+['震','震','震','亨。震來虩虩，笑言啞啞。','震驚而後安，先驚後穩，不必驚慌。',3,'宜鎮定、不要被嚇到；忌慌亂失措。'],
+['艮','艮','艮','艮其背，不獲其身；行其庭，不見其人，無咎。','止步、靜止，適合停下思考與克制。',3,'宜暫停、靜心；忌強行推進。'],
+['漸','巽','艮','女歸吉，利貞。','循序漸進、慢慢來，穩定成長。',4,'宜按部就班；忌急於求成。'],
+['歸妹','震','兌','征凶，無攸利。','不合常理、輕率進行，易生變化。',2,'宜審慎評估、不要衝動；忌倉促決定。'],
+['豐','震','離','亨，王假之，勿憂，宜日中。','豐盛盛大，盛時要防盛極而衰。',3,'宜把握當下、全力展現；忌鬆懈。'],
+['旅','離','艮','小亨，旅貞吉。','在外奔波、作客他鄉，行事低調謹慎。',2,'宜低調謹慎、少樹敵；忌在外張揚。'],
+['巽','巽','巽','小亨，利有攸往，利見大人。','柔順滲透、順風而行，小事有利。',3,'宜溫和溝通、循序影響；忌優柔寡斷。'],
+['兌','兌','兌','亨，利貞。','喜悅溝通、和樂相處，利於談話與社交。',4,'宜溝通談判、交友；忌隨口承諾。'],
+['渙','巽','坎','亨。王假有廟，利涉大川，利貞。','渙散、化解，凝聚散亂的人心。',3,'宜重新凝聚、化解僵局；忌放任散漫。'],
+['節','坎','兌','亨。苦節不可貞。','節制有度，適度則通，過度苦行則不可。',3,'宜設定界線與預算；忌過度壓抑。'],
+['中孚','巽','兌','豚魚吉，利涉大川，利貞。','誠信感通，內心真誠自然獲得信任。',4,'宜誠信待人；忌口是心非。'],
+['小過','震','艮','亨，利貞。可小事，不可大事。飛鳥遺之音，不宜上，宜下，大吉。','小事可成、大事不宜，低調務實為佳。',2,'宜做小事、低調；忌好高騖遠。'],
+['既濟','坎','離','亨，小利貞，初吉終亂。','事已成、大致圓滿，但要防後續生亂。',3,'宜守成、查漏補缺；忌鬆懈。'],
+['未濟','離','坎','亨。小狐汔濟，濡其尾，無攸利。','尚未完成、還差最後一步，保持謹慎有機會。',2,'宜善始善終、謹慎收尾；忌半途而廢。']
+];
+const HMAP={}; HEX.forEach(h=>HMAP[h[1]+h[2]]=h);
+const POS=['初爻','二爻','三爻','四爻','五爻','上爻'];
+const POSM=['事情剛起步、還在醞釀','內部與根基、你能掌握的部分','轉折與關卡、容易猶豫不安','接近決策點、有風險也有機會','核心與最佳位置、影響力最大','事情的尾聲、物極必反要收斂'];
+const CATS=['事業工作','財運投資','感情關係','考試學習','出行搬遷','健康身體','簽約交易','其他'];
+const CATADV={
+ 事業工作:['先蓄力、別做重大決定，把風險降到最低，等時機轉好。','適合穩紮穩打，先把準備做足再行動。','時機有利，可以主動提案、爭取機會；仍要把細節準備好。'],
+ 財運投資:['避免大額與高風險決定，先保本、等待更明朗。','宜小額、分散，先觀察再說。','財運氣勢不錯，可以適度布局；但別把資金一次投入。'],
+ 感情關係:['容易誤會或有阻力，先把話說清楚、給彼此空間。','多觀察與溝通，不急著做決定。','互動順暢，適合表達心意或深入溝通。'],
+ 考試學習:['先補弱項、調整節奏，避免臨時抱佛腳。','按進度複習，把基本題做穩。','狀態與時機都不錯，穩定發揮就能成。'],
+ 出行搬遷:['行程多準備備案，避免勉強上路，安全第一。','提前規劃、預留彈性。','出行順利，適合行動；仍要留意交通與細節。'],
+ 健康身體:['多休息、有不適就就醫；占卜不能取代醫師的判斷。','留意日常保養與睡眠。','整體狀態不錯，維持規律作息即可。'],
+ 簽約交易:['先不要倉促簽，條款與對方背景再三確認，必要時找專業人士。','多比較、多確認，別趕時間。','條件與時機看來有利，仍須細讀條款。'],
+ 其他:['暫緩、換個方式或等待時機。','按原本節奏，仔細準備。','順勢而為，可以放手去做。']
+};
+const LVL={5:['大吉','v5'],4:['吉','v4'],3:['平（中性）','v3'],2:['需謹慎','v2'],1:['暫緩為宜','v1']};
+CATS.forEach(c=>$('cat').add(new Option(c,c)));
+
+/* ========== 擲錢起卦 ========== */
+let tosses=[]; // 每次 {coins:[3|2,...], v:6-9}
+function rand3(){const r=new Uint8Array(3);crypto.getRandomValues(r);const coins=[...r].map(x=>(x&1)?3:2);return {coins,v:coins.reduce((a,b)=>a+b,0)}}
+function yangOf(v){return v===7||v===9}
+function lineHTML(v,mark){return '<div class="ln">'+(yangOf(v)?'<div class="yang"></div>':'<div class="yin"><i></i><i></i></div>')+'<span class="mk">'+(mark?(v===9?'○':v===6?'×':''):'')+'</span></div>'}
+function renderSoFar(){
+  $('linesSoFar').innerHTML=tosses.slice().reverse().map(t=>lineHTML(t.v,true)).join('');
+  const n=tosses.length;
+  $('tossBtn').disabled=n>=6; $('tossBtn').textContent=n>=6?'已擲完':'🪙 擲錢（第 '+(n+1)+' 爻）';
+  $('tossAll').disabled=n>=6;
+}
+function showCoins(t){
+  $('coins').innerHTML=t.coins.map(c=>'<div class="coin spin">'+(c===3?'正':'反')+'</div>').join('');
+}
+function needQ(){ if(!$('q').value.trim()){ alert('請先寫下你想做的事或想問的問題'); $('q').focus(); return false } return true }
+function tossOne(){
+  if(tosses.length>=6||!needQ()) return;
+  const t=rand3(); tosses.push(t); showCoins(t); renderSoFar();
+  if(tosses.length===6) setTimeout(finish,700);
+}
+function tossAllNow(){
+  if(!needQ()) return;
+  while(tosses.length<6) tosses.push(rand3());
+  showCoins(tosses[5]); renderSoFar(); setTimeout(finish,300);
+}
+function resetToss(){tosses=[];$('coins').innerHTML='';$('result').innerHTML='';renderSoFar()}
+
+/* ========== 解卦 ========== */
+function trigram(bits){return TBITS[bits.map(b=>b?1:0).join('')]}
+function hexFrom(yangs){return HMAP[trigram(yangs.slice(3))+trigram(yangs.slice(0,3))]}
+function fullName(h){return h[1]===h[2]?TNAT[h[1]]==='天'&&h[0]==='乾'?'乾為天':h[0]+'為'+TNAT[h[1]]:TNAT[h[1]]+TNAT[h[2]]+h[0]}
+function focusRule(ch){
+  const n=ch.length;
+  if(n===0) return '沒有變爻，以<b>本卦的卦辭</b>為主，卦象即是目前的狀態。';
+  if(n===1) return '只有一個變爻（'+POS[ch[0]]+'），重點看<b>這一爻代表的階段</b>：'+POSM[ch[0]]+'。';
+  if(n===2) return '有兩個變爻（'+ch.map(i=>POS[i]).join('、')+'），以<b>上面那一爻（'+POS[ch[1]]+'）為主</b>：'+POSM[ch[1]]+'。';
+  if(n===3) return '有三個變爻，<b>本卦與變卦要並看</b>：本卦是現況，變卦是走向。';
+  if(n===4){const rest=[0,1,2,3,4,5].filter(i=>!ch.includes(i));return '有四個變爻，重點看<b>變卦中不變的兩爻</b>，以下面那一爻（'+POS[rest[0]]+'）為主：'+POSM[rest[0]]+'。'}
+  if(n===5){const rest=[0,1,2,3,4,5].find(i=>!ch.includes(i));return '有五個變爻，重點看<b>變卦中唯一不變的那一爻（'+POS[rest]+'）</b>：'+POSM[rest]+'。'}
+  return '六爻皆變，以<b>變卦的卦辭</b>為主，代表情勢整個翻轉。';
+}
+let LAST=null;
+function finish(){
+  const yang=tosses.map(t=>yangOf(t.v)), ch=tosses.map((t,i)=>(t.v===6||t.v===9)?i:-1).filter(i=>i>=0);
+  const ben=hexFrom(yang), chg=ch.length?hexFrom(yang.map((y,i)=>ch.includes(i)?!y:y)):null;
+  const cat=$('cat').value, q=$('q').value.trim();
+  const base=ben[5], to=chg?chg[5]:base;
+  const score=chg?Math.round(base*0.55+to*0.45):base;
+  const trend=!chg?'卦象穩定，沒有明顯的轉變。':(to-base>=1?'走勢是<b>先難後易、漸入佳境</b>。':(to-base<=-1?'走勢是<b>先順後阻、後段要小心</b>。':'走勢<b>前後差不多</b>，維持原本節奏即可。'));
+  const grp=score>=4?2:score===3?1:0;
+  LAST={t:Date.now(),q,cat,ben:fullName(ben),chg:chg?fullName(chg):'',score,lines:tosses.map(t=>t.v)};
+  const hist=ld('hub.divine.history',[]); hist.unshift(LAST); sv('hub.divine.history',hist.slice(0,20));
+  const hexView=(h,vals,title)=>'<div class="hexcol"><div class="t">'+title+'</div><div class="lines">'+vals.slice().reverse().map(v=>lineHTML(v,title==='本卦')).join('')+'</div><div class="hname">'+fullName(h)+'</div><div style="color:var(--mute);font-size:13px">上 '+TSYM[h[1]]+h[1]+'（'+TNAT[h[1]]+'）／下 '+TSYM[h[2]]+h[2]+'（'+TNAT[h[2]]+'）</div></div>';
+  const chgVals=tosses.map(t=>t.v===6?7:t.v===9?8:t.v);
+  $('result').innerHTML='<section class="card" id="resCard"><h2>🔮 你的卦象</h2>'+
+   '<div class="p" style="color:var(--mute)">問題：<b style="color:var(--ink)">'+esc(q)+'</b>（'+esc(cat)+'）</div>'+
+   '<div class="hexbox">'+hexView(ben,tosses.map(t=>t.v),'本卦')+(chg?'<div style="align-self:center;font-size:30px;color:var(--gold)">➜</div>'+hexView(chg,chgVals,'變卦'):'')+'</div>'+
+   '<div class="c info">○＝老陽（會變）、×＝老陰（會變）。本卦＝現在的狀況；變卦＝事情的走向。</div>'+
+   '<div class="verdict '+LVL[score][1]+'"><div class="big">這件事的整體運勢：'+LVL[score][0]+'</div>'+
+   '<p>'+trend+'</p><p><b>針對「'+esc(cat)+'」：</b>'+CATADV[cat][grp]+'</p><p><b>行動建議：</b>'+ben[6]+'</p></div>'+
+   '<h3>📜 本卦：'+fullName(ben)+'</h3><div class="gua">'+ben[3]+'</div><p class="p"><b>白話：</b>'+ben[4]+'</p>'+
+   '<h3>🎯 這一次要特別看哪裡？</h3><div class="box">'+focusRule(ch)+'</div>'+
+   (chg?'<h3>➜ 變卦：'+fullName(chg)+'</h3><div class="gua">'+chg[3]+'</div><p class="p"><b>白話：</b>'+chg[4]+'<br><b>意思是：</b>事情之後會朝「'+chg[0]+'」的方向發展。'+chg[6]+'</p>':'')+
+   '<div class="explain"><b>說明：</b>這個版本收錄 64 卦的卦辭與白話解釋，用變爻的位置來判斷重點，沒有收錄 384 條爻辭。運勢等級是依各卦傳統象義的吉凶傾向整理，用來幫你整理思緒，不是保證。</div>'+
+   '<div class="c"><button class="btn" onclick="saveDivCard()">🖼 儲存結果圖片</button><button class="btn ghost" onclick="resetToss();window.scrollTo({top:0,behavior:\'smooth\'})">再問一件事</button></div>'+
+   '<div id="dirHint"></div></section>';
+  renderHist(); dirHint(cat); $('resCard').scrollIntoView({behavior:'smooth'});
+}
+function renderHist(){
+  const h=ld('hub.divine.history',[]); $('histCard').classList.toggle('hidden',!h.length);
+  $('hist').innerHTML=h.map(x=>'<div>'+new Date(x.t).toLocaleDateString('zh-TW')+'｜<b>'+esc(x.cat)+'</b>｜'+esc(x.q)+' → '+esc(x.ben)+(x.chg?' ➜ '+esc(x.chg):'')+'（'+LVL[x.score][0]+'）</div>').join('');
+}
+function clearHist(){if(confirm('清除全部占卜紀錄？')){sv('hub.divine.history',[]);renderHist()}}
+
+/* ========== 風水：八宅命卦 ========== */
+const DIRS=['北','東北','東','東南','南','西南','西','西北'];
+const T2DIR={坎:0,艮:1,震:2,巽:3,離:4,坤:5,兌:6,乾:7};
+const GNUM={1:'坎',2:'坤',3:'震',4:'巽',6:'乾',7:'兌',8:'艮',9:'離'};
+const EAST=['坎','離','震','巽'];
+const DESC={
+ 生氣:['吉','最吉。事業、財運與積極進取，適合辦公桌朝向、大門、出門談事情。'],
+ 天醫:['吉','健康與貴人。適合床頭、養生與求醫、見長輩。'],
+ 延年:['吉','感情、人際與長久穩定。適合臥室、夫妻相處、談感情。'],
+ 伏位:['吉','平穩安定。適合書房、靜修、需要專心與守成的事。'],
+ 絕命:['凶','最需避開。避免大門、床頭、爐灶朝向，不宜做重大決定時面對。'],
+ 五鬼:['凶','是非與破財。避免談金錢糾紛、簽重要約時面對。'],
+ 六煞:['凶','人際與感情糾紛。避免談感情、處理人際衝突時面對。'],
+ 禍害:['凶','口舌與小災。避免爭論、談判時面對。']
+};
+const GOODN=['生氣','天醫','延年','伏位'];
+const CAT2TYPE={事業工作:'生氣',財運投資:'生氣',感情關係:'延年',考試學習:'伏位',出行搬遷:'生氣',健康身體:'天醫',簽約交易:'生氣',其他:'生氣'};
+function mingGua(y,m,d,g){
+  let Y=y; if(m<2||(m===2&&d<4)) Y=y-1;      // 以立春（約 2/4）為界
+  const red=n=>{while(n>9) n=String(n).split('').reduce((a,b)=>a+ +b,0);return n};
+  const n=red(String(Y%100).split('').reduce((a,b)=>a+ +b,0));
+  let k; if(Y<2000) k=g==='M'?11-n:4+n; else k=g==='M'?10-n:5+n;
+  k=red(k); if(k===0) k=9;
+  if(k===5) k=g==='M'?2:8;
+  return {Y,k,tri:GNUM[k]};
+}
+function bits(t){return Object.keys(TBITS).find(k=>TBITS[k]===t).split('').map(Number)}  // 下→中→上
+function bazhai(tri){
+  const a=bits(tri), out={};
+  Object.keys(TBITS).forEach(k=>{const o=k.split('').map(Number), f=a.map((v,i)=>v!==o[i]?1:0).join(''); // 下中上
+    const name={'000':'伏位','001':'生氣','010':'絕命','100':'禍害','011':'五鬼','101':'六煞','110':'天醫','111':'延年'}[f];
+    out[T2DIR[TBITS[k]]]=name;});
+  return out; // 方位索引 → 名稱
+}
+let PROFILE=ld('hub.fs.profile',null), MAP=null;
+function calcGua(){
+  const v=$('fbirth').value; if(!v){alert('請輸入出生日期');return}
+  const [y,m,d]=v.split('-').map(Number), g=$('fgender').value, r=mingGua(y,m,d,g);
+  PROFILE={y,m,d,g,tri:r.tri,k:r.k}; sv('hub.fs.profile',{birth:v,g});
+  applyProfile(); drawDial(); setHeading(HDG,false); if(LAST) dirHint(LAST.cat);
+  $('guaOut').scrollIntoView({behavior:'smooth'});
+}
+function applyProfile(){
+  const P=PROFILE; MAP=bazhai(P.tri);
+  const east=EAST.includes(P.tri);
+  $('guaOut').innerHTML='<div class="verdict v4" style="margin-top:14px"><div class="big">你的命卦：'+P.tri+'命（'+P.k+'）・'+(east?'東四命':'西四命')+'</div><p>'+(east?'吉方多在北、東、東南、南。':'吉方多在西南、西、西北、東北。')+'（以立春為界，實際使用年份：'+(P.m<2||(P.m===2&&P.d<4)?P.y-1:P.y)+'）</p></div>'+
+   '<table class="tbl"><tr><th>方位</th><th>名稱</th><th>吉凶</th><th>怎麼用</th></tr>'+DIRS.map((d,i)=>{const n=MAP[i],g=GOODN.includes(n);return '<tr><td><b>'+d+'</b></td><td>'+n+'</td><td class="'+(g?'good':'bad')+'">'+DESC[n][0]+'</td><td>'+DESC[n][1]+'</td></tr>'}).join('')+'</table>'+
+   '<div class="info">這是「八宅風水」，只依出生年與性別推算，不考慮房子的實際格局與流年飛星，屬於入門級的方位參考。</div>';
+}
+function dirHint(cat){
+  const box=$('dirHint'); if(!box) return;
+  if(!MAP){box.innerHTML='<div class="explain">🧭 想知道做這件事朝哪個方向比較好？到「風水羅盤」分頁輸入出生日期算出命卦，這裡就會顯示建議方位。</div>';return}
+  const type=CAT2TYPE[cat], idx=Object.keys(MAP).find(i=>MAP[i]===type);
+  box.innerHTML='<div class="explain">🧭 <b>方位建議：</b>你是'+PROFILE.tri+'命，做「'+esc(cat)+'」這類事情，建議<b>面向「'+DIRS[idx]+'」（'+type+'位）</b>——例如談事情時、坐在桌前時，或出門的方向。</div>';
+}
+
+/* ========== 羅盤 ========== */
+let HDG=0;
+function pt(cx,cy,r,deg){const a=deg*Math.PI/180;return [cx+r*Math.sin(a),cy-r*Math.cos(a)]}
+function wedge(cx,cy,r1,r2,a0,a1){const p=[pt(cx,cy,r2,a0),pt(cx,cy,r2,a1),pt(cx,cy,r1,a1),pt(cx,cy,r1,a0)].map(q=>q.map(v=>v.toFixed(1)).join(','));return 'M'+p[0]+' A'+r2+','+r2+' 0 0 1 '+p[1]+' L'+p[2]+' A'+r1+','+r1+' 0 0 0 '+p[3]+' Z'}
+function drawDial(){
+  const cx=170,cy=170; let s='<defs><filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity=".3"/></filter></defs>';
+  s+='<g id="rot" style="transition:transform .15s linear">';
+  s+='<circle cx="170" cy="170" r="160" fill="#f7f1de" stroke="#c8a24a" stroke-width="4" filter="url(#sh)"/>';
+  for(let i=0;i<8;i++){
+    const a=i*45, n=MAP?MAP[i]:'', good=GOODN.includes(n);
+    const fill=MAP?(good?'#34d399':'#f87171'):'#e5dcc4';
+    s+='<path d="'+wedge(cx,cy,62,152,a-22.5,a+22.5)+'" fill="'+fill+'" fill-opacity="'+(MAP?(i===facingIdx?1:.62):1)+'" stroke="#fffdf6" stroke-width="2" id="w'+i+'"/>';
+    const [tx,ty]=pt(cx,cy,126,a), [ux,uy]=pt(cx,cy,100,a);
+    s+='<text x="'+tx+'" y="'+ty+'" text-anchor="middle" dominant-baseline="middle" font-size="17" font-weight="800" fill="#2a2420" transform="rotate('+a+' '+tx+' '+ty+')">'+DIRS[i]+'</text>';
+    if(MAP) s+='<text x="'+ux+'" y="'+uy+'" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="700" fill="#2a2420" transform="rotate('+a+' '+ux+' '+uy+')">'+n+'</text>';
+  }
+  const [nx,ny]=pt(cx,cy,156,0);
+  s+='<circle cx="'+nx+'" cy="'+(ny+8)+'" r="9" fill="#b91c1c"/><text x="'+nx+'" y="'+(ny+12)+'" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">N</text>';
+  s+='<circle cx="170" cy="170" r="58" fill="#fffdf6" stroke="#c8a24a" stroke-width="2"/></g>';
+  s+='<polygon points="170,4 158,28 182,28" fill="#0f766e" stroke="#fff" stroke-width="2"/>';
+  s+='<text id="ctr" x="170" y="166" text-anchor="middle" font-size="22" font-weight="800" fill="#2a2420">'+DIRS[facingIdx]+'</text><text id="deg" x="170" y="190" text-anchor="middle" font-size="14" fill="#7b7268">'+Math.round(HDG)+'°</text>';
+  $('dial').innerHTML=s;
+}
+let facingIdx=0;
+function setHeading(h,manual){
+  HDG=((h%360)+360)%360; facingIdx=Math.floor(((HDG+22.5)%360)/45);
+  if(manual===true||manual===false) $('hdg').value=Math.round(HDG); $('hdgTxt').textContent=Math.round(HDG);
+  const rot=document.getElementById('rot'); if(!rot){drawDial()} else {$('rot').setAttribute('transform','rotate('+(-HDG)+' 170 170)'); $('ctr').textContent=DIRS[facingIdx]; $('deg').textContent=Math.round(HDG)+'°'; for(let i=0;i<8;i++){const w=$('w'+i); if(w&&MAP) w.setAttribute('fill-opacity',i===facingIdx?1:.62)}}
+  if(rot) $('rot').setAttribute('transform','rotate('+(-HDG)+' 170 170)');
+  const el=$('facing');
+  if(!MAP){el.innerHTML='你面向：<b>'+DIRS[facingIdx]+'</b>（'+Math.round(HDG)+'°）<br><span style="font-size:14px;color:var(--mute)">請先到上方算出命卦，才能判斷吉凶</span>';return}
+  const n=MAP[facingIdx], g=GOODN.includes(n);
+  el.innerHTML='你面向：<b>'+DIRS[facingIdx]+'</b>（'+Math.round(HDG)+'°）<br><span class="'+(g?'good':'bad')+'" style="font-size:22px">'+(g?'✅ ':'⚠️ ')+n+'位・'+DESC[n][0]+'</span><br><span style="font-size:14px;font-weight:400">'+DESC[n][1]+'</span>';
+}
+function onOri(e){
+  let h=null;
+  if(e.webkitCompassHeading!=null) h=e.webkitCompassHeading;
+  else if(e.alpha!=null&&(e.absolute||e.type==='deviceorientationabsolute')) h=(360-e.alpha)%360;
+  if(h!=null){ setHeading(h,null); $('cmsg').textContent='羅盤運作中，請將手機平放。' }
+}
+async function startCompass(){
+  try{
+    if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){
+      const r=await DeviceOrientationEvent.requestPermission(); if(r!=='granted'){$('cmsg').textContent='沒有取得感應器權限，請改用下方滑桿手動選擇方向。';return}
+    }
+    window.addEventListener('deviceorientationabsolute',onOri,true);
+    window.addEventListener('deviceorientation',onOri,true);
+    $('cmsg').textContent='正在等待感應器資料…若沒有反應，代表這台裝置沒有羅盤，請改用滑桿。';
+  }catch(e){$('cmsg').textContent='無法啟用羅盤，請改用下方滑桿或方位按鈕。'}
+}
+/* ========== 結果圖片 ========== */
+async function saveDivCard(){
+  if(!LAST) return; const F=HubKit.FONT, W=900, H=1180, c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,W,H); g.addColorStop(0,'#134e4a'); g.addColorStop(1,'#0b1f1d'); x.fillStyle=g; x.fillRect(0,0,W,H);
+  HubKit.rr(x,40,40,W-80,H-80,32); x.fillStyle='#fffdf6'; x.fill();
+  x.textAlign='center'; x.fillStyle='#0f766e'; x.font='bold 40px '+F; x.fillText('行前占卜',W/2,120);
+  x.fillStyle='#7b7268'; x.font='24px '+F; x.fillText(new Date(LAST.t).toLocaleDateString('zh-TW')+'　'+LAST.cat,W/2,165);
+  x.fillStyle='#2a2420'; x.font='bold 30px '+F; const q=LAST.q.length>22?LAST.q.slice(0,22)+'…':LAST.q; x.fillText('「'+q+'」',W/2,225);
+  const drawHex=(vals,cx,y0,lbl,mark)=>{ x.fillStyle='#7b7268'; x.font='22px '+F; x.fillText(lbl,cx,y0);
+    vals.slice().reverse().forEach((v,i)=>{const y=y0+30+i*34; x.fillStyle='#2a2420'; if(v===7||v===9){x.fillRect(cx-70,y,140,18)} else {x.fillRect(cx-70,y,60,18);x.fillRect(cx+10,y,60,18)} if(mark&&(v===9||v===6)){x.fillStyle='#c2410c';x.font='bold 24px '+F;x.textAlign='left';x.fillText(v===9?'○':'×',cx+84,y+18);x.textAlign='center'}}); };
+  const hasChg=!!LAST.chg; const vals=LAST.lines, cvals=vals.map(v=>v===6?7:v===9?8:v);
+  drawHex(vals,hasChg?250:450,290,'本卦',true); if(hasChg){x.fillStyle='#c8a24a';x.font='bold 56px '+F;x.fillText('➜',W/2,430);drawHex(cvals,650,290,'變卦',false)}
+  x.fillStyle='#0f766e'; x.font='bold 36px '+F; x.fillText(LAST.ben+(hasChg?'　➜　'+LAST.chg:''),W/2,570);
+  const lv=LVL[LAST.score]; x.fillStyle='#2a2420'; x.font='bold 54px '+F; x.fillText('整體運勢：'+lv[0],W/2,670);
+  const ben=HEX.find(h=>fullName(h)===LAST.ben); const adv=CATADV[LAST.cat][LAST.score>=4?2:LAST.score===3?1:0];
+  const wrap=(t,y,size,col)=>{x.font=size+'px '+F;x.fillStyle=col;let line='';let yy=y;for(const ch of t){if(x.measureText(line+ch).width>W-220){x.fillText(line,W/2,yy);yy+=size+14;line=ch}else line+=ch}x.fillText(line,W/2,yy);return yy+size+20};
+  let y=745; y=wrap('針對「'+LAST.cat+'」：'+adv,y,28,'#2a2420'); if(ben) y=wrap('行動建議：'+ben[6],y+10,28,'#2a2420');
+  x.fillStyle='#9a9387'; x.font='20px '+F; x.fillText('此圖片內含備份資料，可到首頁「匯入」還原　易經占卜僅供自我反思參考',W/2,H-80);
+  await HubKit.download(c,'行前占卜-'+LAST.ben+'.png');
+}
+
+/* ========== 初始化 ========== */
+(function(){
+  const dp=document.getElementById('dirbtns');
+  DIRS.forEach((d,i)=>{const b=document.createElement('button');b.textContent=d;b.onclick=()=>setHeading(i*45,true);dp.appendChild(b)});
+  const p=ld('hub.fs.profile',null);
+  if(p){$('fbirth').value=p.birth;$('fgender').value=p.g;const [y,m,d]=p.birth.split('-').map(Number);const r=mingGua(y,m,d,p.g);PROFILE={y,m,d,g:p.g,tri:r.tri,k:r.k};applyProfile()}
+  drawDial(); setHeading(0,false); renderSoFar(); renderHist();
+})();
+</script>
+</body>
+</html>

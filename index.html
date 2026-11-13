@@ -47,6 +47,13 @@ a.tool:hover{transform:translateY(-4px)}
       <div class="last" id="lastZw">尚無紀錄</div>
       <span class="go">排出命盤 →</span>
     </a>
+    <a class="tool" href="divine.html">
+      <div class="ico">☯🧭</div>
+      <h2>行前占卜與風水羅盤</h2>
+      <p>做一件事之前先問一卦：擲錢起卦（易經六十四卦），得到這件事的運勢與行動建議；另有八宅風水羅盤，用手機判斷哪個方位對你比較吉。</p>
+      <div class="last" id="lastDiv">尚無紀錄</div>
+      <span class="go">開始占卜 →</span>
+    </a>
   </div>
 
   <div class="data">
@@ -72,6 +79,8 @@ function show(){
   if(h.length){const r=h[0];document.getElementById('lastMbti').innerHTML='上次結果：<b>'+esc(r.code)+'</b>（'+esc(ANI[r.code]||'')+'）・'+new Date(r.t).toLocaleDateString('zh-TW')+'・共 '+h.length+' 筆'}
   else document.getElementById('lastMbti').textContent='尚無紀錄';
   const p=ld('hub.ziwei.profiles',[]);
+  const dv=ld('hub.divine.history',[]), LV={5:'大吉',4:'吉',3:'平',2:'需謹慎',1:'暫緩為宜'};
+  document.getElementById('lastDiv').innerHTML=dv.length?'上次占卜：「'+esc(dv[0].q.slice(0,14))+(dv[0].q.length>14?'…':'')+'」→ <b>'+esc(dv[0].ben)+'</b>（'+(LV[dv[0].score]||'')+'）・共 '+dv.length+' 筆':'尚無紀錄';
   document.getElementById('lastZw').innerHTML=p.length?'已儲存 '+p.length+' 個命盤：'+p.slice(0,3).map(x=>esc(x.label)).join('、')+(p.length>3?'…':''):'尚無紀錄';
 }
 function keys(){const a=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('hub.'))a.push(k)}}catch(e){}return a}
